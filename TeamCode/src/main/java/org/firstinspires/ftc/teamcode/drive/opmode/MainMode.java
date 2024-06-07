@@ -4,12 +4,12 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.acmerobotics.roadrunner.util.Angle;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.drive.Robot;
 
 import org.firstinspires.ftc.teamcode.drive.PoseStorage;
 
@@ -39,9 +39,9 @@ import org.firstinspires.ftc.teamcode.drive.PoseStorage;
  * <p>
  * This sample utilizes the SampleMecanumDriveCancelable.java class.
  */
-@TeleOp(group = "advanced")
-@Disabled
-public class mainMode extends LinearOpMode {
+@TeleOp(group = "main")
+//@Disabled
+public class MainMode extends LinearOpMode {
     // Define 2 states, drive control or automatic control
     enum Mode {
         DRIVER_CONTROL,
@@ -61,10 +61,40 @@ public class mainMode extends LinearOpMode {
     // The angle we want to align to when we press Y
     double targetAngle = Math.toRadians(45);
 
+
+    //
+
+
+    Trajectory idle, move, collect, dropOff, tragectory1, trajectory2; //etc
+
+    Pose2d startPose;
+
+    ElapsedTime timer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
+
+    enum State {
+
+        IDLE,
+        MOVE,
+        COLLECT,
+        DROPOFF,
+        TRAJECTORY_1,
+        TRAJECTORY_2,
+        TURN_1
+    }
+
+    State currentState;
+
+    enum StartPoseEnum {
+        FRONT_LEFT
+    }
+
+    StartPoseEnum startPoseEnum;
+
+
     @Override
     public void runOpMode() throws InterruptedException {
-        // Initialize custom cancelable SampleMecanumDrive class
-        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+        // Initialize custom cancelable Robot class
+        Robot drive = new Robot(hardwareMap);
 
         // We want to turn off velocity control for teleop
         // Velocity control per wheel is not necessary outside of motion profiled auto
@@ -73,6 +103,36 @@ public class mainMode extends LinearOpMode {
         // Retrieve our pose from the PoseStorage.currentPose static field
         // See AutoTransferPose.java for further details
         drive.setPoseEstimate(PoseStorage.currentPose);
+
+
+        //
+
+
+        startPoseEnum = StartPoseEnum.FRONT_LEFT;
+
+        switch (startPoseEnum) {
+            case FRONT_LEFT:
+
+                startPose = new Pose2d(0, 100); //TODO: CHANGE VALUES
+
+                break;
+
+            default:
+
+                startPose = new Pose2d(0, 0);
+
+                break;
+        }
+
+        drive.setPoseEstimate(startPose);
+
+        move = drive.trajectoryBuilder(startPose)
+                .forward(100)
+                .build();
+
+        PoseStorage.currentPose = drive.getPoseEstimate();
+
+        currentState = State.IDLE;
 
         waitForStart();
 
@@ -95,6 +155,14 @@ public class mainMode extends LinearOpMode {
             // We follow different logic based on whether we are in manual driver control or switch
             // control to the automatic mode
             switch (currentMode) {
+                case AUTOMATIC_CONTROL:
+                    // If x is pressed, we break out of the automatic following
+                    if (gamepad1.x) {
+                        drive.cancelFollowing();
+                        currentMode = Mode.DRIVER_CONTROL;
+                    }
+                    break;
+
                 case DRIVER_CONTROL:
                     drive.setWeightedDrivePower(
                             new Pose2d(
@@ -132,21 +200,9 @@ public class mainMode extends LinearOpMode {
                         // If Y is pressed, we turn the bot to the specified angle to reach
                         // targetAngle (by default, 45 degrees)
 
-                        drive.turnAsync(Angle.normDelta(targetAngle - poseEstimate.getHeading()));
+                        //drive.turnAsync(Angle.normDelta(targetAngle - poseEstimate.getHeading()));
 
                         currentMode = Mode.AUTOMATIC_CONTROL;
-                    }
-                    break;
-                case AUTOMATIC_CONTROL:
-                    // If x is pressed, we break out of the automatic following
-                    if (gamepad1.x) {
-                        drive.cancelFollowing();
-                        currentMode = Mode.DRIVER_CONTROL;
-                    }
-
-                    // If drive finishes its task, cede control to the driver
-                    if (!drive.isBusy()) {
-                        currentMode = Mode.DRIVER_CONTROL;
                     }
                     break;
             }

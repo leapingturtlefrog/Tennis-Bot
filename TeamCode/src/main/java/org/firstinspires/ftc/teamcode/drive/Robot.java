@@ -53,7 +53,7 @@ import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kV;
  * Simple mecanum drive hardware implementation for REV hardware.
  */
 @Config
-public class SampleMecanumDrive extends MecanumDrive {
+public class Robot extends MecanumDrive {
     public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(0, 0, 0);
     public static PIDCoefficients HEADING_PID = new PIDCoefficients(0, 0, 0);
 
@@ -90,7 +90,7 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     public Mode mode;
 
-    public SampleMecanumDrive(HardwareMap hardwareMap) {
+    public Robot(HardwareMap hardwareMap) {
         super(kV, kA, kStatic, TRACK_WIDTH, TRACK_WIDTH, LATERAL_MULTIPLIER);
 
         follower = new HolonomicPIDVAFollower(TRANSLATIONAL_PID, TRANSLATIONAL_PID, HEADING_PID,
@@ -323,6 +323,6 @@ public class SampleMecanumDrive extends MecanumDrive {
     //
 
     public void cancelFollowing() {
-        mode = SampleMecanumDrive.Mode.IDLE;
+        mode = Robot.Mode.IDLE;
     }
 }
