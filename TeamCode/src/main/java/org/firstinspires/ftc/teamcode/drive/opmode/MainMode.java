@@ -65,7 +65,7 @@ public class MainMode extends LinearOpMode {
     //
 
 
-    Trajectory idle, move, collect, dropOff, tragectory1, trajectory2; //etc
+    Trajectory idle, move, collect, goHome, tragectory1, trajectory2; //etc
 
     Pose2d startPose;
 
@@ -76,7 +76,7 @@ public class MainMode extends LinearOpMode {
         IDLE,
         MOVE,
         COLLECT,
-        DROPOFF,
+        GO_HOME,
         TRAJECTORY_1,
         TRAJECTORY_2,
         TURN_1
@@ -85,7 +85,8 @@ public class MainMode extends LinearOpMode {
     State currentState;
 
     enum StartPoseEnum {
-        FRONT_LEFT
+        FRONT_LEFT,//left entrance towards the parking lot
+        BACK_RIGHT
     }
 
     StartPoseEnum startPoseEnum;
@@ -117,6 +118,7 @@ public class MainMode extends LinearOpMode {
 
                 break;
 
+
             default:
 
                 startPose = new Pose2d(0, 0);
@@ -126,9 +128,11 @@ public class MainMode extends LinearOpMode {
 
         drive.setPoseEstimate(startPose);
 
+        /*
         move = drive.trajectoryBuilder(startPose)
                 .forward(100)
                 .build();
+         */
 
         PoseStorage.currentPose = drive.getPoseEstimate();
 
@@ -161,6 +165,41 @@ public class MainMode extends LinearOpMode {
                         drive.cancelFollowing();
                         currentMode = Mode.DRIVER_CONTROL;
                     }
+
+                    switch (currentState) {
+                        case MOVE:
+                            //move to a tennis ball
+                            drive.intakeOff();
+
+                            //if tennis ball count at 10, run HOME
+                            //run webcam vision
+                            //for each tennis ball keep locations
+                            //go to closest tennis ball by x and y
+                            //if near tennis ball run COLLECT
+                            //if no tennis balls, rotate
+                            //if rotated 2 times, return HOME
+
+                            break;
+
+                        case COLLECT:
+                            //collect a tennis ball when at a tennis ball
+                            drive.intakeOn();
+
+
+                            break;
+
+                        case GO_HOME:
+                            //head to home spot to drop of the tennis balls
+                            drive.intakeOff();
+
+                            break;
+
+                        case IDLE:
+                            drive.intakeOff();
+
+                            break;
+                    }
+
                     break;
 
                 case DRIVER_CONTROL:

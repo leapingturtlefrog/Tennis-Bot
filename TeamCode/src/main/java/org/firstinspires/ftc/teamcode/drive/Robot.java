@@ -70,7 +70,7 @@ public class Robot extends MecanumDrive {
 
     private TrajectoryFollower follower;
 
-    private DcMotorEx leftFront, leftRear, rightRear, rightFront;
+    private DcMotorEx leftFront, leftRear, rightRear, rightFront, intake;
     private List<DcMotorEx> motors;
 
     private IMU imu;
@@ -114,8 +114,9 @@ public class Robot extends MecanumDrive {
         leftRear = hardwareMap.get(DcMotorEx.class, "leftRear");
         rightRear = hardwareMap.get(DcMotorEx.class, "rightRear");
         rightFront = hardwareMap.get(DcMotorEx.class, "rightFront");
+        intake = hardwareMap.get(DcMotorEx.class, "intake");
 
-        motors = Arrays.asList(leftFront, leftRear, rightRear, rightFront);
+        motors = Arrays.asList(leftFront, leftRear, rightRear, rightFront, intake);
 
         for (DcMotorEx motor : motors) {
             MotorConfigurationType motorConfigurationType = motor.getMotorType().clone();
@@ -320,9 +321,19 @@ public class Robot extends MecanumDrive {
         return new ProfileAccelerationConstraint(maxAccel);
     }
 
+
     //
+
 
     public void cancelFollowing() {
         mode = Robot.Mode.IDLE;
     }
+
+    public boolean intakeIsBusy() { return intake.isBusy(); }
+
+    public void intakeOff() { intake.setPower(0); }
+
+    public void intakeOn() { intake.setPower(1); }
+
+    public void intakeVariablePower(double pwr) { intake.setPower(pwr); }
 }
