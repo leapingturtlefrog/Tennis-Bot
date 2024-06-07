@@ -79,6 +79,17 @@ public class SampleMecanumDrive extends MecanumDrive {
     private List<Integer> lastEncPositions = new ArrayList<>();
     private List<Integer> lastEncVels = new ArrayList<>();
 
+    //
+
+    public enum Mode {
+        IDLE,
+        TURN,
+        FIXTURN,
+        FOLLOW_TRAJECTORY
+    }
+
+    public Mode mode;
+
     public SampleMecanumDrive(HardwareMap hardwareMap) {
         super(kV, kA, kStatic, TRACK_WIDTH, TRACK_WIDTH, LATERAL_MULTIPLIER);
 
@@ -307,5 +318,11 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     public static TrajectoryAccelerationConstraint getAccelerationConstraint(double maxAccel) {
         return new ProfileAccelerationConstraint(maxAccel);
+    }
+
+    //
+
+    public void cancelFollowing() {
+        mode = SampleMecanumDrive.Mode.IDLE;
     }
 }
