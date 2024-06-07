@@ -118,12 +118,9 @@ public class MainMode extends LinearOpMode {
 
                 break;
 
-
             default:
 
                 startPose = new Pose2d(0, 0);
-
-                break;
         }
 
         drive.setPoseEstimate(startPose);
