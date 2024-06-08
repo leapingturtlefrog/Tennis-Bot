@@ -39,7 +39,7 @@ import org.firstinspires.ftc.teamcode.drive.PoseStorage;
  * <p>
  * This sample utilizes the SampleMecanumDriveCancelable.java class.
  */
-@TeleOp(group = "main")
+@TeleOp(group = "pushbot")
 //@Disabled
 public class MainMode extends LinearOpMode {
     // Define 2 states, drive control or automatic control
