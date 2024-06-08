@@ -76,10 +76,7 @@ public class MainMode extends LinearOpMode {
         IDLE,
         MOVE,
         COLLECT,
-        GO_HOME,
-        TRAJECTORY_1,
-        TRAJECTORY_2,
-        TURN_1
+        GO_HOME
     }
 
     State currentState;
@@ -207,6 +204,12 @@ public class MainMode extends LinearOpMode {
                                     -gamepad1.right_stick_x
                             )
                     );
+
+                    if (gamepad1.left_bumper) {
+                        drive.intakeOff();
+                    } else if (gamepad1.right_bumper) {
+                        drive.intakeOn();
+                    }
 
                     if (gamepad1.a) {
                         // If the A button is pressed on gamepad1, we generate a splineTo()

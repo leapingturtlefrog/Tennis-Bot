@@ -39,7 +39,7 @@ import org.firstinspires.ftc.teamcode.drive.Robot;
  *
  * Uncomment the @Disabled tag below to use this opmode.
  */
-@Disabled
+//@Disabled
 @Config
 @TeleOp(group = "drive")
 public class MotorDirectionDebugger extends LinearOpMode {
@@ -87,6 +87,9 @@ public class MotorDirectionDebugger extends LinearOpMode {
                 drive.setMotorPowers(0, 0, 0, 0);
                 telemetry.addLine("Running Motor: None");
             }
+
+            telemetry.addLine("Pose estimate: " + drive.getPoseEstimate().toString());
+            telemetry.addLine("Wheel positions: " + drive.getWheelPositions().toString());
 
             telemetry.update();
         }
