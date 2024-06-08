@@ -23,6 +23,7 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -104,10 +105,10 @@ public class MainMode extends LinearOpMode {
 
     StartPoseEnum startPoseEnum;
 
-    private static final String TFOD_MODEL_ASSET = "TennisBallModel2"; //"RedBlueBox.tflite";
+    //private static final String TFOD_MODEL_ASSET = "TennisBallModel2.tflite"; //"RedBlueBox.tflite";
     // TFOD_MODEL_FILE points to a model file stored onboard the Robot Controller's storage,
     // this is used when uploading models directly to the RC using the model upload interface.
-    //private static final String TFOD_MODEL_FILE = "/sdcard/FIRST/tflitemodels/RedBlueBox.tflite";
+    private static final String TFOD_MODEL_FILE = "/sdcard/FIRST/tflitemodels/TennisBallModel2.tflite"; //"/sdcard/FIRST/tflitemodels/RedBlueBox.tflite";
     // Define the labels recognized in the model for TFOD (must be in training order!)
     private static final String[] LABELS = {
             "a",
@@ -124,11 +125,15 @@ public class MainMode extends LinearOpMode {
     private boolean tfodDetected = false;
     private boolean aprilTagDetected = false;
 
-    private List<double[]> tfodPositions;
+    private ArrayList<double[]> tfodPositions = new ArrayList<double[]>();
 
     public int ballsCollected = 0;
 
     private int detectionIndex;
+
+    private boolean moved = false;
+
+    private String movement = "idle";
 
 
     @Override
@@ -136,7 +141,7 @@ public class MainMode extends LinearOpMode {
         // Initialize custom cancelable Robot class
         Robot drive = new Robot(hardwareMap);
 
-        initAprilTag();
+        //initAprilTag();
         initTfod();
 
         // We want to turn off velocity control for teleop
@@ -173,6 +178,16 @@ public class MainMode extends LinearOpMode {
 
         waitForStart();
 
+        /***
+         * BUTTONS
+         * a returns to move image state
+         * b returns to idle image state
+         * x returns to driver control
+         *      left bumper turns off intake
+         *      right bumper turns on intake
+         * y returns to auto
+         */
+
         if (isStopRequested()) return;
 
         while (opModeIsActive() && !isStopRequested()) {
@@ -192,10 +207,17 @@ public class MainMode extends LinearOpMode {
             telemetry.addData("mode: ", currentMode);
             telemetry.addData("driveState: ", currentDriveState);
             telemetry.addData("imageState: ", currentImageState);
+            telemetry.addData("movement: ", movement);
             telemetry.addData("x", poseEstimate.getX());
             telemetry.addData("y", poseEstimate.getY());
             telemetry.addData("heading", poseEstimate.getHeading());
+
+            detectionIndex = tfodLocationDetection();
+            telemetryTfod();
+
             telemetry.update();
+
+
 
             // We follow different logic based on whether we are in manual driver control or switch
             // control to the automatic mode
@@ -214,9 +236,6 @@ public class MainMode extends LinearOpMode {
                     //image recognition
                     switch (currentImageState) {
                         case MOVE:
-                            detectionIndex = tfodLocationDetection();
-                            telemetryTfod();
-
                             if (detectionIndex > -1) {
                                 double distance = tfodPositions.get(detectionIndex)[0], angle = tfodPositions.get(detectionIndex)[1];
                                 if (distance < 60) {
@@ -233,17 +252,16 @@ public class MainMode extends LinearOpMode {
                             } else {
                                 drive.turn(Math.toRadians(10));
                             }
+                            moved = false;
 
                             break;
 
                         case COLLECT:
                             drive.intakeOn();
-                            detectionIndex = tfodLocationDetection();
-                            telemetryTfod();
 
                             if (detectionIndex > -1) {
                                 double distance = tfodPositions.get(detectionIndex)[0], angle = tfodPositions.get(detectionIndex)[1];
-                                if (distance < 24) {
+                                if (distance < 24 && !moved) {
                                     Trajectory trajectory = drive.trajectoryBuilder(new Pose2d())
                                             .forward(30)
                                             .build();
@@ -252,6 +270,7 @@ public class MainMode extends LinearOpMode {
                                     currentImageState = ImageState.MOVE;
 
                                     ballsCollected++;
+                                    moved = true;
                                 } else {
                                     drive.turn(angle);
                                     Trajectory trajectory = drive.trajectoryBuilder(new Pose2d())
@@ -259,6 +278,7 @@ public class MainMode extends LinearOpMode {
                                             .build();
 
                                     drive.followTrajectory(trajectory);
+                                    moved = false;
                                 }
 
                             } else {
@@ -268,8 +288,8 @@ public class MainMode extends LinearOpMode {
                             break;
 
                         case HOME:
-                            aprilTagLocationDetection();
-                            telemetryAprilTag();
+                            //aprilTagLocationDetection();
+                            //telemetryAprilTag();
 
                             break;
 
@@ -382,8 +402,8 @@ public class MainMode extends LinearOpMode {
                 // choose one of the following:
                 //   Use setModelAssetName() if the custom TF Model is built in as an asset (AS only).
                 //   Use setModelFileName() if you have downloaded a custom team model to the Robot Controller.
-                .setModelAssetName(TFOD_MODEL_ASSET)
-                //.setModelFileName(TFOD_MODEL_FILE)
+                //.setModelAssetName(TFOD_MODEL_ASSET)
+                .setModelFileName(TFOD_MODEL_FILE)
 
                 // The following default settings are available to un-comment and edit as needed to
                 // set parameters for custom models.
@@ -536,4 +556,9 @@ public class MainMode extends LinearOpMode {
 
 
     }
+
+    public void goStraight(double dist) {
+
+    }
+
 }
