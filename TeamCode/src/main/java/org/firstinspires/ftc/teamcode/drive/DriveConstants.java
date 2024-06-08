@@ -22,7 +22,7 @@ public class DriveConstants {
     /*
      * These are motor constants that should be listed online for your motors.
      */
-    public static final double TICKS_PER_REV = 751.8; //GoBuilda 5202 26.9:1 ratio
+    public static final double TICKS_PER_REV = 751.8; //GoBuilda 5202 26.9:1 ratio  //tests: 108.05
     public static final double MAX_RPM = 223; //GoBuilda 5202 26.9:1 ratio
 
     /*
@@ -45,9 +45,9 @@ public class DriveConstants {
      * angular distances although most angular parameters are wrapped in Math.toRadians() for
      * convenience. Make sure to exclude any gear ratio included in MOTOR_CONFIG from GEAR_RATIO.
      */
-    public static double WHEEL_RADIUS = 2; // in
+    public static double WHEEL_RADIUS = 2; //2.1; //2; // in //tests: 116.64,115.2  121.38,116.4
     public static double GEAR_RATIO = 0.933; //0.9359; //1; // output (wheel) speed / input (motor) speed
-    public static double TRACK_WIDTH = 20; // in
+    public static double TRACK_WIDTH = 17.5; //20.5; //19.17; //20; // in //19.17 (0.3) //17.49
 
     /*
      * These are the feedforward parameters used to model the drive motor behavior. If you are using
@@ -68,8 +68,8 @@ public class DriveConstants {
      */
     public static double MAX_VEL = 35;
     public static double MAX_ACCEL = 35;
-    public static double MAX_ANG_VEL = Math.toRadians(180);
-    public static double MAX_ANG_ACCEL = Math.toRadians(180);
+    public static double MAX_ANG_VEL = 2.11; //Math.toRadians(180);
+    public static double MAX_ANG_ACCEL = 1.5; //2.11; //Math.toRadians(180);
 
     /*
      * Adjust the orientations here to match your robot. See the FTC SDK documentation for details.
@@ -135,6 +135,12 @@ public class DriveConstants {
 
     result
     0.683
+
+    after
+    34.00
+    14.0
+
+    *******************STRAFE NOT RECOMMENDED ON THIS ROBOT*************
      */
 
     public static double encoderTicksToInches(double ticks) {
