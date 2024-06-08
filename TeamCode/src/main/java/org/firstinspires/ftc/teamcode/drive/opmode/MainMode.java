@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.drive.opmode;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
+import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import com.acmerobotics.roadrunner.util.Angle;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -103,10 +104,10 @@ public class MainMode extends LinearOpMode {
 
     StartPoseEnum startPoseEnum;
 
-    private static final String TFOD_MODEL_ASSET = "RedBlueBox.tflite";
+    private static final String TFOD_MODEL_ASSET = "TennisBallModel2"; //"RedBlueBox.tflite";
     // TFOD_MODEL_FILE points to a model file stored onboard the Robot Controller's storage,
     // this is used when uploading models directly to the RC using the model upload interface.
-    private static final String TFOD_MODEL_FILE = "/sdcard/FIRST/tflitemodels/RedBlueBox.tflite";
+    //private static final String TFOD_MODEL_FILE = "/sdcard/FIRST/tflitemodels/RedBlueBox.tflite";
     // Define the labels recognized in the model for TFOD (must be in training order!)
     private static final String[] LABELS = {
             "a",
@@ -123,7 +124,11 @@ public class MainMode extends LinearOpMode {
     private boolean tfodDetected = false;
     private boolean aprilTagDetected = false;
 
-    private List<Recognition> tfodPositions;
+    private List<double[]> tfodPositions;
+
+    public int ballsCollected = 0;
+
+    private int detectionIndex;
 
 
     @Override
@@ -177,6 +182,12 @@ public class MainMode extends LinearOpMode {
             // Read pose
             Pose2d poseEstimate = drive.getPoseEstimate();
 
+            if (gamepad1.a) {
+                currentImageState = ImageState.MOVE;
+            } else if (gamepad1.b) {
+                currentImageState = ImageState.IDLE;
+            }
+
             // Print pose to telemetry
             telemetry.addData("mode: ", currentMode);
             telemetry.addData("driveState: ", currentDriveState);
@@ -196,15 +207,63 @@ public class MainMode extends LinearOpMode {
                         currentMode = Mode.DRIVER_CONTROL;
                     }
 
+                    if (ballsCollected > 2) {
+                        currentImageState = ImageState.HOME;
+                    }
+
                     //image recognition
                     switch (currentImageState) {
                         case MOVE:
-                            tfodLocationDetection();
+                            detectionIndex = tfodLocationDetection();
                             telemetryTfod();
+
+                            if (detectionIndex > -1) {
+                                double distance = tfodPositions.get(detectionIndex)[0], angle = tfodPositions.get(detectionIndex)[1];
+                                if (distance < 60) {
+                                    currentImageState = ImageState.COLLECT;
+                                } else {
+                                    drive.turn(angle);
+                                    Trajectory trajectory = drive.trajectoryBuilder(new Pose2d())
+                                            .forward(distance * 0.7)
+                                            .build();
+
+                                    drive.followTrajectory(trajectory);
+                                }
+
+                            } else {
+                                drive.turn(Math.toRadians(10));
+                            }
 
                             break;
 
                         case COLLECT:
+                            drive.intakeOn();
+                            detectionIndex = tfodLocationDetection();
+                            telemetryTfod();
+
+                            if (detectionIndex > -1) {
+                                double distance = tfodPositions.get(detectionIndex)[0], angle = tfodPositions.get(detectionIndex)[1];
+                                if (distance < 24) {
+                                    Trajectory trajectory = drive.trajectoryBuilder(new Pose2d())
+                                            .forward(30)
+                                            .build();
+
+                                    drive.followTrajectory(trajectory);
+                                    currentImageState = ImageState.MOVE;
+
+                                    ballsCollected++;
+                                } else {
+                                    drive.turn(angle);
+                                    Trajectory trajectory = drive.trajectoryBuilder(new Pose2d())
+                                            .forward(distance * 0.7)
+                                            .build();
+
+                                    drive.followTrajectory(trajectory);
+                                }
+
+                            } else {
+                                currentImageState = ImageState.MOVE;
+                            }
 
                             break;
 
@@ -219,6 +278,7 @@ public class MainMode extends LinearOpMode {
                             break;
                     }
 
+                    /*
                     switch (currentDriveState) {
                         case MOVE:
                             //move to a tennis ball
@@ -251,7 +311,7 @@ public class MainMode extends LinearOpMode {
                             drive.intakeOff();
 
                             break;
-                    }
+                    }*/
 
                     break;
 
@@ -264,8 +324,9 @@ public class MainMode extends LinearOpMode {
                             )
                     );
 
-                    //
-
+                    if (gamepad1.y) {
+                        currentMode = Mode.AUTOMATIC_CONTROL;
+                    }
 
                     if (gamepad1.left_bumper) {
                         drive.intakeOff();
@@ -273,6 +334,7 @@ public class MainMode extends LinearOpMode {
                         drive.intakeOn();
                     }
 
+                    /*
                     if (gamepad1.a) {
                         // If the A button is pressed on gamepad1, we generate a splineTo()
                         // trajectory on the fly and follow it
@@ -304,7 +366,7 @@ public class MainMode extends LinearOpMode {
                         //drive.turnAsync(Angle.normDelta(targetAngle - poseEstimate.getHeading()));
 
                         currentMode = Mode.AUTOMATIC_CONTROL;
-                    }
+                    }*/
                     break;
             }
         }
@@ -429,20 +491,38 @@ public class MainMode extends LinearOpMode {
 
     }
 
-    private void tfodLocationDetection()
+    private int tfodLocationDetection()
     {
         List<Recognition> currentRecognitions = tfod.getRecognitions();
+
+        double minDistance = 99999;
+        int minDistanceIndex = 0, index = 0;
 
         // Step through the list of detections and display info for each one.
         for (Recognition recognition : currentRecognitions) {
 
-
-
             double x = (recognition.getLeft() + recognition.getRight()) / 2 ;
             double y = (recognition.getTop()  + recognition.getBottom()) / 2 ;
 
+            double distance = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
+
+            //adds the distance and heading of each detection
+            tfodPositions.add(new double[]{distance, Math.atan(y/x), x, y});
+
+            //finds closest detection
+            if (distance < minDistance) {
+                minDistance = distance;
+                minDistanceIndex = index;
+            }
+
+            index++;
         }
 
+        if (currentRecognitions.size() > 0) {
+            return minDistanceIndex;
+        } else {
+            return -1;
+        }
 
     }
     private void aprilTagLocationDetection()
