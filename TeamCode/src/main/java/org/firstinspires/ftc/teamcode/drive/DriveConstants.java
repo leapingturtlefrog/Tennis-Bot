@@ -46,7 +46,7 @@ public class DriveConstants {
      * convenience. Make sure to exclude any gear ratio included in MOTOR_CONFIG from GEAR_RATIO.
      */
     public static double WHEEL_RADIUS = 2; // in
-    public static double GEAR_RATIO = 1; // output (wheel) speed / input (motor) speed
+    public static double GEAR_RATIO = 0.9359; //1; // output (wheel) speed / input (motor) speed
     public static double TRACK_WIDTH = 20; // in
 
     /*
@@ -79,6 +79,36 @@ public class DriveConstants {
     public static RevHubOrientationOnRobot.UsbFacingDirection USB_FACING_DIR =
             RevHubOrientationOnRobot.UsbFacingDirection.RIGHT;
 
+    //straight test results. predicted and then actual
+    /*
+    124.90
+    117.2
+
+    125.10
+    117.5
+
+    124.75
+    117.1
+
+    125.37
+    116.7
+
+    124.82
+    117.1
+
+    125.04
+    116.5
+
+    125.20
+    117.0
+
+    avgs
+    125.03
+    117.014
+
+    ratio
+    0.9359
+     */
 
     public static double encoderTicksToInches(double ticks) {
         return WHEEL_RADIUS * 2 * Math.PI * GEAR_RATIO * ticks / TICKS_PER_REV;
