@@ -136,7 +136,8 @@ public class Robot extends MecanumDrive {
         }
 
         // TODO: reverse any motors using DcMotor.set...Direction()
-
+        leftRear.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
 
         List<Integer> lastTrackingEncPositions = new ArrayList<>();
         List<Integer> lastTrackingEncVels = new ArrayList<>();
