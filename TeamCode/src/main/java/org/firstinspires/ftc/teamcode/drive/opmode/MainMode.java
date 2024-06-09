@@ -236,6 +236,8 @@ public class MainMode extends LinearOpMode {
                     //image recognition
                     switch (currentImageState) {
                         case MOVE:
+                            drive.intakeOff();
+
                             if (detectionIndex > -1) {
                                 double distance = tfodPositions.get(detectionIndex)[0], angle = tfodPositions.get(detectionIndex)[1];
                                 if (distance < 60) {
@@ -247,14 +249,13 @@ public class MainMode extends LinearOpMode {
                                             .build();
 
                                     drive.followTrajectory(trajectory);
+                                    wait(1000);
                                 }
 
                             } else {
                                 drive.turn(Math.toRadians(10));
                             }
                             moved = false;
-
-                            break;
 
                         case COLLECT:
                             drive.intakeOn();
