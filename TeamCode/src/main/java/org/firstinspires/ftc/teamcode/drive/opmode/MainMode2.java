@@ -119,7 +119,29 @@ public class MainMode2 extends LinearOpMode{
             //difference happenings for DRIVER_CONTROL vs AUTO_CONTROL
             switch (currentMode) {
                 case AUTO_CONTROL:
+                    if (ballsCollected > 2) {
+                        currentState = State.HOME;
+                    }
 
+                    switch (currentState) {
+                        case LOCATE:
+
+                            break;
+
+                        case COLLECT:
+
+                            break;
+
+                        case IDLE:
+                            robot.intakeOff();
+                            robot.cancelFollowing();
+
+                            break;
+
+                        case HOME:
+
+                            break;
+                    }
 
                     break;
 
@@ -199,12 +221,14 @@ public class MainMode2 extends LinearOpMode{
             currentMode = Mode.DRIVER_CONTROL;
 
         } else if (gamepad1.y) {
+            robot.intakeOff();
             currentMode = Mode.AUTO_CONTROL;
 
         } else if (gamepad1.a) {
             currentState = State.LOCATE;
 
         } else if (gamepad1.b) {
+            robot.intakeOff();
             currentState = State.IDLE;
 
         }
@@ -272,4 +296,7 @@ public class MainMode2 extends LinearOpMode{
 
         }
     }
+
+    private void tfodFindClosest() {}
+
 }
