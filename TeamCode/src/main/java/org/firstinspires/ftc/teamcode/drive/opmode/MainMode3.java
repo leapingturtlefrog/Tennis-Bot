@@ -1,27 +1,15 @@
 package org.firstinspires.ftc.teamcode.drive.opmode;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.geometry.Vector2d;
-import com.acmerobotics.roadrunner.trajectory.Trajectory;
-import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
-import com.acmerobotics.roadrunner.util.Angle;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.util.ElapsedTime;
-
-import org.firstinspires.ftc.teamcode.drive.Robot;
-import org.firstinspires.ftc.teamcode.drive.PoseStorage;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
+import org.firstinspires.ftc.teamcode.drive.PoseStorage;
+import org.firstinspires.ftc.teamcode.drive.Robot;
 import org.firstinspires.ftc.vision.VisionPortal;
-import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
-import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import org.firstinspires.ftc.vision.tfod.TfodProcessor;
-
-//import org.firstinspires.ftc.teamcode.drive.additions.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,7 +32,7 @@ import java.util.List;
 
 @TeleOp(group= "APushBot")
 //@Disabled
-public class MainMode2 extends LinearOpMode{
+public class MainMode3 extends LinearOpMode{
     //2 modes for if driver is controlling or auto is
     enum Mode {
         DRIVER_CONTROL,
@@ -103,15 +91,38 @@ public class MainMode2 extends LinearOpMode{
     public Pose2d startPose;
     Pose2d poseEstimate;
 
-    //initialize robot
-    Robot robot = new Robot(hardwareMap);
-
 
     @Override
     public void runOpMode() throws InterruptedException {
+        //initialize robot
+        Robot robot = new Robot(hardwareMap);
+
         initTfod();
 
-        setStartPose();
+        //sets the startPose based on startPoseEnum
+        switch (startPoseEnum) {
+            case ONE:
+                startPose = new Pose2d(0,0,0); //TODO: Change values
+
+                break;
+
+            case TWO:
+                startPose = new Pose2d(100,0,0);
+
+                break;
+
+            case THREE:
+                break;
+
+            case FOUR:
+                break;
+
+            default:
+                startPose = new Pose2d(0,0,0); //TODO: Change values
+        }
+
+        robot.setPoseEstimate(startPose);
+        PoseStorage.currentPose = robot.getPoseEstimate();
 
         waitForStart();
 
@@ -124,8 +135,25 @@ public class MainMode2 extends LinearOpMode{
 
             poseEstimate = robot.getPoseEstimate();
 
-            //allows gamepad to switch modes or states
-            universalGamePadCommands();
+            //allows the gamepad to change mode and state
+            if (gamepad1.x) {
+                robot.intakeOff();
+                robot.cancelFollowing();
+                currentMode = Mode.DRIVER_CONTROL;
+
+            } else if (gamepad1.y) {
+                robot.intakeOff();
+                currentMode = Mode.AUTO_CONTROL;
+
+            } else if (gamepad1.a) {
+                currentState = State.LOCATE;
+
+            } else if (gamepad1.b) {
+                robot.intakeOff();
+                currentState = State.IDLE;
+
+            }
+
 
             updateTelemetry();
 
@@ -159,8 +187,28 @@ public class MainMode2 extends LinearOpMode{
                     break;
 
                 case DRIVER_CONTROL:
-                    //driver-control specific commands
-                    driverControlGamepadCommands();
+                    //used for driver control-specific commands
+                    robot.setWeightedDrivePower(
+                            new Pose2d(
+                                    -gamepad1.left_stick_y,
+                                    -gamepad1.left_stick_x,
+                                    -gamepad1.right_stick_x
+                            )
+                    );
+
+                    if (gamepad1.left_bumper) {
+                        robot.intakeOff();
+
+                    } else if (gamepad1.right_bumper) {
+                        robot.intakeOn();
+
+                    } else if (gamepad1.left_trigger > 0.1) {
+                        robot.intakeVariablePower(-gamepad1.left_trigger);
+
+                    } else if (gamepad1.right_trigger > 0.1) {
+                        robot.intakeVariablePower(gamepad1.right_trigger);
+
+                    }
 
                     break;
             }
@@ -170,7 +218,7 @@ public class MainMode2 extends LinearOpMode{
         }
     }
 
-
+    //initialize the object detection
     private void initTfod() {
         //create new TensorFlow processor
         tfod = new TfodProcessor.Builder()
@@ -199,54 +247,6 @@ public class MainMode2 extends LinearOpMode{
 
     }
 
-    //sets the startPose based on startPoseEnum
-    private void setStartPose() {
-        switch (startPoseEnum) {
-            case ONE:
-                startPose = new Pose2d(0,0,0); //TODO: Change values
-
-                break;
-
-            case TWO:
-                startPose = new Pose2d(100,0,0);
-
-                break;
-
-            case THREE:
-                break;
-
-            case FOUR:
-                break;
-
-            default:
-                startPose = new Pose2d(0,0,0); //TODO: Change values
-        }
-
-        robot.setPoseEstimate(startPose);
-        PoseStorage.currentPose = robot.getPoseEstimate();
-    }
-
-    //allows the gamepad to change mode and state
-    private void universalGamePadCommands() {
-        if (gamepad1.x) {
-            robot.intakeOff();
-            robot.cancelFollowing();
-            currentMode = Mode.DRIVER_CONTROL;
-
-        } else if (gamepad1.y) {
-            robot.intakeOff();
-            currentMode = Mode.AUTO_CONTROL;
-
-        } else if (gamepad1.a) {
-            currentState = State.LOCATE;
-
-        } else if (gamepad1.b) {
-            robot.intakeOff();
-            currentState = State.IDLE;
-
-        }
-    }
-
     //regulates the telemetry on the screen
     private void updateTelemetry() {
         //modes, states, and movement
@@ -266,6 +266,7 @@ public class MainMode2 extends LinearOpMode{
         telemetry.update();
     }
 
+    //Add the telemetry for the object detection
     private void tfodTelemetry() {
         List<Recognition> currentRecognitions = tfod.getRecognitions();
 
@@ -282,31 +283,6 @@ public class MainMode2 extends LinearOpMode{
             telemetry.addData("- Position", "%.0f, %.0f", x, y);
             telemetry.addData("- Size", "%.0f x %.0f",
                     recognition.getWidth(), recognition.getHeight());
-        }
-    }
-
-    //used for driver control-specific commands
-    private void driverControlGamepadCommands() {
-        robot.setWeightedDrivePower(
-                new Pose2d(
-                        -gamepad1.left_stick_y,
-                        -gamepad1.left_stick_x,
-                        -gamepad1.right_stick_x
-                )
-        );
-
-        if (gamepad1.left_bumper) {
-            robot.intakeOff();
-
-        } else if (gamepad1.right_bumper) {
-            robot.intakeOn();
-
-        } else if (gamepad1.left_trigger > 0.1) {
-            robot.intakeVariablePower(-gamepad1.left_trigger);
-
-        } else if (gamepad1.right_trigger > 0.1) {
-            robot.intakeVariablePower(gamepad1.right_trigger);
-
         }
     }
 
