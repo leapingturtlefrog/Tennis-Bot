@@ -85,7 +85,7 @@ public class MainMode2 extends LinearOpMode{
 
     //tfod file uploaded using ftc interface
     private static final String TFOD_MODEL_FILE =
-            "/sdcard/FIRST?tflitemodels/TennisBallModel1.tflite";
+            "/sdcard/FIRST/tflitemodels/TennisBallModel1.tflite";
     //labels of model object
     private static final String[] LABELS = {
             "a"

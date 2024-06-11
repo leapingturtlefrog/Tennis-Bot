@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.teamcode.drive.PoseStorage;
 import org.firstinspires.ftc.teamcode.drive.Robot;
@@ -82,12 +83,17 @@ public class MainMode3 extends LinearOpMode{
     private TfodProcessor tfod;
     private VisionPortal visionPortal;
     //private AprilTagProcessor //TODO: add april tag capability
-    private ArrayList<double[]> tfodPositions = new ArrayList<>();
-    private int detectionIndex = -1;
+    //for the current streamed recognitions
+    private List<Recognition> currentRecognitions;
+    private int currentDetectionIndex = -1;
+    //for the recognitions we are heading to
+    private List<Recognition> savedRecognitions;
+    private int savedDetectionIndex;
+    private double detectionHeadingError;
+    private double detectionEstimatedDistance;
+    private int locateLoopTries = 0;
 
     private int ballsCollected = 0;
-
-    private int loopTries = 0;
 
     public Pose2d startPose;
     Pose2d poseEstimate;
@@ -158,6 +164,10 @@ public class MainMode3 extends LinearOpMode{
 
             updateTelemetry();
 
+            //tfod telemetry and also updates the recognitions and
+            //the one with the highest confidence
+            updateTfod();
+
             //difference happenings for DRIVER_CONTROL vs AUTO_CONTROL
             switch (currentMode) {
                 case AUTO_CONTROL:
@@ -167,6 +177,17 @@ public class MainMode3 extends LinearOpMode{
 
                     switch (currentState) {
                         case LOCATE:
+                            if (locateLoopTries == 0) {
+                                if (currentDetectionIndex > -1) {
+                                    savedRecognitions = currentRecognitions;
+                                    savedDetectionIndex = currentDetectionIndex;
+
+                                } else {
+                                    robot.simpleTurn(10);
+
+                                }
+
+                            }
 
 
                             break;
@@ -250,7 +271,7 @@ public class MainMode3 extends LinearOpMode{
         visionPortal = builder.build();
 
         //the confidence interval for objects to be recognized
-        tfod.setMinResultConfidence(0.60f);
+        tfod.setMinResultConfidence(0.01f);
     }
 
     //regulates the telemetry on the screen
@@ -266,20 +287,26 @@ public class MainMode3 extends LinearOpMode{
         telemetry.addData("heading", poseEstimate.getHeading());
         telemetry.addData("", "---------------"); //15 dashes
 
-        //tfod
-        tfodTelemetry();
-
         telemetry.update();
     }
 
-    //Add the telemetry for the object detection
-    private void tfodTelemetry() {
-        List<Recognition> currentRecognitions = tfod.getRecognitions();
+    //Add the telemetry for the object detection and the highest confidence index
+    private void updateTfod() {
+        currentRecognitions = tfod.getRecognitions();
 
         telemetry.addData("# objects detected", currentRecognitions.size());
 
+        double highestConfidence = 0;
+        int index = -1;
+
         //display info on each recognition
         for (Recognition recognition : currentRecognitions) {
+            if (recognition.getConfidence() > highestConfidence) {
+                highestConfidence = recognition.getConfidence();
+                currentDetectionIndex = index;
+
+            }
+
             double x = (recognition.getLeft() + recognition.getRight()) / 2;
             double y = (recognition.getTop() + recognition.getBottom()) / 2;
 
@@ -287,11 +314,37 @@ public class MainMode3 extends LinearOpMode{
             telemetry.addData("Image", "%s (%.0f %% conf.)",
                     recognition.getLabel(), recognition.getConfidence() * 100);
             telemetry.addData("- Position", "%.0f, %.0f", x, y);
+            telemetry.addData("Angle", recognition.estimateAngleToObject(AngleUnit.DEGREES));
             telemetry.addData("- Size", "%.0f x %.0f",
                     recognition.getWidth(), recognition.getHeight());
+
+            index++;
         }
     }
 
-    private void tfodFindClosest() {}
+    private int tfodFindHighestConfidence() {
+        List<Recognition> currentRecognitions = tfod.getRecognitions();
 
+        double highestConfidence = 0;
+        int highestConfidenceIndex = -1, index = -1;
+
+        if (currentRecognitions.size() > 0) {
+            //go through the list of detections and find the highest confidence one
+            // and the approx distance to it
+            for (Recognition recognition : currentRecognitions) {
+                if (recognition.getConfidence() > highestConfidence) {
+                    highestConfidence = recognition.getConfidence();
+                    highestConfidenceIndex = index;
+                }
+
+                index++;
+            }
+
+            return highestConfidenceIndex;
+
+        } else {
+            return -1;
+
+        }
+    }
 }
