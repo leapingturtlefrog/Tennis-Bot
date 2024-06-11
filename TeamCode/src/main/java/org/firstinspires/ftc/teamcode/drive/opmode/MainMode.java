@@ -108,7 +108,7 @@ public class MainMode extends LinearOpMode {
     //private static final String TFOD_MODEL_ASSET = "TennisBallModel2.tflite"; //"RedBlueBox.tflite";
     // TFOD_MODEL_FILE points to a model file stored onboard the Robot Controller's storage,
     // this is used when uploading models directly to the RC using the model upload interface.
-    private static final String TFOD_MODEL_FILE = "/sdcard/FIRST/tflitemodels/TennisBallModel2.tflite"; //"/sdcard/FIRST/tflitemodels/RedBlueBox.tflite";
+    private static final String TFOD_MODEL_FILE = "/sdcard/FIRST/tflitemodels/TennisBallModel1.tflite"; //"/sdcard/FIRST/tflitemodels/RedBlueBox.tflite";
     // Define the labels recognized in the model for TFOD (must be in training order!)
     private static final String[] LABELS = {
             "a",
@@ -447,7 +447,7 @@ public class MainMode extends LinearOpMode {
         visionPortal = builder.build();
 
         // Set confidence threshold for TFOD recognitions, at any time.
-        tfod.setMinResultConfidence(0.70f);
+        tfod.setMinResultConfidence(0.60f);
 
         // Disable or re-enable the TFOD processor at any time.
         //visionPortal.setProcessorEnabled(tfod, true);

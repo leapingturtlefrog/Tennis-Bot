@@ -80,16 +80,16 @@ public class Robot extends MecanumDrive {
     private List<Integer> lastEncPositions = new ArrayList<>();
     private List<Integer> lastEncVels = new ArrayList<>();
 
-    //
-
     public enum Mode {
         IDLE,
         TURN,
         FIXTURN,
         FOLLOW_TRAJECTORY
     }
-
     public Mode mode;
+
+    private boolean intakeContinuous = false;
+
 
     public Robot(HardwareMap hardwareMap) {
         super(kV, kA, kStatic, TRACK_WIDTH, TRACK_WIDTH, LATERAL_MULTIPLIER);
@@ -324,19 +324,23 @@ public class Robot extends MecanumDrive {
         return new ProfileAccelerationConstraint(maxAccel);
     }
 
-
-    //
-
-
     public void cancelFollowing() {
         mode = Robot.Mode.IDLE;
     }
 
     public boolean intakeIsBusy() { return intake.isBusy(); }
 
-    public void intakeOff() { intake.setPower(0); }
+    public void intakeOff() { intake.setPower(0); intakeContinuous = false; }
 
-    public void intakeOn() { intake.setPower(1); }
+    public void intakeOn() { intake.setPower(1); intakeContinuous = true; }
 
-    public void intakeVariablePower(double pwr) { intake.setPower(pwr); }
+    public void intakeVariablePower(double pwr) { intake.setPower(pwr); intakeContinuous = false; }
+
+    //is the intake set to stay on?
+    public boolean isIntakeContinuous() { return intakeContinuous; }
+
+    public void simpleTurn(double angle) {
+
+
+    }
 }

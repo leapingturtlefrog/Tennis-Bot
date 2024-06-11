@@ -103,12 +103,15 @@ public class MainMode2 extends LinearOpMode{
     public Pose2d startPose;
     Pose2d poseEstimate;
 
-    //initialize robot
-    Robot robot = new Robot(hardwareMap);
+    //variable for the robot
+    Robot robot;
 
 
     @Override
     public void runOpMode() throws InterruptedException {
+        //initializes the robot
+        robot = new Robot(hardwareMap);
+
         initTfod();
 
         setStartPose();

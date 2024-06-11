@@ -13,6 +13,7 @@ import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
 
 /**
  * //GAMEPAD CONTROLS
@@ -73,7 +74,7 @@ public class MainMode3 extends LinearOpMode{
 
     //tfod file uploaded using ftc interface
     private static final String TFOD_MODEL_FILE =
-            "/sdcard/FIRST?tflitemodels/TennisBallModel1.tflite";
+            "/sdcard/FIRST/tflitemodels/TennisBallModel2.tflite";
     //labels of model object
     private static final String[] LABELS = {
             "a"
@@ -167,6 +168,7 @@ public class MainMode3 extends LinearOpMode{
                     switch (currentState) {
                         case LOCATE:
 
+
                             break;
 
                         case COLLECT:
@@ -190,11 +192,16 @@ public class MainMode3 extends LinearOpMode{
                     //used for driver control-specific commands
                     robot.setWeightedDrivePower(
                             new Pose2d(
-                                    -gamepad1.left_stick_y,
-                                    -gamepad1.left_stick_x,
+                                    (gamepad1.dpad_up ? 1 : (gamepad1.dpad_down ? -1 : -gamepad1.left_stick_y)),
+                                    (gamepad1.dpad_left ? 1 : (gamepad1.dpad_right ? -1 : -gamepad1.left_stick_x)),
                                     -gamepad1.right_stick_x
                             )
                     );
+
+                    //if triggers are 0 turn off intake if it is not continuous
+                    if (gamepad1.left_trigger < 0.1 && gamepad1.right_trigger < 0.1 && !robot.isIntakeContinuous()) {
+                        robot.intakeVariablePower(0);
+                    }
 
                     if (gamepad1.left_bumper) {
                         robot.intakeOff();
@@ -243,8 +250,7 @@ public class MainMode3 extends LinearOpMode{
         visionPortal = builder.build();
 
         //the confidence interval for objects to be recognized
-        tfod.setMinResultConfidence(0.65f);
-
+        tfod.setMinResultConfidence(0.60f);
     }
 
     //regulates the telemetry on the screen
