@@ -9,15 +9,14 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
-import org.firstinspires.ftc.teamcode.drive.DriveConstants;
-import org.firstinspires.ftc.teamcode.drive.PoseStorage;
-import org.firstinspires.ftc.teamcode.drive.Robot;
+import org.firstinspires.ftc.teamcode.drive.OldDriveConstants;
+import org.firstinspires.ftc.teamcode.drive.OldRobot;
+import org.firstinspires.ftc.teamcode.drive.OldPoseStorage;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 
 import org.firstinspires.ftc.teamcode.drive.additions.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -108,11 +107,11 @@ public class MainMode4 extends LinearOpMode{
     public Pose2d startPose;
     Pose2d poseEstimate;
 
-    Timer timer1 = new Timer();
-    Timer timer2 = new Timer();
-    Timer timer3 = new Timer();
+    OldTimer oldTimer1 = new OldTimer();
+    OldTimer oldTimer2 = new OldTimer();
+    OldTimer oldTimer3 = new OldTimer();
 
-    Robot robot;
+    OldRobot oldRobot;
 
     private double headingError = 0;
 
@@ -130,8 +129,8 @@ public class MainMode4 extends LinearOpMode{
 
     static final double DRIVE_GEAR_REDUCTION = 1.0;
 
-    public static final double     COUNTS_PER_INCH         = (DriveConstants.TICKS_PER_REV * DRIVE_GEAR_REDUCTION) /
-            (DriveConstants.WHEEL_RADIUS * 3.1415);
+    public static final double     COUNTS_PER_INCH         = (OldDriveConstants.TICKS_PER_REV * DRIVE_GEAR_REDUCTION) /
+            (OldDriveConstants.WHEEL_RADIUS * 3.1415);
 
     private boolean isSimpleTurning = false, isSimpleStraight = false;
 
@@ -139,7 +138,7 @@ public class MainMode4 extends LinearOpMode{
     @Override
     public void runOpMode() throws InterruptedException {
         //initialize robot
-        robot = new Robot(hardwareMap);
+        oldRobot = new OldRobot(hardwareMap);
 
         initTfod();
 
@@ -165,8 +164,8 @@ public class MainMode4 extends LinearOpMode{
                 startPose = new Pose2d(0,0,0); //TODO: Change values
         }
 
-        robot.setPoseEstimate(startPose);
-        PoseStorage.currentPose = robot.getPoseEstimate();
+        oldRobot.setPoseEstimate(startPose);
+        OldPoseStorage.currentPose = oldRobot.getPoseEstimate();
 
         waitForStart();
 
@@ -175,19 +174,19 @@ public class MainMode4 extends LinearOpMode{
 
 
         while (opModeIsActive() && !isStopRequested()) {
-            robot.update();
+            oldRobot.update();
 
-            poseEstimate = robot.getPoseEstimate();
+            poseEstimate = oldRobot.getPoseEstimate();
 
             //allows the gamepad to change mode and state
             if (gamepad1.x) {
-                robot.intakeOff();
-                robot.cancelFollowing();
+                oldRobot.intakeOff();
+                oldRobot.cancelFollowing();
                 currentMode = Mode.DRIVER_CONTROL;
                 currentMovement = Movement.DRIVER_IN_CONTROL;
 
             } else if (gamepad1.y) {
-                robot.intakeOff();
+                oldRobot.intakeOff();
                 currentMode = Mode.AUTO_CONTROL;
                 currentMovement = Movement.IDLE;
 
@@ -195,7 +194,7 @@ public class MainMode4 extends LinearOpMode{
                 currentState = State.LOCATE;
 
             } else if (gamepad1.b) {
-                robot.intakeOff();
+                oldRobot.intakeOff();
                 currentState = State.IDLE;
 
             }
@@ -276,8 +275,8 @@ public class MainMode4 extends LinearOpMode{
                             break;
 
                         case IDLE:
-                            robot.intakeOff();
-                            robot.cancelFollowing();
+                            oldRobot.intakeOff();
+                            oldRobot.cancelFollowing();
 
                             break;
 
@@ -291,7 +290,7 @@ public class MainMode4 extends LinearOpMode{
 
                 case DRIVER_CONTROL:
                     //used for driver control-specific commands
-                    robot.setWeightedDrivePower(
+                    oldRobot.setWeightedDrivePower(
                             new Pose2d(
                                     (gamepad1.dpad_up ? 1 : (gamepad1.dpad_down ? -1 : -gamepad1.left_stick_y)),
                                     (gamepad1.dpad_left ? 1 : (gamepad1.dpad_right ? -1 : -gamepad1.left_stick_x)),
@@ -300,21 +299,21 @@ public class MainMode4 extends LinearOpMode{
                     );
 
                     //if triggers are 0 turn off intake if it is not continuous
-                    if (gamepad1.left_trigger < 0.1 && gamepad1.right_trigger < 0.1 && !robot.isIntakeContinuous()) {
-                        robot.intakeVariablePower(0);
+                    if (gamepad1.left_trigger < 0.1 && gamepad1.right_trigger < 0.1 && !oldRobot.isIntakeContinuous()) {
+                        oldRobot.intakeVariablePower(0);
                     }
 
                     if (gamepad1.left_bumper) {
-                        robot.intakeOff();
+                        oldRobot.intakeOff();
 
                     } else if (gamepad1.right_bumper) {
-                        robot.intakeOn();
+                        oldRobot.intakeOn();
 
                     } else if (gamepad1.left_trigger > 0.1) {
-                        robot.intakeVariablePower(-gamepad1.left_trigger);
+                        oldRobot.intakeVariablePower(-gamepad1.left_trigger);
 
                     } else if (gamepad1.right_trigger > 0.1) {
-                        robot.intakeVariablePower(gamepad1.right_trigger);
+                        oldRobot.intakeVariablePower(gamepad1.right_trigger);
 
                     }
 
@@ -324,7 +323,7 @@ public class MainMode4 extends LinearOpMode{
             //robot.checkMotorPositions(); //TODO
 
             //place pose in storage
-            PoseStorage.currentPose = robot.getPoseEstimate();
+            OldPoseStorage.currentPose = oldRobot.getPoseEstimate();
         }
     }
 
@@ -419,19 +418,19 @@ public class MainMode4 extends LinearOpMode{
 
             // Determine new target position, and pass to motor controller
             int moveCounts = (int)(distance * COUNTS_PER_INCH);
-            leftTarget = (robot.leftFront.getCurrentPosition() + robot.rightFront.getCurrentPosition()) / 2 + moveCounts;
-            rightTarget = (robot.rightFront.getCurrentPosition() + robot.rightRear.getCurrentPosition()) / 2 + moveCounts;
+            leftTarget = (oldRobot.leftFront.getCurrentPosition() + oldRobot.rightFront.getCurrentPosition()) / 2 + moveCounts;
+            rightTarget = (oldRobot.rightFront.getCurrentPosition() + oldRobot.rightRear.getCurrentPosition()) / 2 + moveCounts;
 
             // Set Target FIRST, then turn on RUN_TO_POSITION
-            robot.leftFront.setTargetPosition(leftTarget);
-            robot.leftRear.setTargetPosition(leftTarget);
-            robot.rightFront.setTargetPosition(rightTarget);
-            robot.rightRear.setTargetPosition(rightTarget);
+            oldRobot.leftFront.setTargetPosition(leftTarget);
+            oldRobot.leftRear.setTargetPosition(leftTarget);
+            oldRobot.rightFront.setTargetPosition(rightTarget);
+            oldRobot.rightRear.setTargetPosition(rightTarget);
 
-            robot.leftFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.leftRear.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.rightFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.rightRear.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            oldRobot.leftFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            oldRobot.leftRear.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            oldRobot.rightFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            oldRobot.rightRear.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
             // Set the required driving speed  (must be positive for RUN_TO_POSITION)
             // Start driving straight, and then enter the control loop
@@ -440,7 +439,7 @@ public class MainMode4 extends LinearOpMode{
 
             // keep looping while we are still active, and BOTH motors are running.
             while (opModeIsActive() &&
-                    (robot.leftFront.isBusy() && robot.rightFront.isBusy() && robot.leftRear.isBusy()) && robot.rightRear.isBusy()) {
+                    (oldRobot.leftFront.isBusy() && oldRobot.rightFront.isBusy() && oldRobot.leftRear.isBusy()) && oldRobot.rightRear.isBusy()) {
 
 
                 // if driving in reverse, the motor correction also needs to be reversed
@@ -456,10 +455,10 @@ public class MainMode4 extends LinearOpMode{
 
             // Stop all motion & Turn off RUN_TO_POSITION
             moveRobot(0, 0);
-            robot.leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            robot.leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            robot.rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            robot.rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            oldRobot.leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            oldRobot.leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            oldRobot.rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            oldRobot.rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
     }
 
@@ -486,10 +485,10 @@ public class MainMode4 extends LinearOpMode{
             rightSpeed /= max;
         }
 
-        robot.leftFront.setPower(leftSpeed);
-        robot.leftRear.setPower(leftSpeed);
-        robot.rightFront.setPower(rightSpeed);
-        robot.rightRear.setPower(leftSpeed);
+        oldRobot.leftFront.setPower(leftSpeed);
+        oldRobot.leftRear.setPower(leftSpeed);
+        oldRobot.rightFront.setPower(rightSpeed);
+        oldRobot.rightRear.setPower(leftSpeed);
 
     }
 
@@ -498,8 +497,8 @@ public class MainMode4 extends LinearOpMode{
         if (straight) {
             telemetry.addData("Motion", "Drive Straight");
             telemetry.addData("Target Pos L:R",  "%7d:%7d",      leftTarget,  rightTarget);
-            telemetry.addData("Actual Pos Lf:Lr:Rf:Rr",  "%7d:%7d:%7d:%7d",      robot.leftFront.getCurrentPosition(),
-                    robot.leftRear.getCurrentPosition(), robot.rightFront.getCurrentPosition(), robot.rightRear.getCurrentPosition());
+            telemetry.addData("Actual Pos Lf:Lr:Rf:Rr",  "%7d:%7d:%7d:%7d",      oldRobot.leftFront.getCurrentPosition(),
+                    oldRobot.leftRear.getCurrentPosition(), oldRobot.rightFront.getCurrentPosition(), oldRobot.rightRear.getCurrentPosition());
         } else {
             telemetry.addData("Motion", "Turning");
         }
@@ -511,7 +510,7 @@ public class MainMode4 extends LinearOpMode{
     }
 
     public double getHeading() {
-        YawPitchRollAngles orientation = robot.imu.getRobotYawPitchRollAngles();
+        YawPitchRollAngles orientation = oldRobot.imu.getRobotYawPitchRollAngles();
         return orientation.getYaw(AngleUnit.DEGREES);
     }
 }

@@ -37,26 +37,25 @@ import org.firstinspires.ftc.teamcode.util.LynxModuleUtil;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import org.firstinspires.ftc.teamcode.drive.opmode.MainMode4;
 
 
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.MAX_ACCEL;
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.MAX_ANG_ACCEL;
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.MAX_ANG_VEL;
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.MAX_VEL;
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.MOTOR_VELO_PID;
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.RUN_USING_ENCODER;
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.TRACK_WIDTH;
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.encoderTicksToInches;
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kA;
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kStatic;
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kV;
+import static org.firstinspires.ftc.teamcode.drive.OldDriveConstants.MAX_ACCEL;
+import static org.firstinspires.ftc.teamcode.drive.OldDriveConstants.MAX_ANG_ACCEL;
+import static org.firstinspires.ftc.teamcode.drive.OldDriveConstants.MAX_ANG_VEL;
+import static org.firstinspires.ftc.teamcode.drive.OldDriveConstants.MAX_VEL;
+import static org.firstinspires.ftc.teamcode.drive.OldDriveConstants.MOTOR_VELO_PID;
+import static org.firstinspires.ftc.teamcode.drive.OldDriveConstants.RUN_USING_ENCODER;
+import static org.firstinspires.ftc.teamcode.drive.OldDriveConstants.TRACK_WIDTH;
+import static org.firstinspires.ftc.teamcode.drive.OldDriveConstants.encoderTicksToInches;
+import static org.firstinspires.ftc.teamcode.drive.OldDriveConstants.kA;
+import static org.firstinspires.ftc.teamcode.drive.OldDriveConstants.kStatic;
+import static org.firstinspires.ftc.teamcode.drive.OldDriveConstants.kV;
 
 /*
  * Simple mecanum drive hardware implementation for REV hardware.
  */
 @Config
-public class Robot extends MecanumDrive {
+public class OldRobot extends MecanumDrive {
     public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(0, 0, 0); //0,0,0 //may need to be 0,0,0 if path is wonky
     public static PIDCoefficients HEADING_PID = new PIDCoefficients(6, 0, 0); //0,0,0
 
@@ -113,7 +112,7 @@ public class Robot extends MecanumDrive {
             (DriveConstants.WHEEL_RADIUS * 3.1415);*/
 
 
-    public Robot(HardwareMap hardwareMap) {
+    public OldRobot(HardwareMap hardwareMap) {
         super(kV, kA, kStatic, TRACK_WIDTH, TRACK_WIDTH, LATERAL_MULTIPLIER);
 
         follower = new HolonomicPIDVAFollower(TRANSLATIONAL_PID, TRANSLATIONAL_PID, HEADING_PID,
@@ -130,7 +129,7 @@ public class Robot extends MecanumDrive {
         // TODO: adjust the names of the following hardware devices to match your configuration
         imu = hardwareMap.get(IMU.class, "imu");
         IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
-                DriveConstants.LOGO_FACING_DIR, DriveConstants.USB_FACING_DIR));
+                OldDriveConstants.LOGO_FACING_DIR, OldDriveConstants.USB_FACING_DIR));
         imu.initialize(parameters);
 
         leftFront = hardwareMap.get(DcMotorEx.class, "leftFront");
@@ -354,7 +353,7 @@ public class Robot extends MecanumDrive {
     }
 
     public void cancelFollowing() {
-        mode = Robot.Mode.IDLE;
+        mode = OldRobot.Mode.IDLE;
     }
 
     public boolean intakeIsBusy() { return intake.isBusy(); }

@@ -1,24 +1,15 @@
 package org.firstinspires.ftc.teamcode.drive.opmode;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.geometry.Vector2d;
-import com.acmerobotics.roadrunner.trajectory.Trajectory;
-import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
-import com.acmerobotics.roadrunner.util.Angle;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.drive.Robot;
-import org.firstinspires.ftc.teamcode.drive.PoseStorage;
+import org.firstinspires.ftc.teamcode.drive.OldRobot;
+import org.firstinspires.ftc.teamcode.drive.OldPoseStorage;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.vision.VisionPortal;
-import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
-import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 
 //import org.firstinspires.ftc.teamcode.drive.additions.*;
@@ -104,13 +95,13 @@ public class MainMode2 extends LinearOpMode{
     Pose2d poseEstimate;
 
     //variable for the robot
-    Robot robot;
+    OldRobot oldRobot;
 
 
     @Override
     public void runOpMode() throws InterruptedException {
         //initializes the robot
-        robot = new Robot(hardwareMap);
+        oldRobot = new OldRobot(hardwareMap);
 
         initTfod();
 
@@ -123,9 +114,9 @@ public class MainMode2 extends LinearOpMode{
 
 
         while (opModeIsActive() && !isStopRequested()) {
-            robot.update();
+            oldRobot.update();
 
-            poseEstimate = robot.getPoseEstimate();
+            poseEstimate = oldRobot.getPoseEstimate();
 
             //allows gamepad to switch modes or states
             universalGamePadCommands();
@@ -149,8 +140,8 @@ public class MainMode2 extends LinearOpMode{
                             break;
 
                         case IDLE:
-                            robot.intakeOff();
-                            robot.cancelFollowing();
+                            oldRobot.intakeOff();
+                            oldRobot.cancelFollowing();
 
                             break;
 
@@ -169,7 +160,7 @@ public class MainMode2 extends LinearOpMode{
             }
 
             //place pose in storage
-            PoseStorage.currentPose = robot.getPoseEstimate();
+            OldPoseStorage.currentPose = oldRobot.getPoseEstimate();
         }
     }
 
@@ -225,26 +216,26 @@ public class MainMode2 extends LinearOpMode{
                 startPose = new Pose2d(0,0,0); //TODO: Change values
         }
 
-        robot.setPoseEstimate(startPose);
-        PoseStorage.currentPose = robot.getPoseEstimate();
+        oldRobot.setPoseEstimate(startPose);
+        OldPoseStorage.currentPose = oldRobot.getPoseEstimate();
     }
 
     //allows the gamepad to change mode and state
     private void universalGamePadCommands() {
         if (gamepad1.x) {
-            robot.intakeOff();
-            robot.cancelFollowing();
+            oldRobot.intakeOff();
+            oldRobot.cancelFollowing();
             currentMode = Mode.DRIVER_CONTROL;
 
         } else if (gamepad1.y) {
-            robot.intakeOff();
+            oldRobot.intakeOff();
             currentMode = Mode.AUTO_CONTROL;
 
         } else if (gamepad1.a) {
             currentState = State.LOCATE;
 
         } else if (gamepad1.b) {
-            robot.intakeOff();
+            oldRobot.intakeOff();
             currentState = State.IDLE;
 
         }
@@ -290,7 +281,7 @@ public class MainMode2 extends LinearOpMode{
 
     //used for driver control-specific commands
     private void driverControlGamepadCommands() {
-        robot.setWeightedDrivePower(
+        oldRobot.setWeightedDrivePower(
                 new Pose2d(
                         -gamepad1.left_stick_y,
                         -gamepad1.left_stick_x,
@@ -299,16 +290,16 @@ public class MainMode2 extends LinearOpMode{
         );
 
         if (gamepad1.left_bumper) {
-            robot.intakeOff();
+            oldRobot.intakeOff();
 
         } else if (gamepad1.right_bumper) {
-            robot.intakeOn();
+            oldRobot.intakeOn();
 
         } else if (gamepad1.left_trigger > 0.1) {
-            robot.intakeVariablePower(-gamepad1.left_trigger);
+            oldRobot.intakeVariablePower(-gamepad1.left_trigger);
 
         } else if (gamepad1.right_trigger > 0.1) {
-            robot.intakeVariablePower(gamepad1.right_trigger);
+            oldRobot.intakeVariablePower(gamepad1.right_trigger);
 
         }
     }

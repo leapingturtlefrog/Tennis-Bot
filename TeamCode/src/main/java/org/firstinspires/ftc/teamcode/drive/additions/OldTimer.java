@@ -1,10 +1,6 @@
 package org.firstinspires.ftc.teamcode.drive.additions;
 
-import com.qualcomm.robotcore.util.ElapsedTime;
-
-import java.util.concurrent.TimeUnit;
-
-public class Timer {
+public class OldTimer {
 
     /*
     private double startTime, endTime, elapsedTime, timeOfTimer;

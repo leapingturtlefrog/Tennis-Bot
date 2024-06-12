@@ -7,14 +7,13 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
-import org.firstinspires.ftc.teamcode.drive.PoseStorage;
-import org.firstinspires.ftc.teamcode.drive.Robot;
+import org.firstinspires.ftc.teamcode.drive.OldRobot;
+import org.firstinspires.ftc.teamcode.drive.OldPoseStorage;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 
 import org.firstinspires.ftc.teamcode.drive.additions.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -105,16 +104,16 @@ public class MainMode3 extends LinearOpMode{
     public Pose2d startPose;
     Pose2d poseEstimate;
 
-    Timer timer1 = new Timer();
-    Timer timer2 = new Timer();
-    Timer timer3 = new Timer();
+    OldTimer oldTimer1 = new OldTimer();
+    OldTimer oldTimer2 = new OldTimer();
+    OldTimer oldTimer3 = new OldTimer();
 
 
 
     @Override
     public void runOpMode() throws InterruptedException {
         //initialize robot
-        Robot robot = new Robot(hardwareMap);
+        OldRobot oldRobot = new OldRobot(hardwareMap);
 
         initTfod();
 
@@ -140,8 +139,8 @@ public class MainMode3 extends LinearOpMode{
                 startPose = new Pose2d(0,0,0); //TODO: Change values
         }
 
-        robot.setPoseEstimate(startPose);
-        PoseStorage.currentPose = robot.getPoseEstimate();
+        oldRobot.setPoseEstimate(startPose);
+        OldPoseStorage.currentPose = oldRobot.getPoseEstimate();
 
         waitForStart();
 
@@ -150,19 +149,19 @@ public class MainMode3 extends LinearOpMode{
 
 
         while (opModeIsActive() && !isStopRequested()) {
-            robot.update();
+            oldRobot.update();
 
-            poseEstimate = robot.getPoseEstimate();
+            poseEstimate = oldRobot.getPoseEstimate();
 
             //allows the gamepad to change mode and state
             if (gamepad1.x) {
-                robot.intakeOff();
-                robot.cancelFollowing();
+                oldRobot.intakeOff();
+                oldRobot.cancelFollowing();
                 currentMode = Mode.DRIVER_CONTROL;
                 currentMovement = Movement.DRIVER_IN_CONTROL;
 
             } else if (gamepad1.y) {
-                robot.intakeOff();
+                oldRobot.intakeOff();
                 currentMode = Mode.AUTO_CONTROL;
                 currentMovement = Movement.IDLE;
 
@@ -170,7 +169,7 @@ public class MainMode3 extends LinearOpMode{
                 currentState = State.LOCATE;
 
             } else if (gamepad1.b) {
-                robot.intakeOff();
+                oldRobot.intakeOff();
                 currentState = State.IDLE;
 
             }
@@ -251,8 +250,8 @@ public class MainMode3 extends LinearOpMode{
                             break;
 
                         case IDLE:
-                            robot.intakeOff();
-                            robot.cancelFollowing();
+                            oldRobot.intakeOff();
+                            oldRobot.cancelFollowing();
 
                             break;
 
@@ -266,7 +265,7 @@ public class MainMode3 extends LinearOpMode{
 
                 case DRIVER_CONTROL:
                     //used for driver control-specific commands
-                    robot.setWeightedDrivePower(
+                    oldRobot.setWeightedDrivePower(
                             new Pose2d(
                                     (gamepad1.dpad_up ? 1 : (gamepad1.dpad_down ? -1 : -gamepad1.left_stick_y)),
                                     (gamepad1.dpad_left ? 1 : (gamepad1.dpad_right ? -1 : -gamepad1.left_stick_x)),
@@ -275,21 +274,21 @@ public class MainMode3 extends LinearOpMode{
                     );
 
                     //if triggers are 0 turn off intake if it is not continuous
-                    if (gamepad1.left_trigger < 0.1 && gamepad1.right_trigger < 0.1 && !robot.isIntakeContinuous()) {
-                        robot.intakeVariablePower(0);
+                    if (gamepad1.left_trigger < 0.1 && gamepad1.right_trigger < 0.1 && !oldRobot.isIntakeContinuous()) {
+                        oldRobot.intakeVariablePower(0);
                     }
 
                     if (gamepad1.left_bumper) {
-                        robot.intakeOff();
+                        oldRobot.intakeOff();
 
                     } else if (gamepad1.right_bumper) {
-                        robot.intakeOn();
+                        oldRobot.intakeOn();
 
                     } else if (gamepad1.left_trigger > 0.1) {
-                        robot.intakeVariablePower(-gamepad1.left_trigger);
+                        oldRobot.intakeVariablePower(-gamepad1.left_trigger);
 
                     } else if (gamepad1.right_trigger > 0.1) {
-                        robot.intakeVariablePower(gamepad1.right_trigger);
+                        oldRobot.intakeVariablePower(gamepad1.right_trigger);
 
                     }
 
@@ -299,7 +298,7 @@ public class MainMode3 extends LinearOpMode{
             //robot.checkMotorPositions(); //TODO
 
             //place pose in storage
-            PoseStorage.currentPose = robot.getPoseEstimate();
+            OldPoseStorage.currentPose = oldRobot.getPoseEstimate();
         }
     }
 

@@ -16,7 +16,7 @@ Basic:  	This is a minimally functional OpMode used to illustrate the skeleton/s
             of a particular style of OpMode.  These are bare bones examples.
 
 Sensor:    	This is a Sample OpMode that shows how to use a specific sensor.
-            It is not intended to drive a functioning robot, it is simply showing the minimal code
+            It is not intended to drive a functioning oldRobot, it is simply showing the minimal code
             required to read and display the sensor values.
 
 Robot:	    This is a Sample OpMode that assumes a simple two-motor (differential) drive base.
@@ -27,7 +27,7 @@ Concept:	This is a sample OpMode that illustrates performing a specific function
             These may be complex, but their operation should be explained clearly in the comments,
             or the comments should reference an external doc, guide or tutorial.
             Each OpMode should try to only demonstrate a single concept so they are easy to
-            locate based on their name.  These OpModes may not produce a drivable robot.
+            locate based on their name.  These OpModes may not produce a drivable oldRobot.
 
 After the prefix, other conventions will apply:
 
@@ -46,7 +46,7 @@ and not be embellished with too much additional “clever” code.  If a sensor 
 addressing needs, or has a variety of modes or outputs, these should be demonstrated as
 simply as possible.
 
-Special programming methods, or robot control techniques should be reserved for “Concept” Samples,
+Special programming methods, or oldRobot control techniques should be reserved for “Concept” Samples,
 and where possible, Samples should strive to only demonstrate a single concept,
 eg: State machine coding, or a User Menu system, and not combine them into a single “all inclusive”
 sample.  This will prevent an “all inclusive” Sample being deleted just because one part of it

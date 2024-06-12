@@ -3,19 +3,16 @@ package org.firstinspires.ftc.teamcode.drive.opmode;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
-import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
-import com.acmerobotics.roadrunner.util.Angle;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-import org.firstinspires.ftc.teamcode.drive.Robot;
+import org.firstinspires.ftc.teamcode.drive.OldRobot;
 
-import org.firstinspires.ftc.teamcode.drive.PoseStorage;
+import org.firstinspires.ftc.teamcode.drive.OldPoseStorage;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
@@ -136,7 +133,7 @@ public class MainMode extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         // Initialize custom cancelable Robot class
-        Robot drive = new Robot(hardwareMap);
+        OldRobot drive = new OldRobot(hardwareMap);
 
         //initAprilTag();
         initTfod();
@@ -147,7 +144,7 @@ public class MainMode extends LinearOpMode {
 
         // Retrieve our pose from the PoseStorage.currentPose static field
         // See AutoTransferPose.java for further details
-        drive.setPoseEstimate(PoseStorage.currentPose);
+        drive.setPoseEstimate(OldPoseStorage.currentPose);
 
         startPoseEnum = StartPoseEnum.FRONT_LEFT;
 
@@ -171,7 +168,7 @@ public class MainMode extends LinearOpMode {
                 .build();
          */
 
-        PoseStorage.currentPose = drive.getPoseEstimate();
+        OldPoseStorage.currentPose = drive.getPoseEstimate();
 
         waitForStart();
 
