@@ -89,6 +89,8 @@ public class Robot extends MecanumDrive {
     public Mode mode;
 
     private boolean intakeContinuous = false;
+    private boolean isSimpleTurning = false;
+    private boolean isSimpleStraight = false;
 
 
     public Robot(HardwareMap hardwareMap) {
@@ -339,10 +341,18 @@ public class Robot extends MecanumDrive {
     //is the intake set to stay on?
     public boolean isIntakeContinuous() { return intakeContinuous; }
 
-    public void simpleTurn(double angle) {
+    public void simpleTurn(double angle, double power) {
+        //TODO: Implement
+    }
 
+    public boolean isSimpleTurning() { return isSimpleTurning; }
+
+    public void simpleStraight(double distance, double power) {
+        //TODO: Implement
 
     }
+
+    public boolean isSimpleStraight() { return isSimpleStraight; }
 
     public boolean checkMotorPositions() {
         return false;

@@ -6,7 +6,7 @@ import java.util.concurrent.TimeUnit;
 
 public class Timer {
     private double startTime, endTime, elapsedTime, timeOfTimer;
-    private boolean used;
+    private boolean used, on;
 
     ElapsedTime internalTimer;
 
@@ -15,6 +15,7 @@ public class Timer {
         ElapsedTime internalTimer = new ElapsedTime(ElapsedTime.Resolution.SECONDS);
         elapsedTime = 0;
         used = false;
+        on = false;
 
     }
 
@@ -24,14 +25,19 @@ public class Timer {
 
     public boolean isUsed() { return used; }
 
-    public void reset() { used = false; }
+    public void reset() { used = false; on = false; }
 
-    public void stop() { elapsedTime += internalTimer.now(TimeUnit.SECONDS) - startTime; }
+    public void stop() {
+        elapsedTime += internalTimer.now(TimeUnit.SECONDS) - startTime;
+        on = false;
+
+    }
 
     //start after it has already been stopped
     public void startAfterStop() {
         startTime = internalTimer.now(TimeUnit.SECONDS);
         endTime = internalTimer.now(TimeUnit.SECONDS) + timeOfTimer - elapsedTime;
+        on = true;
 
     }
 
@@ -40,15 +46,18 @@ public class Timer {
         startTime = internalTimer.now(TimeUnit.SECONDS);
         endTime = startTime + elap;
         used = false;
+        on = true;
 
     }
 
     public boolean isOver() {
-        if (internalTimer.now(TimeUnit.SECONDS) >= endTime) {
+        if (internalTimer.now(TimeUnit.SECONDS) >= endTime && on) {
             used = true;
             return true;
         }
         return false;
 
     }
+
+    public boolean isCurrentlyOn() { return on; }
 }

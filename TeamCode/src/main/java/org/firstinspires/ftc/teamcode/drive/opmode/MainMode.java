@@ -8,7 +8,6 @@ import com.acmerobotics.roadrunner.util.Angle;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.drive.Robot;
 
@@ -77,8 +76,6 @@ public class MainMode extends LinearOpMode {
     Trajectory idle, move, collect, goHome, tragectory1, trajectory2; //etc
 
     Pose2d startPose;
-
-    ElapsedTime timer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
 
     enum DriveState {
         IDLE,

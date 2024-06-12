@@ -12,9 +12,10 @@ import org.firstinspires.ftc.teamcode.drive.Robot;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 
+import org.firstinspires.ftc.teamcode.drive.additions.*;
+
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Timer;
 
 /**
  * //GAMEPAD CONTROLS
@@ -56,11 +57,12 @@ public class MainMode3 extends LinearOpMode{
         IDLE,
         LOCATING_BY_ROTATING,
         LOCATING_BY_DRIVING,
-        TURNING_TO_TARGET,
+        ROTATING_TO_TARGET,
         DRIVING_STRAIGHT_TO_TARGET,
-        AT_TARGET,
+        COLLECTING_TARGET,
         FINDING_HOME,
-        DRIVING_HOME
+        DRIVING_HOME,
+        DRIVER_IN_CONTROL
     }
     Movement currentMovement = Movement.IDLE;
 
@@ -89,14 +91,22 @@ public class MainMode3 extends LinearOpMode{
     //for the recognitions we are heading to
     private List<Recognition> savedRecognitions;
     private int savedDetectionIndex;
-    private double detectionHeadingError;
-    private double detectionEstimatedDistance;
-    private int locateLoopTries = 0;
+    private double savedHeadingError;
+    private double savedDistance;
+    private double savedX, savedY;
+    private int locateRotations = 0;
+    private int collectRotations = 0;
+    private int collectStraights = 0;
 
     private int ballsCollected = 0;
 
     public Pose2d startPose;
     Pose2d poseEstimate;
+
+    Timer timer1 = new Timer();
+    Timer timer2 = new Timer();
+    Timer timer3 = new Timer();
+
 
 
     @Override
@@ -147,10 +157,12 @@ public class MainMode3 extends LinearOpMode{
                 robot.intakeOff();
                 robot.cancelFollowing();
                 currentMode = Mode.DRIVER_CONTROL;
+                currentMovement = Movement.DRIVER_IN_CONTROL;
 
             } else if (gamepad1.y) {
                 robot.intakeOff();
                 currentMode = Mode.AUTO_CONTROL;
+                currentMovement = Movement.IDLE;
 
             } else if (gamepad1.a) {
                 currentState = State.LOCATE;
@@ -160,7 +172,6 @@ public class MainMode3 extends LinearOpMode{
                 currentState = State.IDLE;
 
             }
-
 
             updateTelemetry();
 
@@ -177,22 +188,62 @@ public class MainMode3 extends LinearOpMode{
 
                     switch (currentState) {
                         case LOCATE:
-                            if (locateLoopTries == 0) {
-                                if (currentDetectionIndex > -1) {
-                                    savedRecognitions = currentRecognitions;
-                                    savedDetectionIndex = currentDetectionIndex;
+                            if (currentDetectionIndex > -1) {
+                                savedRecognitions = currentRecognitions;
+                                savedDetectionIndex = currentDetectionIndex;
+                                savedHeadingError = savedRecognitions
+                                        .get(savedDetectionIndex).estimateAngleToObject(AngleUnit.DEGREES);
+
+                                savedX = (savedRecognitions.get(savedDetectionIndex).getLeft()
+                                        + savedRecognitions.get(savedDetectionIndex).getRight()) / 2;
+                                savedY = (savedRecognitions.get(savedDetectionIndex).getTop()
+                                        + savedRecognitions.get(savedDetectionIndex).getBottom()) / 2;
+
+                                savedDistance = 13100000 - 214233*savedY + 1461*savedY*savedY
+                                        - 5.31*Math.pow(savedY, 3) + 0.0109*Math.pow(savedY, 4)
+                                        - 0.0000118*Math.pow(savedY, 5)
+                                        + 0.00000000536*Math.pow(savedY, 6);
+                                //1.31E+07 + -214233x + 1461x^2 + -5.31x^3 + 0.0109x^4 + -1.18E-05x^5 + 5.36E-09x^6
+
+                                currentState = State.COLLECT;
+
+                            } else if (timer1.isOver() && !robot.isSimpleTurning()){
+                                if (locateRotations > 35) {
+                                    driveToNewPosition(); //TODO: Implement
+                                    currentMovement = Movement.LOCATING_BY_DRIVING;
 
                                 } else {
-                                    robot.simpleTurn(10);
+                                    robot.simpleTurn(10, 0.8);
+                                    timer1.start(0.5);
+                                    currentMovement = Movement.LOCATING_BY_ROTATING;
 
                                 }
 
                             }
 
 
-                            break;
-
                         case COLLECT:
+                            if (collectRotations == 0 ) {
+                                robot.simpleTurn(savedHeadingError, 0.3);
+                                currentMovement = Movement.ROTATING_TO_TARGET;
+                                collectRotations++;
+
+                            } else if (robot.isSimpleTurning() || robot.isSimpleStraight()) {
+
+                            } else if (collectStraights == 0) {
+                                //min viewing distance 57 inches, add 24 in to get 81
+                                robot.simpleStraight(Math.max(0, savedDistance - 81), 0.8);
+                                collectStraights++;
+                                currentMovement = Movement.DRIVING_STRAIGHT_TO_TARGET;
+
+                            } else if (collectStraights == 1) {
+                                robot.simpleStraight(90, 1);
+                                currentMovement = Movement.COLLECTING_TARGET;
+
+                            } else {
+                                currentState = State.LOCATE;
+
+                            }
 
                             break;
 
@@ -203,6 +254,7 @@ public class MainMode3 extends LinearOpMode{
                             break;
 
                         case HOME:
+                            //TODO: Implement
 
                             break;
                     }
@@ -241,7 +293,7 @@ public class MainMode3 extends LinearOpMode{
                     break;
             }
 
-            //robot.checkMotorPositions();
+            //robot.checkMotorPositions(); //TODO
 
             //place pose in storage
             PoseStorage.currentPose = robot.getPoseEstimate();
@@ -273,7 +325,7 @@ public class MainMode3 extends LinearOpMode{
         visionPortal = builder.build();
 
         //the confidence interval for objects to be recognized
-        tfod.setMinResultConfidence(0.01f);
+        tfod.setMinResultConfidence(0.10f);
     }
 
     //regulates the telemetry on the screen
@@ -300,6 +352,7 @@ public class MainMode3 extends LinearOpMode{
 
         double highestConfidence = 0;
         int index = -1;
+        currentDetectionIndex = -1;
 
         //display info on each recognition
         for (Recognition recognition : currentRecognitions) {
@@ -324,29 +377,7 @@ public class MainMode3 extends LinearOpMode{
         }
     }
 
-    private int tfodFindHighestConfidence() {
-        List<Recognition> currentRecognitions = tfod.getRecognitions();
+    private void driveToNewPosition() {
 
-        double highestConfidence = 0;
-        int highestConfidenceIndex = -1, index = -1;
-
-        if (currentRecognitions.size() > 0) {
-            //go through the list of detections and find the highest confidence one
-            // and the approx distance to it
-            for (Recognition recognition : currentRecognitions) {
-                if (recognition.getConfidence() > highestConfidence) {
-                    highestConfidence = recognition.getConfidence();
-                    highestConfidenceIndex = index;
-                }
-
-                index++;
-            }
-
-            return highestConfidenceIndex;
-
-        } else {
-            return -1;
-
-        }
     }
 }
