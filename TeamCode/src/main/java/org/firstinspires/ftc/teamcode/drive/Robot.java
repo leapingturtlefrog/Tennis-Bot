@@ -37,6 +37,8 @@ import org.firstinspires.ftc.teamcode.util.LynxModuleUtil;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import org.firstinspires.ftc.teamcode.drive.opmode.MainMode4;
+
 
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.MAX_ACCEL;
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.MAX_ANG_ACCEL;
@@ -71,10 +73,10 @@ public class Robot extends MecanumDrive {
 
     private TrajectoryFollower follower;
 
-    private DcMotorEx leftFront, leftRear, rightRear, rightFront, intake;
+    public DcMotorEx leftFront, leftRear, rightRear, rightFront, intake;
     private List<DcMotorEx> motors;
 
-    private IMU imu;
+    public IMU imu;
     private VoltageSensor batteryVoltageSensor;
 
     private List<Integer> lastEncPositions = new ArrayList<>();
@@ -91,6 +93,24 @@ public class Robot extends MecanumDrive {
     private boolean intakeContinuous = false;
     private boolean isSimpleTurning = false;
     private boolean isSimpleStraight = false;
+
+    /*
+    private double  targetHeading = 0;
+    private double  driveSpeed    = 0;
+    private double  turnSpeed     = 0;
+    private double  leftSpeed     = 0;
+    private double  rightSpeed    = 0;
+    private int     leftTarget    = 0;
+    private int     rightTarget   = 0;
+
+    static final double     DRIVE_SPEED             = 0.5;     // Max driving speed for better distance accuracy.
+    static final double     TURN_SPEED              = 0.4;     // Max Turn speed to limit turn rate
+    static final double     HEADING_THRESHOLD       = 2.0;
+
+    static final double DRIVE_GEAR_REDUCTION = 1.0;
+
+    public static final double     COUNTS_PER_INCH         = (DriveConstants.TICKS_PER_REV * DRIVE_GEAR_REDUCTION) /
+            (DriveConstants.WHEEL_RADIUS * 3.1415);*/
 
 
     public Robot(HardwareMap hardwareMap) {
@@ -127,6 +147,11 @@ public class Robot extends MecanumDrive {
             motor.setMotorType(motorConfigurationType);
         }
 
+        leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
         if (RUN_USING_ENCODER) {
             setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
@@ -140,6 +165,8 @@ public class Robot extends MecanumDrive {
         // TODO: reverse any motors using DcMotor.set...Direction()
         leftRear.setDirection(DcMotorSimple.Direction.REVERSE);
         leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        imu.resetYaw();
 
         List<Integer> lastTrackingEncPositions = new ArrayList<>();
         List<Integer> lastTrackingEncVels = new ArrayList<>();
@@ -334,29 +361,79 @@ public class Robot extends MecanumDrive {
 
     public void intakeOff() { intake.setPower(0); intakeContinuous = false; }
 
-    public void intakeOn() { intake.setPower(1); intakeContinuous = true; }
+    public void intakeOn() { intake.setPower(-1); intakeContinuous = true; }
 
-    public void intakeVariablePower(double pwr) { intake.setPower(pwr); intakeContinuous = false; }
+    public void intakeVariablePower(double pwr) { intake.setPower(-pwr); intakeContinuous = false; }
 
     //is the intake set to stay on?
     public boolean isIntakeContinuous() { return intakeContinuous; }
 
+    /*
     public void simpleTurn(double angle, double power) {
-        //TODO: Implement
-    }
 
+
+    }
+*/
+    /*
     public boolean isSimpleTurning() { return isSimpleTurning; }
 
     public void simpleStraight(double distance, double power) {
-        //TODO: Implement
 
+
+        if (MainMode4.is) {
+
+            // Determine new target position, and pass to motor controller
+            int moveCounts = (int)(distance * COUNTS_PER_INCH);
+            leftTarget = (leftFront.getCurrentPosition() + rightFront.getCurrentPosition()) / 2 + moveCounts;
+            rightTarget = (rightFront.getCurrentPosition() + rightRear.getCurrentPosition()) / 2 + moveCounts;
+
+            // Set Target FIRST, then turn on RUN_TO_POSITION
+            leftFront.setTargetPosition(leftTarget);
+            leftRear.setTargetPosition(leftTarget);
+            rightFront.setTargetPosition(rightTarget);
+            rightRear.setTargetPosition(rightTarget);
+
+            leftFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            leftRear.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            rightFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            rightRear.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            // Set the required driving speed  (must be positive for RUN_TO_POSITION)
+            // Start driving straight, and then enter the control loop
+            maxDriveSpeed = Math.abs(maxDriveSpeed);
+            moveRobot(maxDriveSpeed, 0);
+
+            // keep looping while we are still active, and BOTH motors are running.
+            while (opModeIsActive() &&
+                    (leftFront.isBusy() && rightFront.isBusy() && leftRear.isBusy()) && rightRear.isBusy()) {
+
+
+                // if driving in reverse, the motor correction also needs to be reversed
+                if (distance < 0)
+                    turnSpeed *= -1.0;
+
+                // Apply the turning correction to the current driving speed.
+                moveRobot(driveSpeed, turnSpeed);
+
+                // Display drive status for the driver.
+                sendTelemetry(true);
+            }
+
+            // Stop all motion & Turn off RUN_TO_POSITION
+            moveRobot(0, 0);
+            leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        }
     }
 
     public boolean isSimpleStraight() { return isSimpleStraight; }
 
     public boolean checkMotorPositions() {
+
         return false;
 
-    }
+    }*/
 
 }

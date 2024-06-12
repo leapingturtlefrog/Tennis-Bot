@@ -5,6 +5,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import java.util.concurrent.TimeUnit;
 
 public class Timer {
+
+    /*
     private double startTime, endTime, elapsedTime, timeOfTimer;
     private boolean used, on;
 
@@ -14,6 +16,7 @@ public class Timer {
     public Timer() {
         ElapsedTime internalTimer = new ElapsedTime(ElapsedTime.Resolution.SECONDS);
         elapsedTime = 0;
+        endTime = -1;
         used = false;
         on = false;
 
@@ -59,5 +62,5 @@ public class Timer {
 
     }
 
-    public boolean isCurrentlyOn() { return on; }
+    public boolean isCurrentlyOn() { return on; }*/
 }

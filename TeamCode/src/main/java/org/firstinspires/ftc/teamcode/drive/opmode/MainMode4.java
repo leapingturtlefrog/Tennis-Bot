@@ -3,10 +3,13 @@ package org.firstinspires.ftc.teamcode.drive.opmode;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
+import org.firstinspires.ftc.teamcode.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.drive.PoseStorage;
 import org.firstinspires.ftc.teamcode.drive.Robot;
 import org.firstinspires.ftc.vision.VisionPortal;
@@ -37,7 +40,7 @@ import java.util.List;
 
 @TeleOp(group= "APushBot")
 //@Disabled
-public class MainMode3 extends LinearOpMode{
+public class MainMode4 extends LinearOpMode{
     //2 modes for if driver is controlling or auto is
     enum Mode {
         DRIVER_CONTROL,
@@ -109,12 +112,34 @@ public class MainMode3 extends LinearOpMode{
     Timer timer2 = new Timer();
     Timer timer3 = new Timer();
 
+    Robot robot;
+
+    private double headingError = 0;
+
+    private double  targetHeading = 0;
+    private double  driveSpeed    = 0;
+    private double  turnSpeed     = 0;
+    private double  leftSpeed     = 0;
+    private double  rightSpeed    = 0;
+    private int     leftTarget    = 0;
+    private int     rightTarget   = 0;
+
+    static final double     DRIVE_SPEED             = 0.5;     // Max driving speed for better distance accuracy.
+    static final double     TURN_SPEED              = 0.4;     // Max Turn speed to limit turn rate
+    static final double     HEADING_THRESHOLD       = 2.0;
+
+    static final double DRIVE_GEAR_REDUCTION = 1.0;
+
+    public static final double     COUNTS_PER_INCH         = (DriveConstants.TICKS_PER_REV * DRIVE_GEAR_REDUCTION) /
+            (DriveConstants.WHEEL_RADIUS * 3.1415);
+
+    private boolean isSimpleTurning = false, isSimpleStraight = false;
 
 
     @Override
     public void runOpMode() throws InterruptedException {
         //initialize robot
-        Robot robot = new Robot(hardwareMap);
+        robot = new Robot(hardwareMap);
 
         initTfod();
 
@@ -209,13 +234,13 @@ public class MainMode3 extends LinearOpMode{
 
                                 currentState = State.COLLECT;
 
-                            } else if (true/*timer1.isOver() &&*/ /*!robot.isSimpleTurning()*/){
+                            } else if (/*timer1.isOver() &&*/ !isSimpleTurning()){
                                 if (locateRotations > 35) {
                                     driveToNewPosition(); //TODO: Implement
                                     currentMovement = Movement.LOCATING_BY_DRIVING;
 
                                 } else {
-                                    //robot.simpleTurn(10, 0.8);
+                                    simpleTurn(10, 0.8);
                                     //timer1.start(0.5);
                                     locateRotations++;
                                     currentMovement = Movement.LOCATING_BY_ROTATING;
@@ -227,20 +252,20 @@ public class MainMode3 extends LinearOpMode{
 
                         case COLLECT:
                             if (collectRotations == 0 ) {
-                                //robot.simpleTurn(savedHeadingError, 0.3);
+                                simpleTurn(savedHeadingError, 0.3);
                                 currentMovement = Movement.ROTATING_TO_TARGET;
                                 collectRotations++;
 
-                            } else if (true/*robot.isSimpleTurning() || robot.isSimpleStraight()*/) {
+                            } else if (isSimpleTurning() || isSimpleStraight()) {
 
                             } else if (collectStraights == 0) {
                                 //min viewing distance 57 inches, add 24 in to get 81
-                                //robot.simpleStraight(Math.max(0, savedDistance - 81), 0.8);
+                                simpleStraight(Math.max(0, savedDistance - 81), 0.8);
                                 collectStraights++;
                                 currentMovement = Movement.DRIVING_STRAIGHT_TO_TARGET;
 
                             } else if (collectStraights == 1) {
-                                //robot.simpleStraight(90, 1);
+                                simpleStraight(90, 1);
                                 currentMovement = Movement.COLLECTING_TARGET;
 
                             } else {
@@ -382,5 +407,111 @@ public class MainMode3 extends LinearOpMode{
 
     private void driveToNewPosition() {
 
+    }
+
+    public void simpleTurn(double angle, double power) {}
+
+    public boolean isSimpleTurning() { return isSimpleTurning; }
+
+    public void simpleStraight(double distance, double power) {
+        //TODO: Implement
+        if (opModeIsActive()) {
+
+            // Determine new target position, and pass to motor controller
+            int moveCounts = (int)(distance * COUNTS_PER_INCH);
+            leftTarget = (robot.leftFront.getCurrentPosition() + robot.rightFront.getCurrentPosition()) / 2 + moveCounts;
+            rightTarget = (robot.rightFront.getCurrentPosition() + robot.rightRear.getCurrentPosition()) / 2 + moveCounts;
+
+            // Set Target FIRST, then turn on RUN_TO_POSITION
+            robot.leftFront.setTargetPosition(leftTarget);
+            robot.leftRear.setTargetPosition(leftTarget);
+            robot.rightFront.setTargetPosition(rightTarget);
+            robot.rightRear.setTargetPosition(rightTarget);
+
+            robot.leftFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.leftRear.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.rightFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.rightRear.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            // Set the required driving speed  (must be positive for RUN_TO_POSITION)
+            // Start driving straight, and then enter the control loop
+            power = Math.abs(power);
+            moveRobot(power, 0);
+
+            // keep looping while we are still active, and BOTH motors are running.
+            while (opModeIsActive() &&
+                    (robot.leftFront.isBusy() && robot.rightFront.isBusy() && robot.leftRear.isBusy()) && robot.rightRear.isBusy()) {
+
+
+                // if driving in reverse, the motor correction also needs to be reversed
+                if (distance < 0)
+                    turnSpeed *= 1.0;
+
+                // Apply the turning correction to the current driving speed.
+                moveRobot(driveSpeed, 0);
+
+                // Display drive status for the driver.
+                sendTelemetry(true);
+            }
+
+            // Stop all motion & Turn off RUN_TO_POSITION
+            moveRobot(0, 0);
+            robot.leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            robot.leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            robot.rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            robot.rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        }
+    }
+
+    public boolean isSimpleStraight() { return isSimpleStraight; }
+
+    public boolean checkMotorPositions() {
+        //TODO
+        return false;
+
+    }
+
+    public void moveRobot(double drive, double turn) {
+        driveSpeed = drive;     // save this value as a class member so it can be used by telemetry.
+        turnSpeed  = turn;      // save this value as a class member so it can be used by telemetry.
+
+        leftSpeed  = drive - turn;
+        rightSpeed = drive + turn;
+
+        // Scale speeds down if either one exceeds +/- 1.0;
+        double max = Math.max(Math.abs(leftSpeed), Math.abs(rightSpeed));
+        if (max > 1.0)
+        {
+            leftSpeed /= max;
+            rightSpeed /= max;
+        }
+
+        robot.leftFront.setPower(leftSpeed);
+        robot.leftRear.setPower(leftSpeed);
+        robot.rightFront.setPower(rightSpeed);
+        robot.rightRear.setPower(leftSpeed);
+
+    }
+
+    private void sendTelemetry(boolean straight) {
+
+        if (straight) {
+            telemetry.addData("Motion", "Drive Straight");
+            telemetry.addData("Target Pos L:R",  "%7d:%7d",      leftTarget,  rightTarget);
+            telemetry.addData("Actual Pos Lf:Lr:Rf:Rr",  "%7d:%7d:%7d:%7d",      robot.leftFront.getCurrentPosition(),
+                    robot.leftRear.getCurrentPosition(), robot.rightFront.getCurrentPosition(), robot.rightRear.getCurrentPosition());
+        } else {
+            telemetry.addData("Motion", "Turning");
+        }
+
+        telemetry.addData("Heading- Target : Current", "%5.2f : %5.0f", targetHeading, getHeading());
+        telemetry.addData("Error  : Steer Pwr",  "%5.1f : %5.1f", headingError, turnSpeed);
+        telemetry.addData("Wheel Speeds L : R", "%5.2f : %5.2f", leftSpeed, rightSpeed);
+        telemetry.update();
+    }
+
+    public double getHeading() {
+        YawPitchRollAngles orientation = robot.imu.getRobotYawPitchRollAngles();
+        return orientation.getYaw(AngleUnit.DEGREES);
     }
 }
