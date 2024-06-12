@@ -343,4 +343,10 @@ public class Robot extends MecanumDrive {
 
 
     }
+
+    public boolean checkMotorPositions() {
+        return false;
+
+    }
+
 }

@@ -241,6 +241,8 @@ public class MainMode3 extends LinearOpMode{
                     break;
             }
 
+            //robot.checkMotorPositions();
+
             //place pose in storage
             PoseStorage.currentPose = robot.getPoseEstimate();
         }
