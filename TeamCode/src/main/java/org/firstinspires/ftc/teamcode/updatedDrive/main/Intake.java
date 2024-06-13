@@ -26,7 +26,7 @@ public class Intake {
 
     public boolean graduallyChangePower;
 
-    private double intakeTargetPower, intakeStartPower, targetTime;
+    private double intakeTargetPower, intakeStartPower, targetTime, a, c;
 
     ElapsedTime timer = new ElapsedTime();
 
@@ -65,10 +65,39 @@ public class Intake {
 
     }
 
+    //eq: a * BASE^(POW*time) + c = speed
+    //eq solution: (log[(speed - c) / a]) / (log(b) * POW) = time
     private void graduallyChangePower(double targetPower) {
         intakeTargetPower = targetPower;
         intakeStartPower = intake.getPower();
         graduallyChangePower = true;
+
+        if (intakeTargetPower == 0) {
+            intake.setPower(0.0);
+            graduallyChangePower = false;
+
+        } else if (intakeTargetPower > intakeStartPower) {
+            if (intakeStartPower == 0) {
+                intake.setPower(0.01);
+                intakeStartPower = 0.01;
+
+            }
+
+
+
+        } else if (intakeTargetPower < intakeStartPower) {
+            if (intakeStartPower > 0) {
+
+
+            }
+
+
+
+
+        } else {
+            graduallyChangePower = false;
+
+        }
 
         if (intakeStartPower < 0.01) {
             intake.setPower(0.01);

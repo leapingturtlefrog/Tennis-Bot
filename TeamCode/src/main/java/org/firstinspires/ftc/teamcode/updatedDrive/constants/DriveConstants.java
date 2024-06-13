@@ -13,6 +13,9 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 @Config
 public class DriveConstants {
+
+    /** DRIVETRAIN */
+
     //motor specifications
     public static final double TICKS_PER_REV = 751.8; //GoBuilda 5202 26.9:1 ratio
     public static final double MAX_RPM = 223; //GoBuilda 5202 26.9:1 ratio
@@ -34,6 +37,8 @@ public class DriveConstants {
     public static double GEAR_RATIO = 0.933; //output (wheel) speed / input (motor) speed
     public static double TRACK_WIDTH = 17.5;
 
+    /** DRIVING PARAMETERS */
+
     //The feedforward parameters used to model the drive motor behavior
     public static double kV = 0.0237;
     public static double kA = 0.0035;
@@ -49,11 +54,15 @@ public class DriveConstants {
     public static double MAX_ANG_VEL = 2.11;
     public static double MAX_ANG_ACCEL = 1.5;
 
+    /** IMU */
+
     //imu constants
     public static RevHubOrientationOnRobot.LogoFacingDirection LOGO_FACING_DIR =
             RevHubOrientationOnRobot.LogoFacingDirection.UP;
     public static RevHubOrientationOnRobot.UsbFacingDirection USB_FACING_DIR =
             RevHubOrientationOnRobot.UsbFacingDirection.RIGHT;
+
+    /** INTAKE */
 
     //Motor gradually changing power constants (can graph in Geogebra)
     public static double INTAKE_GRADUAL_BASE = 2.7; //higher and the longer it takes
