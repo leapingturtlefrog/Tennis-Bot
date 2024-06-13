@@ -55,6 +55,11 @@ public class DriveConstants {
     public static RevHubOrientationOnRobot.UsbFacingDirection USB_FACING_DIR =
             RevHubOrientationOnRobot.UsbFacingDirection.RIGHT;
 
+    //Motor gradually changing power constants (can graph in Geogebra)
+    public static double INTAKE_GRADUAL_BASE = 2.7; //higher and the longer it takes
+    public static double INTAKE_GRADUAL_POW = 2.0; //higher and the shorter it takes
+
+
 
     /*** Functions ***/
 

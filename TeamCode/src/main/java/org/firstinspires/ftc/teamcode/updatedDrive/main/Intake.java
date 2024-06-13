@@ -1,9 +1,14 @@
 package org.firstinspires.ftc.teamcode.updatedDrive.main;
 
-import com.qualcomm.robotcore.hardware.DcMotor;
+
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.ElapsedTime;
+
+import static org.firstinspires.ftc.teamcode.updatedDrive.constants.DriveConstants.INTAKE_GRADUAL_BASE;
+import static org.firstinspires.ftc.teamcode.updatedDrive.constants.DriveConstants.INTAKE_GRADUAL_POW;
+
 
 
 /**
@@ -17,9 +22,13 @@ public class Intake {
     public DcMotorEx intake;
 
     //is the intake running without controller input constantly?
-    private boolean isIntakeRunningContinuously;
+    private boolean intakeRunningContinuously;
 
-    private double intakeTargetPower;
+    public boolean graduallyChangePower;
+
+    private double intakeTargetPower, intakeStartPower, targetTime;
+
+    ElapsedTime timer = new ElapsedTime();
 
 
     public Intake(HardwareMap hwMap) { init(hwMap); }
@@ -32,33 +41,58 @@ public class Intake {
         intake.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         intake.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
 
-        isIntakeRunningContinuously = false;
+        intakeRunningContinuously = false;
+        graduallyChangePower = false;
 
     }
 
     public void turnIntakeOn() {
-        intake.setPower(1.0);
-        isIntakeRunningContinuously = true;
+        graduallyChangePower(1.0);
+        intakeRunningContinuously = true;
 
     }
 
     public void turnIntakeOff() {
         intake.setPower(0.0);
-        isIntakeRunningContinuously = false;
+        intakeRunningContinuously = false;
 
     }
 
     //turn the intake to a variable power that is between -1 and 1
     public void intakeVariablePower(double power) {
-        isIntakeRunningContinuously = false;
+        intakeRunningContinuously = false;
         graduallyChangePower(power);
 
     }
 
     private void graduallyChangePower(double targetPower) {
         intakeTargetPower = targetPower;
+        intakeStartPower = intake.getPower();
+        graduallyChangePower = true;
 
-        double currentPower = intake.getPower();
+        if (intakeStartPower < 0.01) {
+            intake.setPower(0.01);
+            intakeStartPower = 0.01;
+
+        }
+
+        targetTime = (Math.log(0.99 / intakeStartPower)) / (INTAKE_GRADUAL_POW * Math.log(INTAKE_GRADUAL_BASE));
+
+        timer.reset();
+
+    }
+
+    public void updateIntake() {
+        double time = timer.seconds();
+
+        if (time >= targetTime) {
+            intake.setPower(1.0);
+            graduallyChangePower = false;
+
+        } else {
+            intake.setPower(Math.round(intakeStartPower * Math.pow(INTAKE_GRADUAL_BASE, INTAKE_GRADUAL_POW * time) * 100.0) / 100.0);
+
+        }
 
     }
 

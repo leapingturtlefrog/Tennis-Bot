@@ -34,6 +34,7 @@ import org.firstinspires.ftc.teamcode.drive.OldRobot;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceBuilder;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceRunner;
+import org.firstinspires.ftc.teamcode.updatedDrive.utilities.Timer;
 import org.firstinspires.ftc.teamcode.util.LynxModuleUtil;
 
 import java.util.ArrayList;
@@ -61,6 +62,7 @@ import static org.firstinspires.ftc.teamcode.updatedDrive.constants.DriveConstan
 
 
 public class Robot extends MecanumDrive {
+    public Timer timer;
     public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(0, 0, 0); //0,0,0 //may need to be 0,0,0 if path is wonky
     public static PIDCoefficients HEADING_PID = new PIDCoefficients(6, 0, 0); //0,0,0
 
@@ -121,6 +123,10 @@ public class Robot extends MecanumDrive {
     public Robot(HardwareMap hardwareMap) {
         super(kV, kA, kStatic, TRACK_WIDTH, TRACK_WIDTH, LATERAL_MULTIPLIER);
 
+        timer = new Timer();
+
+        Intake intake = new Intake(hardwareMap);
+
         follower = new HolonomicPIDVAFollower(TRANSLATIONAL_PID, TRANSLATIONAL_PID, HEADING_PID,
                 new Pose2d(0.5, 0.5, Math.toRadians(5.0)), 0.5);
 
@@ -142,9 +148,8 @@ public class Robot extends MecanumDrive {
         leftRear = hardwareMap.get(DcMotorEx.class, "leftRear");
         rightRear = hardwareMap.get(DcMotorEx.class, "rightRear");
         rightFront = hardwareMap.get(DcMotorEx.class, "rightFront");
-        intake = hardwareMap.get(DcMotorEx.class, "intake");
 
-        motors = Arrays.asList(leftFront, leftRear, rightRear, rightFront, intake);
+        motors = Arrays.asList(leftFront, leftRear, rightRear, rightFront);
 
         for (DcMotorEx motor : motors) {
             MotorConfigurationType motorConfigurationType = motor.getMotorType().clone();
