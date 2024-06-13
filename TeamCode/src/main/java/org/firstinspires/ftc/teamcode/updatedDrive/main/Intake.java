@@ -31,11 +31,11 @@ public class Intake {
     ElapsedTime timer = new ElapsedTime();
 
 
-    public Intake(HardwareMap hwMap) { init(hwMap); }
+    public Intake(HardwareMap hardwareMap) { init(hardwareMap); }
 
     //initialize intake
-    private void init(HardwareMap hwMap) {
-        intake = hwMap.get(DcMotorEx.class, "Intake");
+    private void init(HardwareMap hardwareMap) {
+        intake = hardwareMap.get(DcMotorEx.class, "Intake");
 
         intake.setDirection(DcMotorSimple.Direction.REVERSE);
         intake.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
@@ -65,61 +65,75 @@ public class Intake {
 
     }
 
-    //eq: a * BASE^(POW*time) + c = speed
-    //eq solution: (log[(speed - c) / a]) / (log(b) * POW) = time
+    //eq: a * BASE^(POW*time) + c = power
+    //eq solution: (log[(power - c) / a]) / (log(b) * POW) = time
     private void graduallyChangePower(double targetPower) {
         intakeTargetPower = targetPower;
         intakeStartPower = intake.getPower();
         graduallyChangePower = true;
 
+        //control for setting the function to get to targetPower
         if (intakeTargetPower == 0) {
             intake.setPower(0.0);
             graduallyChangePower = false;
 
         } else if (intakeTargetPower > intakeStartPower) {
-            if (intakeStartPower == 0) {
+            if (intakeStartPower > 0) {
+                a = intakeStartPower;
+                c = 0;
+
+            } else if (intakeStartPower < 0) {
+                a = -intakeStartPower;
+                c = -2 * intakeStartPower;
+
+            } else {
                 intake.setPower(0.01);
-                intakeStartPower = 0.01;
+                a = 0.01;
+                c = 0.0;
 
             }
-
-
 
         } else if (intakeTargetPower < intakeStartPower) {
             if (intakeStartPower > 0) {
+                a = -intakeStartPower;
+                c = 2 * intakeStartPower;
 
+            } else if (intakeStartPower < 0) {
+                a = intakeStartPower;
+                c = -2 * intakeStartPower;
+
+            } else {
+                intake.setPower(-0.01);
+                a = -0.01;
+                c = 0.0;
 
             }
 
-
-
-
         } else {
+            //targetPower = currentPower
             graduallyChangePower = false;
 
         }
 
-        if (intakeStartPower < 0.01) {
-            intake.setPower(0.01);
-            intakeStartPower = 0.01;
-
-        }
-
-        targetTime = (Math.log(0.99 / intakeStartPower)) / (INTAKE_GRADUAL_POW * Math.log(INTAKE_GRADUAL_BASE));
+        //this is how long it should take to get to the targetPower
+        targetTime = Math.log((targetPower - c) / a) / (INTAKE_GRADUAL_POW * Math.log(INTAKE_GRADUAL_BASE));
 
         timer.reset();
 
     }
 
     public void updateIntake() {
-        double time = timer.seconds();
+        if (graduallyChangePower) {
+            double time = timer.seconds();
 
-        if (time >= targetTime) {
-            intake.setPower(1.0);
-            graduallyChangePower = false;
+            if (time >= targetTime) {
+                intake.setPower(intakeTargetPower);
+                graduallyChangePower = false;
 
-        } else {
-            intake.setPower(Math.round(intakeStartPower * Math.pow(INTAKE_GRADUAL_BASE, INTAKE_GRADUAL_POW * time) * 100.0) / 100.0);
+            } else {
+                intake.setPower(Math.round((a * Math.pow(INTAKE_GRADUAL_BASE, INTAKE_GRADUAL_POW * time) + c) * 100.0) / 100.0);
+
+            }
 
         }
 

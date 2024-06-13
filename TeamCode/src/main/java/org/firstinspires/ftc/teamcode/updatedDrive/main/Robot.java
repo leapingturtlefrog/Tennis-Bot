@@ -80,7 +80,7 @@ public class Robot extends MecanumDrive {
 
     private TrajectoryFollower follower;
 
-    public DcMotorEx leftFront, leftRear, rightRear, rightFront, intake;
+    public DcMotorEx leftFront, leftRear, rightRear, rightFront;
     private List<DcMotorEx> motors;
 
     public IMU imu;
@@ -97,9 +97,7 @@ public class Robot extends MecanumDrive {
     }
     public OldRobot.Mode mode;
 
-    private boolean intakeContinuous = false;
-    private boolean isSimpleTurning = false;
-    private boolean isSimpleStraight = false;
+    public Intake intake;
 
     /*
     private double  targetHeading = 0;
@@ -125,7 +123,7 @@ public class Robot extends MecanumDrive {
 
         timer = new Timer();
 
-        Intake intake = new Intake(hardwareMap);
+        intake = new Intake(hardwareMap);
 
         follower = new HolonomicPIDVAFollower(TRANSLATIONAL_PID, TRANSLATIONAL_PID, HEADING_PID,
                 new Pose2d(0.5, 0.5, Math.toRadians(5.0)), 0.5);
@@ -366,17 +364,6 @@ public class Robot extends MecanumDrive {
     public void cancelFollowing() {
         mode = OldRobot.Mode.IDLE;
     }
-
-    public boolean intakeIsBusy() { return intake.isBusy(); }
-
-    public void intakeOff() { intake.setPower(0); intakeContinuous = false; }
-
-    public void intakeOn() { intake.setPower(-1); intakeContinuous = true; }
-
-    public void intakeVariablePower(double pwr) { intake.setPower(-pwr); intakeContinuous = false; }
-
-    //is the intake set to stay on?
-    public boolean isIntakeContinuous() { return intakeContinuous; }
 
     /*
     public void simpleTurn(double angle, double power) {
