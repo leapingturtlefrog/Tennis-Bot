@@ -17,7 +17,7 @@ public class UpdateMotors {
         //update distance sensor variable distance
         robot.distanceSensor.updateDistance();
 
-
+        //update the motors and their powers if need be
 
     }
 

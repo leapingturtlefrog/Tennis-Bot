@@ -1,7 +1,11 @@
 package org.firstinspires.ftc.teamcode.updatedDrive.main;
 
-import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+
+import org.firstinspires.ftc.teamcode.updatedDrive.objects.Drivetrain;
+import org.firstinspires.ftc.teamcode.updatedDrive.objects.Imu;
+import org.firstinspires.ftc.teamcode.updatedDrive.objects.Intake;
+import org.firstinspires.ftc.teamcode.updatedDrive.objects.REVDistanceSensor;
 
 
 /**

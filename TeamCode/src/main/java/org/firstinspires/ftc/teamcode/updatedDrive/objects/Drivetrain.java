@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.updatedDrive.main;
+package org.firstinspires.ftc.teamcode.updatedDrive.objects;
 
 import static org.firstinspires.ftc.teamcode.drive.OldDriveConstants.MOTOR_VELO_PID;
 import static org.firstinspires.ftc.teamcode.updatedDrive.constants.DriveConstants.HEADING_PID;
@@ -49,6 +49,7 @@ import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceBuilder;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceRunner;
 import org.firstinspires.ftc.teamcode.updatedDrive.constants.DriveConstants;
+import org.firstinspires.ftc.teamcode.updatedDrive.main.Robot;
 import org.firstinspires.ftc.teamcode.updatedDrive.utilities.Timer;
 import org.firstinspires.ftc.teamcode.util.LynxModuleUtil;
 
@@ -76,6 +77,9 @@ public class Drivetrain extends MecanumDrive {
 
     private List<Integer> lastEncPositions = new ArrayList<>();
     private List<Integer> lastEncVels = new ArrayList<>();
+
+    private boolean graduallyChangePower = false;
+    private double startPower, targetMaxPower;
 
     private Robot robot;
 
@@ -130,7 +134,12 @@ public class Drivetrain extends MecanumDrive {
 
     /*** Custom functions */
 
+    //drives while gradually changing power a certain distance
+    //from a starting velocity of zero
+    public void driveStraightFromZero(double distance) {
 
+
+    }
 
     /*** Roadrunner functions */
 

@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.updatedDrive.main;
+package org.firstinspires.ftc.teamcode.updatedDrive.objects;
 
 import static org.firstinspires.ftc.teamcode.updatedDrive.constants.DriveConstants.LOGO_FACING_DIR;
 import static org.firstinspires.ftc.teamcode.updatedDrive.constants.DriveConstants.USB_FACING_DIR;
