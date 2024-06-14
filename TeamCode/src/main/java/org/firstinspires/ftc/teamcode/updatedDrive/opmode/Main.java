@@ -78,6 +78,8 @@ public class Main extends LinearOpMode {
 
             poseEstimate = robot.drivetrain.getPoseEstimate();
 
+            //checks and does actions based on the universal gamepad controls
+            //which occur no matter what
             robot.gamepadControls.universalControls();
 
             switch (currentMode) {
@@ -86,6 +88,7 @@ public class Main extends LinearOpMode {
                     break;
 
                 case DRIVER_CONTROL:
+                    //gamepad controls that only occur if the mode is driver control
                     robot.gamepadControls.driverControlControls();
 
             }

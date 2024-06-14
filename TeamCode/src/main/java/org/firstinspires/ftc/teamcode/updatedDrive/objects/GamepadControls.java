@@ -4,6 +4,7 @@ import org.firstinspires.ftc.teamcode.updatedDrive.main.Robot;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.Gamepad;
 
 import static org.firstinspires.ftc.teamcode.updatedDrive.storage.Positions.startPoseEnumerated;
 import static org.firstinspires.ftc.teamcode.updatedDrive.storage.Positions.currentMode;
@@ -39,7 +40,9 @@ public class GamepadControls extends LinearOpMode {
 
     private Robot robot;
 
-    public GamepadControls(Robot rob) { robot = rob; }
+    private Gamepad gamepad;
+
+    public GamepadControls(Robot rob) { robot = rob; gamepad = new Gamepad(); }
 
     @Override
     public void runOpMode() throws InterruptedException {
