@@ -1,27 +1,25 @@
 package org.firstinspires.ftc.teamcode.updatedDrive.objects;
 
 import static org.firstinspires.ftc.teamcode.drive.OldDriveConstants.MOTOR_VELO_PID;
-import static org.firstinspires.ftc.teamcode.updatedDrive.constants.DriveConstants.HEADING_PID;
-import static org.firstinspires.ftc.teamcode.updatedDrive.constants.DriveConstants.MAX_ANG_ACCEL;
-import static org.firstinspires.ftc.teamcode.updatedDrive.constants.DriveConstants.MAX_ANG_VEL;
-import static org.firstinspires.ftc.teamcode.updatedDrive.constants.DriveConstants.RUN_USING_ENCODER;
-import static org.firstinspires.ftc.teamcode.updatedDrive.constants.DriveConstants.TRACK_WIDTH;
-import static org.firstinspires.ftc.teamcode.updatedDrive.constants.DriveConstants.TRANSLATIONAL_PID;
-import static org.firstinspires.ftc.teamcode.updatedDrive.constants.DriveConstants.encoderTicksToInches;
-import static org.firstinspires.ftc.teamcode.updatedDrive.constants.DriveConstants.kA;
-import static org.firstinspires.ftc.teamcode.updatedDrive.constants.DriveConstants.kStatic;
-import static org.firstinspires.ftc.teamcode.updatedDrive.constants.DriveConstants.kV;
-import static org.firstinspires.ftc.teamcode.updatedDrive.constants.DriveConstants.ACCEL_CONSTRAINT;
-import static org.firstinspires.ftc.teamcode.updatedDrive.constants.DriveConstants.LATERAL_MULTIPLIER;
-import static org.firstinspires.ftc.teamcode.updatedDrive.constants.DriveConstants.VEL_CONSTRAINT;
-import static org.firstinspires.ftc.teamcode.updatedDrive.constants.DriveConstants.VX_WEIGHT;
-import static org.firstinspires.ftc.teamcode.updatedDrive.constants.DriveConstants.VY_WEIGHT;
-import static org.firstinspires.ftc.teamcode.updatedDrive.constants.DriveConstants.OMEGA_WEIGHT;
+import static org.firstinspires.ftc.teamcode.updatedDrive.constants.Constants.HEADING_PID;
+import static org.firstinspires.ftc.teamcode.updatedDrive.constants.Constants.MAX_ANG_ACCEL;
+import static org.firstinspires.ftc.teamcode.updatedDrive.constants.Constants.MAX_ANG_VEL;
+import static org.firstinspires.ftc.teamcode.updatedDrive.constants.Constants.RUN_USING_ENCODER;
+import static org.firstinspires.ftc.teamcode.updatedDrive.constants.Constants.TRACK_WIDTH;
+import static org.firstinspires.ftc.teamcode.updatedDrive.constants.Constants.TRANSLATIONAL_PID;
+import static org.firstinspires.ftc.teamcode.updatedDrive.constants.Constants.encoderTicksToInches;
+import static org.firstinspires.ftc.teamcode.updatedDrive.constants.Constants.kA;
+import static org.firstinspires.ftc.teamcode.updatedDrive.constants.Constants.kStatic;
+import static org.firstinspires.ftc.teamcode.updatedDrive.constants.Constants.kV;
+import static org.firstinspires.ftc.teamcode.updatedDrive.constants.Constants.ACCEL_CONSTRAINT;
+import static org.firstinspires.ftc.teamcode.updatedDrive.constants.Constants.LATERAL_MULTIPLIER;
+import static org.firstinspires.ftc.teamcode.updatedDrive.constants.Constants.VEL_CONSTRAINT;
+import static org.firstinspires.ftc.teamcode.updatedDrive.constants.Constants.VX_WEIGHT;
+import static org.firstinspires.ftc.teamcode.updatedDrive.constants.Constants.VY_WEIGHT;
+import static org.firstinspires.ftc.teamcode.updatedDrive.constants.Constants.OMEGA_WEIGHT;
 
 import androidx.annotation.NonNull;
 
-import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.roadrunner.control.PIDCoefficients;
 import com.acmerobotics.roadrunner.drive.DriveSignal;
 import com.acmerobotics.roadrunner.drive.MecanumDrive;
 import com.acmerobotics.roadrunner.followers.HolonomicPIDVAFollower;
@@ -35,7 +33,6 @@ import com.acmerobotics.roadrunner.trajectory.constraints.MinVelocityConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.ProfileAccelerationConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryAccelerationConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint;
-import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -43,14 +40,11 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.teamcode.drive.OldDriveConstants;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceBuilder;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceRunner;
-import org.firstinspires.ftc.teamcode.updatedDrive.constants.DriveConstants;
+import org.firstinspires.ftc.teamcode.updatedDrive.constants.Constants;
 import org.firstinspires.ftc.teamcode.updatedDrive.main.Robot;
-import org.firstinspires.ftc.teamcode.updatedDrive.utilities.Timer;
 import org.firstinspires.ftc.teamcode.util.LynxModuleUtil;
 
 import java.util.ArrayList;
@@ -118,7 +112,7 @@ public class Drivetrain extends MecanumDrive {
 
         batteryVoltageSensor = hardwareMap.voltageSensor.iterator().next();
 
-        if (DriveConstants.RUN_USING_ENCODER && MOTOR_VELO_PID != null) {
+        if (Constants.RUN_USING_ENCODER && MOTOR_VELO_PID != null) {
             setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, MOTOR_VELO_PID);
         }
 

@@ -6,8 +6,8 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import static org.firstinspires.ftc.teamcode.updatedDrive.constants.DriveConstants.INTAKE_GRADUAL_BASE;
-import static org.firstinspires.ftc.teamcode.updatedDrive.constants.DriveConstants.INTAKE_GRADUAL_POW;
+import static org.firstinspires.ftc.teamcode.updatedDrive.constants.Constants.INTAKE_GRADUAL_BASE;
+import static org.firstinspires.ftc.teamcode.updatedDrive.constants.Constants.INTAKE_GRADUAL_POW;
 
 
 

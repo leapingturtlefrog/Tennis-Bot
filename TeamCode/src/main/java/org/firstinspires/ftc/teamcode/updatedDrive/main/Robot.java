@@ -16,17 +16,23 @@ import org.firstinspires.ftc.teamcode.updatedDrive.objects.REVDistanceSensor;
 
 
 public class Robot {
+    //physical objects
     public Drivetrain drivetrain;
 
     public Intake intake;
 
     public Imu imu;
 
-    public UpdateMotors updateMotors;
-
     public REVDistanceSensor distanceSensor;
 
+    //VIrutal functions and processors
+    public UpdateMotors updateMotors;
+
     public Telemetry telemetry;
+
+    public Tfod tfod;
+
+    public AprilTag aprilTag;
 
     public Robot(HardwareMap hardwareMap) {
         drivetrain = new Drivetrain(hardwareMap, this);
@@ -37,6 +43,10 @@ public class Robot {
         updateMotors = new UpdateMotors(this);
 
         telemetry = new Telemetry();
+
+        tfod = new Tfod(hardwareMap);
+
+        aprilTag = new AprilTag(hardwareMap);
 
     }
 

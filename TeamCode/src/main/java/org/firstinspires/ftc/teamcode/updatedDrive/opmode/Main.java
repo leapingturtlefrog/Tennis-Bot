@@ -1,7 +1,10 @@
 package org.firstinspires.ftc.teamcode.updatedDrive.opmode;
 
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+
+import org.firstinspires.ftc.teamcode.updatedDrive.main.Robot;
 
 
 /**
@@ -27,19 +30,20 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 @TeleOp(group = "APushBot")
 //@Disabled
 public class Main extends LinearOpMode {
-    //2 modes for if the driver is controlling the robot or auto is
-    enum Mode {
-        DRIVER_CONTROL,
-        AUTO_CONTROL
+    private int locateRotations = 0;
+    private int collectRotations = 0;
+    private int collectStraights = 0;
 
-    }
-    Mode currentMode = Mode.DRIVER_CONTROL;
+    private int ballsCollected = 0;
 
-    //states for which period of auto control is occuring
+    public Pose2d startPose;
+    Pose2d poseEstimate;
+
+    Robot robot;
 
     @Override
     public void runOpMode() throws InterruptedException {
-
+        robot = new Robot(hardwareMap);
 
     }
 

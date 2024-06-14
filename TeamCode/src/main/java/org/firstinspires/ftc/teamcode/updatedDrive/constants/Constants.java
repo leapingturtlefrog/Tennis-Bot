@@ -1,10 +1,5 @@
 package org.firstinspires.ftc.teamcode.updatedDrive.constants;
 
-import static org.firstinspires.ftc.teamcode.drive.OldDriveConstants.MAX_ACCEL;
-import static org.firstinspires.ftc.teamcode.drive.OldDriveConstants.MAX_ANG_VEL;
-import static org.firstinspires.ftc.teamcode.drive.OldDriveConstants.MAX_VEL;
-import static org.firstinspires.ftc.teamcode.drive.OldDriveConstants.TRACK_WIDTH;
-
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.control.PIDCoefficients;
 import com.acmerobotics.roadrunner.trajectory.constraints.AngularVelocityConstraint;
@@ -26,7 +21,7 @@ import java.util.Arrays;
 
 
 @Config
-public class DriveConstants {
+public class Constants {
 
     /** DRIVETRAIN */
 
@@ -95,6 +90,15 @@ public class DriveConstants {
     public static double INTAKE_GRADUAL_BASE = 2.7; //higher and the longer it takes
     public static double INTAKE_GRADUAL_POW = 2.0; //higher and the shorter it takes
 
+
+    /** Tfod Image detection */
+
+    public static final String TFOD_MODEL_FILE =
+            "/sdcard/FIRST/tflitemodels/TennisBallModel2.tflite";
+    //labels of model object
+    public static final String[] LABELS = {
+            "a"
+    };
 
 
     /*** Functions ***/

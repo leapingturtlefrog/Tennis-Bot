@@ -109,8 +109,8 @@ public class OldRobot extends MecanumDrive {
 
     static final double DRIVE_GEAR_REDUCTION = 1.0;
 
-    public static final double     COUNTS_PER_INCH         = (DriveConstants.TICKS_PER_REV * DRIVE_GEAR_REDUCTION) /
-            (DriveConstants.WHEEL_RADIUS * 3.1415);*/
+    public static final double     COUNTS_PER_INCH         = (Constants.TICKS_PER_REV * DRIVE_GEAR_REDUCTION) /
+            (Constants.WHEEL_RADIUS * 3.1415);*/
 
 
     public OldRobot(HardwareMap hardwareMap) {
