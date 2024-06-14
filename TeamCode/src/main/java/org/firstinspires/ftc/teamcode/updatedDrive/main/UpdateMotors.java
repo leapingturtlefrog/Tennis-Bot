@@ -14,6 +14,11 @@ public class UpdateMotors {
         //update intake power if needed
         robot.intake.updateIntake();
 
+        //update distance sensor variable distance
+        robot.distanceSensor.updateDistance();
+
+
+
     }
 
 }

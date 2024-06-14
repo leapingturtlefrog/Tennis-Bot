@@ -23,7 +23,6 @@ public class Imu {
 
     }
 
-
     public double getRawExternalHeading() {
         return imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
     }
@@ -31,4 +30,5 @@ public class Imu {
     public Double getExternalHeadingVelocity() {
         return (double) imu.getRobotAngularVelocity(AngleUnit.RADIANS).zRotationRate;
     }
+
 }

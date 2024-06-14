@@ -48,6 +48,7 @@ import org.firstinspires.ftc.teamcode.drive.OldDriveConstants;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceBuilder;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceRunner;
+import org.firstinspires.ftc.teamcode.updatedDrive.constants.DriveConstants;
 import org.firstinspires.ftc.teamcode.updatedDrive.utilities.Timer;
 import org.firstinspires.ftc.teamcode.util.LynxModuleUtil;
 
@@ -55,11 +56,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+
 /**
  * Class that contains the drivetrain motors
  * and related RoadRunner functions
  * as well as the movement functions
  */
+
 
 public class Drivetrain extends MecanumDrive {
     public DcMotorEx leftFront, leftRear, rightRear, rightFront;
@@ -75,6 +78,7 @@ public class Drivetrain extends MecanumDrive {
     private List<Integer> lastEncVels = new ArrayList<>();
 
     private Robot robot;
+
 
     public Drivetrain(HardwareMap hardwareMap, Robot rob) {
         super(kV, kA, kStatic, TRACK_WIDTH, TRACK_WIDTH, LATERAL_MULTIPLIER);
@@ -110,10 +114,9 @@ public class Drivetrain extends MecanumDrive {
 
         batteryVoltageSensor = hardwareMap.voltageSensor.iterator().next();
 
-        if (OldDriveConstants.RUN_USING_ENCODER && MOTOR_VELO_PID != null) {
+        if (DriveConstants.RUN_USING_ENCODER && MOTOR_VELO_PID != null) {
             setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, MOTOR_VELO_PID);
         }
-
 
         List<Integer> lastTrackingEncPositions = new ArrayList<>();
         List<Integer> lastTrackingEncVels = new ArrayList<>();
@@ -125,6 +128,11 @@ public class Drivetrain extends MecanumDrive {
 
     }
 
+    /*** Custom functions */
+
+
+
+    /*** Roadrunner functions */
 
     public TrajectoryBuilder trajectoryBuilder(Pose2d startPose) {
         return new TrajectoryBuilder(startPose, VEL_CONSTRAINT, ACCEL_CONSTRAINT);
@@ -278,12 +286,11 @@ public class Drivetrain extends MecanumDrive {
         rightFront.setPower(v3);
     }
 
-
+    //Use in the IMU, NOT HERE
     @Override
     public double getRawExternalHeading() {
-        return -1;
+        return robot.imu.getRawExternalHeading();
     }
-
 
     public static TrajectoryVelocityConstraint getVelocityConstraint(double maxVel, double maxAngularVel, double trackWidth) {
         return new MinVelocityConstraint(Arrays.asList(
@@ -295,4 +302,5 @@ public class Drivetrain extends MecanumDrive {
     public static TrajectoryAccelerationConstraint getAccelerationConstraint(double maxAccel) {
         return new ProfileAccelerationConstraint(maxAccel);
     }
+
 }
