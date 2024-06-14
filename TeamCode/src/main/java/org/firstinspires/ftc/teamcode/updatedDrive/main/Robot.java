@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.updatedDrive.main;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.updatedDrive.objects.Drivetrain;
+import org.firstinspires.ftc.teamcode.updatedDrive.objects.GamepadControls;
 import org.firstinspires.ftc.teamcode.updatedDrive.objects.Imu;
 import org.firstinspires.ftc.teamcode.updatedDrive.objects.Intake;
 import org.firstinspires.ftc.teamcode.updatedDrive.objects.REVDistanceSensor;
@@ -25,8 +26,9 @@ public class Robot {
 
     public REVDistanceSensor distanceSensor;
 
+    public GamepadControls gamepadControls;
+
     //VIrutal functions and processors
-    public UpdateMotors updateMotors;
 
     public Telemetry telemetry;
 
@@ -39,14 +41,23 @@ public class Robot {
         intake = new Intake(hardwareMap);
         imu = new Imu(hardwareMap);
         distanceSensor = new REVDistanceSensor(hardwareMap);
-
-        updateMotors = new UpdateMotors(this);
+        gamepadControls = new GamepadControls(this);
 
         telemetry = new Telemetry();
 
         tfod = new Tfod(hardwareMap);
-
         aprilTag = new AprilTag(hardwareMap);
+
+    }
+
+    public void updateExceptTelemetry() {
+        //update intake power if needed
+        intake.updateIntake();
+
+        //update distance sensor variable distance
+        distanceSensor.updateDistance();
+
+        //update the motors and their powers if need be
 
     }
 

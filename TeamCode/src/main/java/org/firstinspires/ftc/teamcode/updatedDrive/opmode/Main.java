@@ -5,6 +5,18 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.updatedDrive.main.Robot;
+import org.firstinspires.ftc.teamcode.updatedDrive.storage.PoseStorage;
+import org.firstinspires.ftc.teamcode.updatedDrive.storage.Positions;
+
+import static org.firstinspires.ftc.teamcode.updatedDrive.storage.Positions.startPoseEnumerated;
+import static org.firstinspires.ftc.teamcode.updatedDrive.storage.Positions.currentMode;
+import static org.firstinspires.ftc.teamcode.updatedDrive.storage.Positions.currentMovement;
+import static org.firstinspires.ftc.teamcode.updatedDrive.storage.Positions.currentState;
+import static org.firstinspires.ftc.teamcode.updatedDrive.storage.Positions.StartPoseEnumerated;
+import static org.firstinspires.ftc.teamcode.updatedDrive.storage.Positions.Mode;
+import static org.firstinspires.ftc.teamcode.updatedDrive.storage.Positions.Movement;
+import static org.firstinspires.ftc.teamcode.updatedDrive.storage.Positions.State;
+
 
 
 /**
@@ -44,6 +56,35 @@ public class Main extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         robot = new Robot(hardwareMap);
+
+        //robot.tfod.initTfod();
+
+        startPoseEnumerated = StartPoseEnumerated.COURT_FOUR;
+        startPose = Positions.getStartPose();
+
+        robot.drivetrain.setPoseEstimate(startPose);
+        PoseStorage.currentPose = robot.drivetrain.getPoseEstimate();
+
+
+
+        waitForStart();
+
+        if (isStopRequested()) return;
+
+        while (opModeIsActive() && !isStopRequested()) {
+            //updates the drivetrain, distance sensor, tfod, AprilTags, etc
+            //So everything except telemetry
+            robot.updateExceptTelemetry();
+
+            poseEstimate = robot.drivetrain.getPoseEstimate();
+
+
+
+
+
+            robot.telemetry.update();
+
+        }
 
     }
 

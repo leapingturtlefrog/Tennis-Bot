@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.updatedDrive.storage;
 
 
+import com.acmerobotics.roadrunner.geometry.Pose2d;
+
 /**
  * Holds the different modes, states, and movements
  * of the robot
@@ -10,7 +12,7 @@ package org.firstinspires.ftc.teamcode.updatedDrive.storage;
 public class Positions {
     //2 modes for if the driver is controlling the robot
     //or auto is
-    enum Mode {
+    public static enum Mode {
         DRIVER_CONTROL,
         AUTO_CONTROL
 
@@ -18,7 +20,7 @@ public class Positions {
     public static Mode currentMode;
 
     //states for which period of auto control is occurring
-    enum State {
+    public static enum State {
         IDLE,
         LOCATING,
         COLLECTING,
@@ -30,7 +32,7 @@ public class Positions {
 
     //to keep track of the specific movement that
     //is currently being performed
-    enum Movement {
+    public static enum Movement {
         IDLE,
         LOCATING_BY_ROTATING,
         LOCATING_BY_DRIVING,
@@ -46,7 +48,7 @@ public class Positions {
     public static Movement currentMovement;
 
     //to determine where the robot is to start
-    enum StartPoseEnumerated {
+    public static enum StartPoseEnumerated {
         COURT_ONE,
         COURT_TWO,
         COURT_THREE,
@@ -54,5 +56,26 @@ public class Positions {
 
     }
     public static StartPoseEnumerated startPoseEnumerated;
+
+    //TODO: Change poses to match court positions
+    public static Pose2d getStartPose() {
+        switch (startPoseEnumerated) {
+            case COURT_ONE:
+                return new Pose2d(0,0,0);
+
+            case COURT_TWO:
+                return new Pose2d(0,0,0);
+
+            case COURT_THREE:
+                return new Pose2d(0,0,0);
+
+            case COURT_FOUR:
+                return new Pose2d(0,0,0);
+
+            default:
+                return new Pose2d(0, 0, 0);
+        }
+
+    }
 
 }

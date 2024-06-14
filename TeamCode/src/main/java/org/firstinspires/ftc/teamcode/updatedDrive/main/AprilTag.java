@@ -6,5 +6,4 @@ public class AprilTag {
 
     public AprilTag(HardwareMap hardwareMap) {}
 
-    //comment
 }
