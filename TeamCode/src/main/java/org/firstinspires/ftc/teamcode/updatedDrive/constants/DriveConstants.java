@@ -1,8 +1,22 @@
 package org.firstinspires.ftc.teamcode.updatedDrive.constants;
 
+import static org.firstinspires.ftc.teamcode.drive.OldDriveConstants.MAX_ACCEL;
+import static org.firstinspires.ftc.teamcode.drive.OldDriveConstants.MAX_ANG_VEL;
+import static org.firstinspires.ftc.teamcode.drive.OldDriveConstants.MAX_VEL;
+import static org.firstinspires.ftc.teamcode.drive.OldDriveConstants.TRACK_WIDTH;
+
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.roadrunner.control.PIDCoefficients;
+import com.acmerobotics.roadrunner.trajectory.constraints.AngularVelocityConstraint;
+import com.acmerobotics.roadrunner.trajectory.constraints.MecanumVelocityConstraint;
+import com.acmerobotics.roadrunner.trajectory.constraints.MinVelocityConstraint;
+import com.acmerobotics.roadrunner.trajectory.constraints.ProfileAccelerationConstraint;
+import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryAccelerationConstraint;
+import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
+
+import java.util.Arrays;
 
 
 /**
@@ -54,6 +68,19 @@ public class DriveConstants {
     public static double MAX_ANG_VEL = 2.11;
     public static double MAX_ANG_ACCEL = 1.5;
 
+    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(0, 0, 0); //0,0,0 //may need to be 0,0,0 if path is wonky
+    public static PIDCoefficients HEADING_PID = new PIDCoefficients(6, 0, 0); //0,0,0
+
+    public static double LATERAL_MULTIPLIER = -1.560; //1.560; //1.460; //0.683; //1;
+    //TODO: Test if negative lateral multiplier works
+
+    public static double VX_WEIGHT = 1;
+    public static double VY_WEIGHT = 1;
+    public static double OMEGA_WEIGHT = 1;
+
+    public static final TrajectoryVelocityConstraint VEL_CONSTRAINT = getVelocityConstraint(MAX_VEL, MAX_ANG_VEL, TRACK_WIDTH);
+    public static final TrajectoryAccelerationConstraint ACCEL_CONSTRAINT = getAccelerationConstraint(MAX_ACCEL);
+
     /** IMU */
 
     //imu constants
@@ -83,6 +110,17 @@ public class DriveConstants {
     public static double getMotorVelocityF(double ticksPerSecond) {
         // see https://docs.google.com/document/d/1tyWrXDfMidwYyP_5H4mZyVgaEswhOC35gvdmP-V-5hA/edit#heading=h.61g9ixenznbx
         return 32767 / ticksPerSecond;
+    }
+
+    public static TrajectoryVelocityConstraint getVelocityConstraint(double maxVel, double maxAngularVel, double trackWidth) {
+        return new MinVelocityConstraint(Arrays.asList(
+                new AngularVelocityConstraint(maxAngularVel),
+                new MecanumVelocityConstraint(maxVel, trackWidth)
+        ));
+    }
+
+    public static TrajectoryAccelerationConstraint getAccelerationConstraint(double maxAccel) {
+        return new ProfileAccelerationConstraint(maxAccel);
     }
 
 }
