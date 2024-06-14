@@ -46,6 +46,8 @@ public class Intake {
 
     }
 
+    public boolean isIntakeRunningContinuously() { return intakeRunningContinuously; }
+
     public void turnIntakeOn() {
         graduallyChangePower(1.0);
         intakeRunningContinuously = true;

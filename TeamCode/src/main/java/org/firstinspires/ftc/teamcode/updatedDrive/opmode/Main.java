@@ -73,15 +73,26 @@ public class Main extends LinearOpMode {
 
         while (opModeIsActive() && !isStopRequested()) {
             //updates the drivetrain, distance sensor, tfod, AprilTags, etc
-            //So everything except telemetry
-            robot.updateExceptTelemetry();
+            //Includes telemetry update
+            robot.update();
 
             poseEstimate = robot.drivetrain.getPoseEstimate();
 
+            robot.gamepadControls.universalControls();
+
+            switch (currentMode) {
+                case AUTO_CONTROL:
+
+                    break;
+
+                case DRIVER_CONTROL:
+                    robot.gamepadControls.driverControlControls();
+
+            }
 
 
 
-
+            //only updates the telemetry
             robot.telemetry.update();
 
         }

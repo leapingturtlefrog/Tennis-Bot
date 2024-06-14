@@ -50,7 +50,7 @@ public class Robot {
 
     }
 
-    public void updateExceptTelemetry() {
+    public void update() {
         //update intake power if needed
         intake.updateIntake();
 
