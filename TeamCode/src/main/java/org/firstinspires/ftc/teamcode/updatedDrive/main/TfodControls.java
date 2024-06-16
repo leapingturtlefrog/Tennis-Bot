@@ -10,6 +10,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.vision.VisionPortal;
+import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 
 import java.util.List;
@@ -56,11 +57,14 @@ public class TfodControls extends LinearOpMode {
 
         builder.setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"));
         builder.enableLiveView(true);
+        //builder.setLiveViewContainerId(1);
         builder.setStreamFormat(VisionPortal.StreamFormat.YUY2);
         builder.setAutoStopLiveView(false);
-        builder.addProcessor(tfod);
+        //builder.addProcessor(tfod);
+        builder.addProcessors(tfod, AprilTagProcessor.easyCreateWithDefaults());
 
         visionPortal = builder.build();
+
 
         //the confidence interval for objects to be recognized
         tfod.setMinResultConfidence(0.10f);
