@@ -4,6 +4,7 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.updatedDrive.main.Robot;
 import org.firstinspires.ftc.teamcode.updatedDrive.storage.PoseStorage;
 import org.firstinspires.ftc.teamcode.updatedDrive.storage.Positions;
@@ -16,6 +17,8 @@ import static org.firstinspires.ftc.teamcode.updatedDrive.storage.Positions.Star
 import static org.firstinspires.ftc.teamcode.updatedDrive.storage.Positions.Mode;
 import static org.firstinspires.ftc.teamcode.updatedDrive.storage.Positions.Movement;
 import static org.firstinspires.ftc.teamcode.updatedDrive.storage.Positions.State;
+import static org.firstinspires.ftc.teamcode.updatedDrive.storage.PoseStorage.poseEstimate;
+
 
 
 
@@ -49,15 +52,18 @@ public class Main extends LinearOpMode {
     private int ballsCollected = 0;
 
     public Pose2d startPose;
-    Pose2d poseEstimate;
 
     Robot robot;
 
     @Override
     public void runOpMode() throws InterruptedException {
-        robot = new Robot(hardwareMap);
+        robot = new Robot(hardwareMap, telemetry);
 
         //robot.tfod.initTfod();
+
+        currentMode = Mode.DRIVER_CONTROL;
+        currentState = State.IDLE;
+        currentMovement = Movement.DRIVER_IN_CONTROL;
 
         startPoseEnumerated = StartPoseEnumerated.COURT_FOUR;
         startPose = Positions.getStartPose();
@@ -80,7 +86,7 @@ public class Main extends LinearOpMode {
 
             //checks and does actions based on the universal gamepad controls
             //which occur no matter what
-            robot.gamepadControls.universalControls();
+            robot.gamepadControls.universalControls(gamepad1);
 
             switch (currentMode) {
                 case AUTO_CONTROL:
@@ -89,14 +95,17 @@ public class Main extends LinearOpMode {
 
                 case DRIVER_CONTROL:
                     //gamepad controls that only occur if the mode is driver control
-                    robot.gamepadControls.driverControlControls();
+                    robot.gamepadControls.driverControlControls(gamepad1);
 
             }
 
 
 
             //only updates the telemetry
-            robot.telemetry.update();
+            //robot.telemetry.update(Tel);
+            telemetry.addData("Hi", 0);
+            telemetry.update();
+            //robot.telemetry.update(Telemetry);
 
         }
 

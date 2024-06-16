@@ -36,21 +36,16 @@ import static org.firstinspires.ftc.teamcode.updatedDrive.storage.Positions.Stat
  */
 
 
-public class GamepadControls extends LinearOpMode {
+public class GamepadControls{
 
     private Robot robot;
 
-    private Gamepad gamepad;
+    private Gamepad gamepad1;
 
-    public GamepadControls(Robot rob) { robot = rob; gamepad = new Gamepad(); }
-
-    @Override
-    public void runOpMode() throws InterruptedException {
-
-    }
+    public GamepadControls(Robot rob) { robot = rob; }
 
     //allows the gamepad to change mode and state
-    public void universalControls() {
+    public void universalControls(Gamepad gamepad1) {
         if (gamepad1.x) {
             robot.intake.turnIntakeOff();
             robot.drivetrain.setMotorPowers(0, 0, 0, 0);
@@ -74,7 +69,7 @@ public class GamepadControls extends LinearOpMode {
     }
 
     //allows the gamepad to do certain controls during the driver period
-    public void driverControlControls() {
+    public void driverControlControls(Gamepad gamepad1) {
         //used for driver control-specific commands
         robot.drivetrain.setWeightedDrivePower(
                 new Pose2d(
