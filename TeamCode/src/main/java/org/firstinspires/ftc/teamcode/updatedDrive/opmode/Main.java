@@ -59,8 +59,6 @@ public class Main extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         robot = new Robot(hardwareMap, telemetry);
 
-        robot.tfodControls.initTfod();
-
         currentMode = Mode.DRIVER_CONTROL;
         currentState = State.IDLE;
         currentMovement = Movement.DRIVER_IN_CONTROL;
@@ -70,7 +68,6 @@ public class Main extends LinearOpMode {
 
         robot.drivetrain.setPoseEstimate(startPose);
         PoseStorage.currentPose = robot.drivetrain.getPoseEstimate();
-
 
 
         waitForStart();

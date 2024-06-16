@@ -6,6 +6,8 @@ import static org.firstinspires.ftc.teamcode.updatedDrive.constants.Constants.TF
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.JavaUtil;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
@@ -16,7 +18,6 @@ import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 import java.util.List;
 
 public class TfodControls extends LinearOpMode {
-    public TfodProcessor tfod;
     public VisionPortal visionPortal;
 
     public List<Recognition> currentRecognitions;
@@ -30,6 +31,11 @@ public class TfodControls extends LinearOpMode {
 
     public HardwareMap hardwareMap;
 
+    public AprilTagProcessor myAprilTagProcessor;
+    public TfodProcessor myTfodProcessor;
+    public VisionPortal myVisionPortal;
+
+
     public void runOpMode() throws InterruptedException {}
 
     public TfodControls(HardwareMap hwMap) {
@@ -39,6 +45,56 @@ public class TfodControls extends LinearOpMode {
 
     }
 
+    public void initTfod() {
+        VisionPortal.Builder myVisionPortalBuilder;
+
+        //tfod
+        TfodProcessor.Builder myTfodProcessorBuilder;
+
+        // First, create a TfodProcessor.
+        // Create a new TfodProcessor.Builder object.
+        myTfodProcessorBuilder = new TfodProcessor.Builder();
+        // Set the name of the file where the model can be found.
+        myTfodProcessorBuilder.setModelFileName(TFOD_MODEL_FILE);
+        // Set the full ordered list of labels the model is trained to recognize.
+        myTfodProcessorBuilder.setModelLabels(JavaUtil.createListWith(LABELS));
+        // Build the TensorFlow Object Detection processor and assign it to a variable.
+        myTfodProcessor = myTfodProcessorBuilder.build();
+        // Set the minimum confidence at which to keep recognitions.
+        myTfodProcessor.setMinResultConfidence((float) 0.10);
+
+        //aprilTag
+        AprilTagProcessor.Builder myAprilTagProcessorBuilder;
+
+        // Create the AprilTag processor by using a builder.
+        // Create a new AprilTagProcessor.Builder object and assign it to a variable.
+        myAprilTagProcessorBuilder = new AprilTagProcessor.Builder();
+        // Build the AprilTag processor and assign it to a variable.
+        myAprilTagProcessor = myAprilTagProcessorBuilder.build();
+        // Adjust Image Decimation to trade-off detection-range for detection-rate.
+        // eg: Some typical detection data using a Logitech C920 WebCam
+        // Decimation = 1 ..  Detect 2" Tag from 10 feet away at 10 Frames per second
+        // Decimation = 2 ..  Detect 2" Tag from 6  feet away at 22 Frames per second
+        // Decimation = 3 ..  Detect 2" Tag from 4  feet away at 30 Frames Per Second
+        // Decimation = 3 ..  Detect 5" Tag from 10 feet away at 30 Frames Per Second
+        // Note: Decimation can be changed on-the-fly to adapt during a match.
+        // Set the detector decimation.
+        myAprilTagProcessor.setDecimation(1);
+
+
+        myVisionPortalBuilder = new VisionPortal.Builder();
+
+        myVisionPortalBuilder.setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"));
+
+        // Add the AprilTag processor.
+        myVisionPortalBuilder.addProcessor(myAprilTagProcessor);
+        // Add the TensorFlow processor.
+        myVisionPortalBuilder.addProcessor(myTfodProcessor);
+        // Build the VisionPortal object and assign it to a variable.
+        myVisionPortal = myVisionPortalBuilder.build();
+    }
+
+    /*
     //initialize the object detection
     public void initTfod() {
         //create new TensorFlow processor
@@ -68,11 +124,11 @@ public class TfodControls extends LinearOpMode {
 
         //the confidence interval for objects to be recognized
         tfod.setMinResultConfidence(0.10f);
-    }
+    }*/
 
     //Add the telemetry for the object detection and the highest confidence index
     public void updateTfod() {
-        currentRecognitions = tfod.getRecognitions();
+        currentRecognitions = myTfodProcessor.getRecognitions();
 
         telemetry.addData("# objects detected", currentRecognitions.size());
 

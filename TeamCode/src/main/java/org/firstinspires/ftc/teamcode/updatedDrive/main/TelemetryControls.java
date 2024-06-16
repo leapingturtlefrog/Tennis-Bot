@@ -46,7 +46,7 @@ public class TelemetryControls{
 
     //updates the telemetry for the tfod and the
     public void updateTfodTelemAndDetectionIndex() {
-        robot.tfodControls.currentRecognitions = robot.tfodControls.tfod.getRecognitions();
+        robot.tfodControls.currentRecognitions = robot.tfodControls.myTfodProcessor.getRecognitions();
 
         telemetry.addData("# objects detected", robot.tfodControls.currentRecognitions.size());
 
