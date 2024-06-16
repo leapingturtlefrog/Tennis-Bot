@@ -59,7 +59,7 @@ public class Main extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         robot = new Robot(hardwareMap, telemetry);
 
-        //robot.tfod.initTfod();
+        robot.tfodControls.initTfod();
 
         currentMode = Mode.DRIVER_CONTROL;
         currentState = State.IDLE;
@@ -78,15 +78,15 @@ public class Main extends LinearOpMode {
         if (isStopRequested()) return;
 
         while (opModeIsActive() && !isStopRequested()) {
-            //updates the drivetrain, distance sensor, tfod, AprilTags, etc
-            //Includes telemetry update
-            robot.update();
-
             poseEstimate = robot.drivetrain.getPoseEstimate();
 
             //checks and does actions based on the universal gamepad controls
             //which occur no matter what
             robot.gamepadControls.universalControls(gamepad1);
+
+            //updates the drivetrain, distance sensor, tfod, AprilTags, etc
+            //Includes telemetry update
+            robot.update();
 
             switch (currentMode) {
                 case AUTO_CONTROL:
@@ -99,13 +99,8 @@ public class Main extends LinearOpMode {
 
             }
 
+            robot.telemetryControls.update(false);
 
-
-            //only updates the telemetry
-            //robot.telemetry.update(Tel);
-            telemetry.addData("Hi", 0);
-            telemetry.update();
-            //robot.telemetry.update(Telemetry);
 
         }
 

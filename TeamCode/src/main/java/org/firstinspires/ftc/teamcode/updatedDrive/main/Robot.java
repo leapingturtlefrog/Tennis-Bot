@@ -35,7 +35,7 @@ public class Robot {
 
     public TfodControls tfodControls;
 
-    public AprilTag aprilTag;
+    //public AprilTag aprilTag;
 
     public Robot(HardwareMap hardwareMap, Telemetry telemetry) {
         drivetrain = new Drivetrain(hardwareMap, this);
@@ -47,7 +47,7 @@ public class Robot {
         telemetryControls = new TelemetryControls(this, telemetry);
 
         tfodControls = new TfodControls(hardwareMap);
-        aprilTag = new AprilTag(hardwareMap);
+        //aprilTag = new AprilTag(hardwareMap);
 
     }
 
@@ -61,7 +61,7 @@ public class Robot {
         //update the motors and their powers if need be
 
         //update telemetry and tfod
-        telemetryControls.update();
+        telemetryControls.update(true);
 
     }
 

@@ -21,7 +21,7 @@ public class TelemetryControls{
 
     }
 
-    public void update() {
+    public void update(boolean tfodAndAprilTag) {
         //modes, states, and movement
         telemetry.addData("mode", currentMode);
         telemetry.addData("state", currentState);
@@ -34,8 +34,11 @@ public class TelemetryControls{
         telemetry.addData("heading", poseEstimate.getHeading());
         telemetry.addData("", "---------------"); //15 dashes*/
 
-        //tfod
-        updateTfodTelemAndDetectionIndex();
+        if (tfodAndAprilTag) {
+            //tfod
+            updateTfodTelemAndDetectionIndex();
+
+        }
 
         telemetry.update();
 
