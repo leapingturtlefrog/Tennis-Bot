@@ -156,6 +156,8 @@ public class OldRobot extends MecanumDrive {
             setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
 
+        setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
         setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         if (RUN_USING_ENCODER && MOTOR_VELO_PID != null) {

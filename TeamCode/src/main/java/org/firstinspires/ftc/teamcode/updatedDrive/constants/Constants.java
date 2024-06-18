@@ -37,7 +37,7 @@ public class Constants {
      * If using the built-in motor velocity PID, update MOTOR_VELO_PID with the tuned coefficients
      * from DriveVelocityPIDTuner.
      */
-    public static final boolean RUN_USING_ENCODER = false; //TODO: should this be true?
+    public static final boolean RUN_USING_ENCODER = false; //Leave this as FALSE or else drivetrain didn't work
     public static PIDFCoefficients MOTOR_VELO_PID = new PIDFCoefficients(0, 0, 0,
             getMotorVelocityF(MAX_RPM / 60 * TICKS_PER_REV));
 
@@ -66,8 +66,8 @@ public class Constants {
     public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(0, 0, 0); //0,0,0 //may need to be 0,0,0 if path is wonky
     public static PIDCoefficients HEADING_PID = new PIDCoefficients(6, 0, 0); //0,0,0
 
-    public static double LATERAL_MULTIPLIER = -1.560; //1.560; //1.460; //0.683; //1;
-    //TODO: Test if negative lateral multiplier works
+    public static double LATERAL_MULTIPLIER = 1.560; //-1.560; //1.460; //0.683; //1;
+    //Test if negative lateral multiplier works //update: it makes the strafing backwards
 
     public static double VX_WEIGHT = 1;
     public static double VY_WEIGHT = 1;
@@ -88,7 +88,9 @@ public class Constants {
 
     //Motor gradually changing power constants (can graph in Geogebra)
     public static double INTAKE_GRADUAL_BASE = 2.7; //higher and the longer it takes
-    public static double INTAKE_GRADUAL_POW = 2.0; //higher and the shorter it takes
+    public static double INTAKE_GRADUAL_POW = 4.0; //higher and the shorter it takes
+
+    public static double INTAKE_START_POWER = 0.0;
 
 
     /** Tfod Image detection */

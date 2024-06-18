@@ -14,6 +14,8 @@ import static org.firstinspires.ftc.teamcode.updatedDrive.storage.Positions.Star
 import static org.firstinspires.ftc.teamcode.updatedDrive.storage.Positions.Mode;
 import static org.firstinspires.ftc.teamcode.updatedDrive.storage.Positions.Movement;
 import static org.firstinspires.ftc.teamcode.updatedDrive.storage.Positions.State;
+import static org.firstinspires.ftc.teamcode.updatedDrive.constants.Constants.INTAKE_START_POWER;
+
 
 
 /**
@@ -36,24 +38,24 @@ import static org.firstinspires.ftc.teamcode.updatedDrive.storage.Positions.Stat
  */
 
 
-public class GamepadControls{
+public class GamepadControls {
 
     private Robot robot;
 
     private Gamepad gamepad1;
 
-    public GamepadControls(Robot rob) { robot = rob; }
+    public GamepadControls(Robot rob, Gamepad gamepadUno) { robot = rob; gamepad1 = gamepadUno; }
 
     //allows the gamepad to change mode and state
-    public void universalControls(Gamepad gamepad1) {
+    public void universalControls() {
         if (gamepad1.x) {
-            robot.intake.turnIntakeOff();
-            robot.drivetrain.setMotorPowers(0, 0, 0, 0);
+            //robot.intake.turnIntakeOff();
+            //robot.drivetrain.setMotorPowers(0, 0, 0, 0);
             currentMode = Mode.DRIVER_CONTROL;
             currentMovement = Movement.DRIVER_IN_CONTROL;
 
         } else if (gamepad1.y) {
-            robot.intake.turnIntakeOff();
+            //robot.intake.turnIntakeOff();
             currentMode = Mode.AUTO_CONTROL;
             currentMovement = Movement.IDLE;
 
@@ -69,8 +71,19 @@ public class GamepadControls{
     }
 
     //allows the gamepad to do certain controls during the driver period
-    public void driverControlControls(Gamepad gamepad1) {
+    public void driverControlControls() {
+        robot.telemetryControls.add("GamepadControls", "driverControlControls", 10.0);
         //used for driver control-specific commands
+        //robot.drivetrain.setMotorPowers(0.5, 0.5,0,0);
+        /*
+        robot.drivetrain.setWeightedDrivePower(
+                new Pose2d(
+                        -gamepad1.left_stick_y,
+                        -gamepad1.left_stick_x,
+                        -gamepad1.right_stick_x
+                )
+        );*/
+
         robot.drivetrain.setWeightedDrivePower(
                 new Pose2d(
                         (gamepad1.dpad_up ? 1 : (gamepad1.dpad_down ? -1 : -gamepad1.left_stick_y)),
@@ -96,6 +109,12 @@ public class GamepadControls{
         } else if (gamepad1.right_trigger > 0.1) {
             robot.intake.intakeVariablePower(gamepad1.right_trigger);
 
+        }
+
+        if (gamepad1.dpad_up) {
+            INTAKE_START_POWER += 0.01;
+        } else if (gamepad1.dpad_down) {
+            INTAKE_START_POWER -= 0.01;
         }
 
 

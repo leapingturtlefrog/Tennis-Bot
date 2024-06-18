@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.updatedDrive.main;
 
+import static org.firstinspires.ftc.teamcode.updatedDrive.constants.Constants.INTAKE_START_POWER;
 import static org.firstinspires.ftc.teamcode.updatedDrive.storage.PoseStorage.poseEstimate;
 import static org.firstinspires.ftc.teamcode.updatedDrive.storage.Positions.currentMode;
 import static org.firstinspires.ftc.teamcode.updatedDrive.storage.Positions.currentMovement;
@@ -9,11 +10,17 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+
 public class TelemetryControls{
 
     private Robot robot;
 
     private Telemetry telemetry;
+
+    private Map<String, Object[] > addedTelemetry = new HashMap<>();
 
     public TelemetryControls(Robot rob, Telemetry telem) {
         robot = rob;
@@ -21,7 +28,7 @@ public class TelemetryControls{
 
     }
 
-    public void update(boolean tfodAndAprilTag) {
+    public void update() {
         //modes, states, and movement
         telemetry.addData("mode", currentMode);
         telemetry.addData("state", currentState);
@@ -32,13 +39,21 @@ public class TelemetryControls{
         telemetry.addData("x", poseEstimate.getX());
         telemetry.addData("y", poseEstimate.getY());
         telemetry.addData("heading", poseEstimate.getHeading());
-        telemetry.addData("", "---------------"); //15 dashes*/
 
-        if (tfodAndAprilTag) {
-            //tfod
-            updateTfodTelemAndDetectionIndex();
+        telemetry.addData("Added telemetry", "");
+
+        //addedTelemetry
+        telemetry.addData("INTAKE_START_POWER", INTAKE_START_POWER);
+        for (String key : addedTelemetry.keySet()) {
+            telemetry.addData(key, " value - "
+                    + Objects.requireNonNull(addedTelemetry.get(key))[0] +
+                    ", time - " + Objects.requireNonNull(addedTelemetry.get(key))[1]);
 
         }
+
+        telemetry.addData("", "---------------"); //15 dashes*/
+
+        updateTfodTelemAndDetectionIndex();
 
         telemetry.update();
 
@@ -75,5 +90,11 @@ public class TelemetryControls{
 
             index++;
         }
+    }
+
+    //add custom messages
+    public void add(String name, String message, Double time) {
+        addedTelemetry.put(name, new Object[]{message, time});
+
     }
 }

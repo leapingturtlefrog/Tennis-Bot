@@ -92,6 +92,7 @@ public class TfodControls extends LinearOpMode {
         myVisionPortalBuilder.addProcessor(myTfodProcessor);
         // Build the VisionPortal object and assign it to a variable.
         myVisionPortal = myVisionPortalBuilder.build();
+
     }
 
     /*

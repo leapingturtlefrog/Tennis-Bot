@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import static org.firstinspires.ftc.teamcode.updatedDrive.constants.Constants.INTAKE_GRADUAL_BASE;
 import static org.firstinspires.ftc.teamcode.updatedDrive.constants.Constants.INTAKE_GRADUAL_POW;
-
+import static org.firstinspires.ftc.teamcode.updatedDrive.constants.Constants.INTAKE_START_POWER;
 
 
 /**
@@ -71,9 +71,14 @@ public class Intake {
     //eq solution: (log[(power - c) / a]) / (log(b) * POW) = time
     private void graduallyChangePower(double targetPower) {
         intakeTargetPower = targetPower;
-        intakeStartPower = intake.getPower();
+        intakeStartPower = INTAKE_START_POWER; //intake.getPower();
         graduallyChangePower = true;
 
+        targetTime = (intakeTargetPower - intakeStartPower) / 1.0;
+
+
+
+        /*
         //control for setting the function to get to targetPower
         if (intakeTargetPower == 0) {
             intake.setPower(0.0);
@@ -119,7 +124,7 @@ public class Intake {
 
         //this is how long it should take to get to the targetPower
         targetTime = Math.log((targetPower - c) / a) / (INTAKE_GRADUAL_POW * Math.log(INTAKE_GRADUAL_BASE));
-
+*/
         timer.reset();
 
     }
@@ -133,7 +138,8 @@ public class Intake {
                 graduallyChangePower = false;
 
             } else {
-                intake.setPower(Math.round((a * Math.pow(INTAKE_GRADUAL_BASE, INTAKE_GRADUAL_POW * time) + c) * 100.0) / 100.0);
+                intake.setPower(intakeStartPower + 1.0*time);
+                //intake.setPower(Math.round((a * Math.pow(INTAKE_GRADUAL_BASE, INTAKE_GRADUAL_POW * time) + c) * 100.0) / 100.0);
 
             }
 

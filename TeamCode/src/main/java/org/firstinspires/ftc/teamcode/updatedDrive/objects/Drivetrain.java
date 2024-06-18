@@ -93,9 +93,7 @@ public class Drivetrain extends MecanumDrive {
         for (DcMotorEx motor : motors) {
             motor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
 
-            if (RUN_USING_ENCODER) {
-                motor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-            }
+            motor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
 
             motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         }
@@ -252,6 +250,7 @@ public class Drivetrain extends MecanumDrive {
         }
 
         setDrivePower(vel);
+
     }
 
     @NonNull

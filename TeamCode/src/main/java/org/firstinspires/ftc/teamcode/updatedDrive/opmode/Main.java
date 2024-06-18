@@ -57,7 +57,7 @@ public class Main extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        robot = new Robot(hardwareMap, telemetry);
+        robot = new Robot(hardwareMap, telemetry, gamepad1);
 
         currentMode = Mode.DRIVER_CONTROL;
         currentState = State.IDLE;
@@ -79,7 +79,7 @@ public class Main extends LinearOpMode {
 
             //checks and does actions based on the universal gamepad controls
             //which occur no matter what
-            robot.gamepadControls.universalControls(gamepad1);
+            robot.gamepadControls.universalControls();
 
             //updates the drivetrain, distance sensor, tfod, AprilTags, etc
             //Includes telemetry update
@@ -91,17 +91,17 @@ public class Main extends LinearOpMode {
                     break;
 
                 case DRIVER_CONTROL:
+                    robot.telemetryControls.add("Main", "Driver control", time);
                     //gamepad controls that only occur if the mode is driver control
-                    robot.gamepadControls.driverControlControls(gamepad1);
+                    robot.gamepadControls.driverControlControls();
 
             }
 
-            robot.telemetryControls.update(false);
+            robot.telemetryControls.update();
 
 
         }
 
     }
-
 
 }
