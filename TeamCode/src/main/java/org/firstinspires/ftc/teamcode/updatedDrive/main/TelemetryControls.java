@@ -1,6 +1,12 @@
 package org.firstinspires.ftc.teamcode.updatedDrive.main;
 
 import static org.firstinspires.ftc.teamcode.updatedDrive.constants.Constants.INTAKE_START_POWER;
+import static org.firstinspires.ftc.teamcode.updatedDrive.main.TfodControls.savedDetectionIndex;
+import static org.firstinspires.ftc.teamcode.updatedDrive.main.TfodControls.savedDistance;
+import static org.firstinspires.ftc.teamcode.updatedDrive.main.TfodControls.savedHeadingError;
+import static org.firstinspires.ftc.teamcode.updatedDrive.main.TfodControls.savedRecognitions;
+import static org.firstinspires.ftc.teamcode.updatedDrive.main.TfodControls.savedX;
+import static org.firstinspires.ftc.teamcode.updatedDrive.main.TfodControls.savedY;
 import static org.firstinspires.ftc.teamcode.updatedDrive.storage.PoseStorage.poseEstimate;
 import static org.firstinspires.ftc.teamcode.updatedDrive.storage.Positions.currentMode;
 import static org.firstinspires.ftc.teamcode.updatedDrive.storage.Positions.currentMovement;
@@ -51,7 +57,20 @@ public class TelemetryControls{
 
         }
 
-        telemetry.addData("", "---------------"); //15 dashes*/
+        //current saved recognition and its data
+        if (savedRecognitions != null && savedRecognitions.size() > 0) {
+            telemetry.addData("Saved object", "");
+            telemetry.addData("- Detection index", savedDetectionIndex);
+            telemetry.addData("- Heading error", savedHeadingError);
+            telemetry.addData("- x", savedX);
+            telemetry.addData("- y", savedY);
+            telemetry.addData("- Distance", savedDistance);
+        }
+
+        //the rest of the objects detected
+        telemetry.addData("", " ");
+        telemetry.addData("", "---------------"); //15 dashes
+        telemetry.addData("", " ");
 
         updateTfodTelemAndDetectionIndex();
 

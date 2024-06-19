@@ -24,7 +24,7 @@ public class Positions {
         IDLE,
         LOCATING,
         COLLECTING,
-        HEADING_HOME, //heading home
+        HEADING_HOME,
         DROPPING_OFF
 
     }

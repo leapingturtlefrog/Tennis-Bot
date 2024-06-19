@@ -72,18 +72,7 @@ public class GamepadControls {
 
     //allows the gamepad to do certain controls during the driver period
     public void driverControlControls() {
-        robot.telemetryControls.add("GamepadControls", "driverControlControls", 10.0);
         //used for driver control-specific commands
-        //robot.drivetrain.setMotorPowers(0.5, 0.5,0,0);
-        /*
-        robot.drivetrain.setWeightedDrivePower(
-                new Pose2d(
-                        -gamepad1.left_stick_y,
-                        -gamepad1.left_stick_x,
-                        -gamepad1.right_stick_x
-                )
-        );*/
-
         robot.drivetrain.setWeightedDrivePower(
                 new Pose2d(
                         (gamepad1.dpad_up ? 1 : (gamepad1.dpad_down ? -1 : -gamepad1.left_stick_y)),
@@ -111,10 +100,11 @@ public class GamepadControls {
 
         }
 
+
         if (gamepad1.dpad_up) {
-            INTAKE_START_POWER += 0.01;
+            INTAKE_START_POWER += 0.001;
         } else if (gamepad1.dpad_down) {
-            INTAKE_START_POWER -= 0.01;
+            INTAKE_START_POWER -= 0.001;
         }
 
 

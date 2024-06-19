@@ -95,6 +95,7 @@ public class Drivetrain extends MecanumDrive {
 
             motor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
 
+            //TODO: should this not be zero for a more smooth and accurate robot?
             motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         }
 

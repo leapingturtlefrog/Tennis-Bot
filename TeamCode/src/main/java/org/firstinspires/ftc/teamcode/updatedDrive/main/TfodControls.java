@@ -23,11 +23,11 @@ public class TfodControls extends LinearOpMode {
     public List<Recognition> currentRecognitions;
     public int currentDetectionIndex = -1;
     //for the recognitions we are heading to
-    public List<Recognition> savedRecognitions;
-    public int savedDetectionIndex;
-    public double savedHeadingError;
-    public double savedDistance;
-    public double savedX, savedY;
+    public static List<Recognition> savedRecognitions;
+    public static int savedDetectionIndex;
+    public static double savedHeadingError;
+    public static double savedDistance;
+    public static double savedX, savedY;
 
     public HardwareMap hardwareMap;
 

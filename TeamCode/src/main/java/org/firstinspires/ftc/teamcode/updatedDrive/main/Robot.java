@@ -30,8 +30,7 @@ public class Robot {
 
     public GamepadControls gamepadControls;
 
-    //VIrutal functions and processors
-
+    //Virtual functions and processorsf
     public TelemetryControls telemetryControls;
 
     public TfodControls tfodControls;

@@ -5,10 +5,17 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.updatedDrive.main.Robot;
 import org.firstinspires.ftc.teamcode.updatedDrive.storage.PoseStorage;
 import org.firstinspires.ftc.teamcode.updatedDrive.storage.Positions;
 
+import static org.firstinspires.ftc.teamcode.updatedDrive.main.TfodControls.savedDetectionIndex;
+import static org.firstinspires.ftc.teamcode.updatedDrive.main.TfodControls.savedRecognitions;
+import static org.firstinspires.ftc.teamcode.updatedDrive.main.TfodControls.savedHeadingError;
+import static org.firstinspires.ftc.teamcode.updatedDrive.main.TfodControls.savedDistance;
+import static org.firstinspires.ftc.teamcode.updatedDrive.main.TfodControls.savedX;
+import static org.firstinspires.ftc.teamcode.updatedDrive.main.TfodControls.savedY;
 import static org.firstinspires.ftc.teamcode.updatedDrive.storage.Positions.startPoseEnumerated;
 import static org.firstinspires.ftc.teamcode.updatedDrive.storage.Positions.currentMode;
 import static org.firstinspires.ftc.teamcode.updatedDrive.storage.Positions.currentMovement;
@@ -40,6 +47,8 @@ import static org.firstinspires.ftc.teamcode.updatedDrive.storage.PoseStorage.po
  * left trigger     intake reverse with variable speed
  * right trigger    intake collect with variable speed
  */
+
+//TODO: Add distance sensor to prevent driving into solid objects
 
 
 @TeleOp(group = "APushBot")
@@ -88,15 +97,62 @@ public class Main extends LinearOpMode {
             switch (currentMode) {
                 case AUTO_CONTROL:
 
+                    switch (currentState) {
+                        case IDLE:
+                            //stop movements
+                            robot.drivetrain.setMotorPowers(0.0, 0.0, 0.0, 0.0);
+                            currentMovement = Movement.IDLE;
+
+                            break;
+
+                        case LOCATING:
+                            //locates tennis balls
+
+                            //if there is a detection
+                            if (robot.tfodControls.currentRecognitions.size() > 0) {
+                                savedRecognitions = robot.tfodControls.currentRecognitions;
+
+                                savedDetectionIndex = robot.tfodControls.currentDetectionIndex;
+                                savedHeadingError = savedRecognitions.get(savedDetectionIndex).estimateAngleToObject(AngleUnit.DEGREES);
+
+                                savedX = (savedRecognitions.get(savedDetectionIndex).getLeft() + savedRecognitions.get(savedDetectionIndex).getRight()) / 2.0;
+                                savedY = (savedRecognitions.get(savedDetectionIndex).getTop() + savedRecognitions.get(savedDetectionIndex).getBottom()) / 2.0;
+
+                                //approximtes the distance based on the y value
+                                //552 + -3.69x + 0.0245x^2 + -7.77E-05x^3 + 9.57E-08x^4
+                                savedDistance = 552 - 3.69*savedY + 0.0245*savedY*savedY - 0.0000777*Math.pow(savedY, 3) + 0.0000000957*Math.pow(savedY, 4);
+
+                            }
+
+                            break;
+
+                        case COLLECTING:
+                            //collects the detected tennis ball
+
+                            break;
+
+                        case HEADING_HOME:
+                            //finds apriltag and then when found go to it
+
+                            break;
+
+                        case DROPPING_OFF:
+                            //dropping off the tennis balls when already at home
+
+
+                    }
+
                     break;
 
                 case DRIVER_CONTROL:
-                    robot.telemetryControls.add("Main", "Driver control", time);
                     //gamepad controls that only occur if the mode is driver control
                     robot.gamepadControls.driverControlControls();
 
+                    currentMovement = Movement.DRIVER_IN_CONTROL;
+
             }
 
+            //updates only the telemetry
             robot.telemetryControls.update();
 
 
