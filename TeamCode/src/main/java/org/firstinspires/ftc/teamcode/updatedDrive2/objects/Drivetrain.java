@@ -1,22 +1,21 @@
-package org.firstinspires.ftc.teamcode.updatedDrive.objects;
+package org.firstinspires.ftc.teamcode.updatedDrive2.objects;
 
 import static org.firstinspires.ftc.teamcode.drive.OldDriveConstants.MOTOR_VELO_PID;
+import static org.firstinspires.ftc.teamcode.updatedDrive.constants.Constants.ACCEL_CONSTRAINT;
 import static org.firstinspires.ftc.teamcode.updatedDrive.constants.Constants.HEADING_PID;
+import static org.firstinspires.ftc.teamcode.updatedDrive.constants.Constants.LATERAL_MULTIPLIER;
 import static org.firstinspires.ftc.teamcode.updatedDrive.constants.Constants.MAX_ANG_ACCEL;
 import static org.firstinspires.ftc.teamcode.updatedDrive.constants.Constants.MAX_ANG_VEL;
-import static org.firstinspires.ftc.teamcode.updatedDrive.constants.Constants.RUN_USING_ENCODER;
+import static org.firstinspires.ftc.teamcode.updatedDrive.constants.Constants.OMEGA_WEIGHT;
 import static org.firstinspires.ftc.teamcode.updatedDrive.constants.Constants.TRACK_WIDTH;
 import static org.firstinspires.ftc.teamcode.updatedDrive.constants.Constants.TRANSLATIONAL_PID;
+import static org.firstinspires.ftc.teamcode.updatedDrive.constants.Constants.VEL_CONSTRAINT;
+import static org.firstinspires.ftc.teamcode.updatedDrive.constants.Constants.VX_WEIGHT;
+import static org.firstinspires.ftc.teamcode.updatedDrive.constants.Constants.VY_WEIGHT;
 import static org.firstinspires.ftc.teamcode.updatedDrive.constants.Constants.encoderTicksToInches;
 import static org.firstinspires.ftc.teamcode.updatedDrive.constants.Constants.kA;
 import static org.firstinspires.ftc.teamcode.updatedDrive.constants.Constants.kStatic;
 import static org.firstinspires.ftc.teamcode.updatedDrive.constants.Constants.kV;
-import static org.firstinspires.ftc.teamcode.updatedDrive.constants.Constants.ACCEL_CONSTRAINT;
-import static org.firstinspires.ftc.teamcode.updatedDrive.constants.Constants.LATERAL_MULTIPLIER;
-import static org.firstinspires.ftc.teamcode.updatedDrive.constants.Constants.VEL_CONSTRAINT;
-import static org.firstinspires.ftc.teamcode.updatedDrive.constants.Constants.VX_WEIGHT;
-import static org.firstinspires.ftc.teamcode.updatedDrive.constants.Constants.VY_WEIGHT;
-import static org.firstinspires.ftc.teamcode.updatedDrive.constants.Constants.OMEGA_WEIGHT;
 
 import androidx.annotation.NonNull;
 
@@ -43,9 +42,9 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceBuilder;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceRunner;
-import org.firstinspires.ftc.teamcode.updatedDrive.constants.Constants;
-import org.firstinspires.ftc.teamcode.updatedDrive.main.Robot;
 import org.firstinspires.ftc.teamcode.util.LynxModuleUtil;
+import org.firstinspires.ftc.teamcode.updatedDrive2.constants.Constants;
+import org.firstinspires.ftc.teamcode.updatedDrive2.main.Robot;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -74,16 +73,6 @@ public class Drivetrain extends MecanumDrive {
 
     private boolean graduallyChangePower = false;
     private double startPower, targetMaxPower;
-
-    //for simple straight and simple turning
-    public double          headingError  = 0;
-    public double  targetHeading = 0;
-    public double  driveSpeed    = 0;
-    public double  turnSpeed     = 0;
-    public double  leftSpeed     = 0;
-    public double  rightSpeed    = 0;
-    public int     leftTarget    = 0;
-    public int     rightTarget   = 0;
 
     private Robot robot;
 

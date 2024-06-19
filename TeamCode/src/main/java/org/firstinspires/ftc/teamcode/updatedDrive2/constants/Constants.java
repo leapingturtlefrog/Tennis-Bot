@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.updatedDrive.constants;
+package org.firstinspires.ftc.teamcode.updatedDrive2.constants;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.control.PIDCoefficients;
@@ -45,25 +45,6 @@ public class Constants {
     public static double WHEEL_RADIUS = 2;
     public static double GEAR_RATIO = 0.933; //output (wheel) speed / input (motor) speed
     public static double TRACK_WIDTH = 17.5;
-
-    /** SIMPLE DRIVE CONSTANTS */
-
-    //TODO: should the gear ratio be multiplied by or divided by?
-    public static double TICKS_PER_INCH = TICKS_PER_REV / GEAR_RATIO / (2 * WHEEL_RADIUS * Math.PI);
-
-    // These constants define the desired driving/control characteristics
-    // They can/should be tweaked to suit the specific robot drive train.
-    static final double     DRIVE_SPEED             = 0.4;     // Max driving speed for better distance accuracy.
-    static final double     TURN_SPEED              = 0.2;     // Max Turn speed to limit turn rate
-    static final double     HEADING_THRESHOLD       = 1.0 ;    // How close must the heading get to the target before moving to next step.
-    // Requiring more accuracy (a smaller number) will often make the turn take longer to get into the final position.
-    // Define the Proportional control coefficient (or GAIN) for "heading control".
-    // We define one value when Turning (larger errors), and the other is used when Driving straight (smaller errors).
-    // Increase these numbers if the heading does not corrects strongly enough (eg: a heavy robot or using tracks)
-    // Decrease these numbers if the heading does not settle on the correct value (eg: very agile robot with omni wheels)
-    static final double     P_TURN_GAIN            = 0.02;     // Larger is more responsive, but also less stable
-    static final double     P_DRIVE_GAIN           = 0.03;     // Larger is more responsive, but also less stable
-
 
     /** DRIVING PARAMETERS */
 
