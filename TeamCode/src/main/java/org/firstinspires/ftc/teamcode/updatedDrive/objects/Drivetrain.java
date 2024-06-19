@@ -306,4 +306,18 @@ public class Drivetrain extends MecanumDrive {
         return new ProfileAccelerationConstraint(maxAccel);
     }
 
+    public boolean isSimpleRotating() {
+        return false;
+    }
+
+    public boolean isSimpleStraight() {
+        return false;
+    }
+
+    public void simpleRotate(double angle) {
+    }
+
+    public void simpleStraight(double distance) {
+
+    }
 }

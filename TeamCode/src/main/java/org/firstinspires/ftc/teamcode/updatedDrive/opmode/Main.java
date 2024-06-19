@@ -27,8 +27,6 @@ import static org.firstinspires.ftc.teamcode.updatedDrive.storage.Positions.Stat
 import static org.firstinspires.ftc.teamcode.updatedDrive.storage.PoseStorage.poseEstimate;
 
 
-
-
 /**
  * The main opmode for the robot
  *
@@ -48,7 +46,8 @@ import static org.firstinspires.ftc.teamcode.updatedDrive.storage.PoseStorage.po
  * right trigger    intake collect with variable speed
  */
 
-//TODO: Add distance sensor to prevent driving into solid objects
+
+//TODO: Add distance sensor to prevent driving into solid objects and add virtual map for path planning
 
 
 @TeleOp(group = "APushBot")
@@ -110,17 +109,32 @@ public class Main extends LinearOpMode {
 
                             //if there is a detection
                             if (robot.tfodControls.currentRecognitions.size() > 0) {
-                                savedRecognitions = robot.tfodControls.currentRecognitions;
+                                //save the recognition data for the highest confidence recognition
+                                saveRecognitionData();
 
-                                savedDetectionIndex = robot.tfodControls.currentDetectionIndex;
-                                savedHeadingError = savedRecognitions.get(savedDetectionIndex).estimateAngleToObject(AngleUnit.DEGREES);
+                                currentState = State.COLLECTING;
 
-                                savedX = (savedRecognitions.get(savedDetectionIndex).getLeft() + savedRecognitions.get(savedDetectionIndex).getRight()) / 2.0;
-                                savedY = (savedRecognitions.get(savedDetectionIndex).getTop() + savedRecognitions.get(savedDetectionIndex).getBottom()) / 2.0;
+                            } else if (!robot.drivetrain.isSimpleRotating()) {
+                                //if there is no detection
+                                if (locateRotations < 36) {
+                                    //rotate to find target
 
-                                //approximtes the distance based on the y value
-                                //552 + -3.69x + 0.0245x^2 + -7.77E-05x^3 + 9.57E-08x^4
-                                savedDistance = 552 - 3.69*savedY + 0.0245*savedY*savedY - 0.0000777*Math.pow(savedY, 3) + 0.0000000957*Math.pow(savedY, 4);
+                                    robot.drivetrain.simpleRotate(10.0); //rotate 10 degrees counterclockwise
+
+                                    locateRotations++;
+
+                                    currentMovement = Movement.LOCATING_BY_ROTATING;
+
+                                } else if (!robot.drivetrain.isSimpleStraight()){
+                                    //drive to a new location asynchronously
+                                    findNewLocation();
+                                    driveToNewLocation();
+
+                                    //once done: locateRotations = 0;
+
+                                    currentMovement = Movement.LOCATING_BY_DRIVING;
+
+                                }
 
                             }
 
@@ -128,6 +142,7 @@ public class Main extends LinearOpMode {
 
                         case COLLECTING:
                             //collects the detected tennis ball
+
 
                             break;
 
@@ -157,6 +172,35 @@ public class Main extends LinearOpMode {
 
 
         }
+
+    }
+
+
+    /** FUNCTIONS ***/
+
+
+    //save the recognition data for the highest confidence recognition
+    private void saveRecognitionData() {
+        savedRecognitions = robot.tfodControls.currentRecognitions;
+
+        savedDetectionIndex = robot.tfodControls.currentDetectionIndex;
+        savedHeadingError = savedRecognitions.get(savedDetectionIndex).estimateAngleToObject(AngleUnit.DEGREES);
+
+        savedX = (savedRecognitions.get(savedDetectionIndex).getLeft() + savedRecognitions.get(savedDetectionIndex).getRight()) / 2.0;
+        savedY = (savedRecognitions.get(savedDetectionIndex).getTop() + savedRecognitions.get(savedDetectionIndex).getBottom()) / 2.0;
+
+        //approximates the distance based on the y value
+        //552 + -3.69x + 0.0245x^2 + -7.77E-05x^3 + 9.57E-08x^4
+        savedDistance = 552 - 3.69*savedY + 0.0245*savedY*savedY - 0.0000777*Math.pow(savedY, 3) + 0.0000000957*Math.pow(savedY, 4);
+
+    }
+
+    //TODO: finish these functions
+    private void findNewLocation() {
+
+    }
+
+    private void driveToNewLocation() {
 
     }
 
