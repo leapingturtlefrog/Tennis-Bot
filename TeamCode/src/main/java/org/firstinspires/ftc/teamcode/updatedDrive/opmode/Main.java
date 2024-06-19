@@ -10,6 +10,7 @@ import org.firstinspires.ftc.teamcode.updatedDrive.main.Robot;
 import org.firstinspires.ftc.teamcode.updatedDrive.storage.PoseStorage;
 import org.firstinspires.ftc.teamcode.updatedDrive.storage.Positions;
 
+import static org.firstinspires.ftc.teamcode.updatedDrive.constants.Constants.RESTING_INTAKE_POWER;
 import static org.firstinspires.ftc.teamcode.updatedDrive.main.TfodControls.savedDetectionIndex;
 import static org.firstinspires.ftc.teamcode.updatedDrive.main.TfodControls.savedRecognitions;
 import static org.firstinspires.ftc.teamcode.updatedDrive.main.TfodControls.savedHeadingError;
@@ -96,64 +97,103 @@ public class Main extends LinearOpMode {
             switch (currentMode) {
                 case AUTO_CONTROL:
 
-                    switch (currentState) {
-                        case IDLE:
-                            //stop movements
-                            robot.drivetrain.setMotorPowers(0.0, 0.0, 0.0, 0.0);
-                            currentMovement = Movement.IDLE;
+                    if (currentState != State.IDLE && currentState != State.DROPPING_OFF && ballsCollected > 1) {
+                        //if the robot has collected enough targets, head home if not idle or dropping off
+                        currentState = State.HEADING_HOME;
 
-                            break;
+                    } else {
+                        switch (currentState) {
+                            case IDLE:
+                                //stop movement and intake
+                                robot.drivetrain.setMotorPowers(0.0, 0.0, 0.0, 0.0);
+                                robot.intake.turnIntakeOff();
 
-                        case LOCATING:
-                            //locates tennis balls
+                                currentMovement = Movement.IDLE;
 
-                            //if there is a detection
-                            if (robot.tfodControls.currentRecognitions.size() > 0) {
-                                //save the recognition data for the highest confidence recognition
-                                saveRecognitionData();
+                                break;
 
-                                currentState = State.COLLECTING;
+                            case LOCATING:
+                                //locates tennis balls
+                                robot.intake.intakeVariablePower(RESTING_INTAKE_POWER);
 
-                            } else if (!robot.drivetrain.isSimpleRotating()) {
-                                //if there is no detection
-                                if (locateRotations < 36) {
-                                    //rotate to find target
+                                //if there is a detection
+                                if (robot.tfodControls.currentRecognitions.size() > 0) {
+                                    //save the recognition data for the highest confidence recognition
+                                    saveRecognitionData();
 
-                                    robot.drivetrain.simpleRotate(10.0); //rotate 10 degrees counterclockwise
+                                    currentState = State.COLLECTING;
 
-                                    locateRotations++;
+                                } else if (!robot.drivetrain.isSimpleRotating()) {
+                                    //if there is no detection
+                                    if (locateRotations < 36) {
+                                        //rotate to find target
+                                        robot.drivetrain.simpleRotate(10.0); //rotate 10 degrees counterclockwise
+                                        locateRotations++;
 
-                                    currentMovement = Movement.LOCATING_BY_ROTATING;
+                                        currentMovement = Movement.LOCATING_BY_ROTATING;
 
-                                } else if (!robot.drivetrain.isSimpleStraight()){
-                                    //drive to a new location asynchronously
-                                    findNewLocation();
-                                    driveToNewLocation();
+                                    } else if (!robot.drivetrain.isSimpleStraight()){
+                                        //drive to a new location asynchronously
+                                        findNewLocation();
+                                        driveToNewLocation();
 
-                                    //once done: locateRotations = 0;
+                                        //once done: locateRotations = 0;
 
-                                    currentMovement = Movement.LOCATING_BY_DRIVING;
+                                        currentMovement = Movement.LOCATING_BY_DRIVING;
+
+                                    }
 
                                 }
 
-                            }
+                                break;
 
-                            break;
+                            case COLLECTING:
+                                //collects the detected tennis ball
+                                if (!robot.drivetrain.isSimpleRotating() && collectRotations == 0) {
+                                    //needs to rotate to target
+                                    robot.drivetrain.simpleRotate(savedHeadingError);
+                                    collectRotations++;
 
-                        case COLLECTING:
-                            //collects the detected tennis ball
+                                    currentMovement = Movement.ROTATING_TO_TARGET;
+
+                                } else if (!robot.drivetrain.isSimpleStraightMinusEnd() && collectStraights == 0) {
+                                    //needs to collect target
+                                    robot.intake.turnIntakeOn();
+
+                                    robot.drivetrain.simpleStraight(savedDistance, 12);
+                                    collectStraights++;
+
+                                    currentMovement = Movement.DRIVING_STRAIGHT_TO_TARGET;
+
+                                } else if (robot.drivetrain.isSimpleStraightJustEnd()) {
+                                    currentMovement = Movement.COLLECTING_TARGET;
+
+                                } else {
+                                    //collected target
+                                    ballsCollected++;
+
+                                    currentState = State.LOCATING;
+
+                                }
 
 
-                            break;
+                                break;
 
-                        case HEADING_HOME:
-                            //finds apriltag and then when found go to it
+                            case HEADING_HOME:
+                                //finds apriltag and then when found go to it
+                                robot.intake.intakeVariablePower(RESTING_INTAKE_POWER);
 
-                            break;
+                                currentMovement = Movement.FINDING_HOME;
 
-                        case DROPPING_OFF:
-                            //dropping off the tennis balls when already at home
+                                break;
 
+                            case DROPPING_OFF:
+                                //dropping off the tennis balls when already at home
+                                robot.intake.turnIntakeOff();
+
+                                currentMovement = Movement.STATIONARY_FOR_DROPOFF;
+
+                        }
 
                     }
 
@@ -196,10 +236,12 @@ public class Main extends LinearOpMode {
     }
 
     //TODO: finish these functions
+    //find new location using virtual map
     private void findNewLocation() {
 
     }
 
+    //drives to new location avoiding objects
     private void driveToNewLocation() {
 
     }

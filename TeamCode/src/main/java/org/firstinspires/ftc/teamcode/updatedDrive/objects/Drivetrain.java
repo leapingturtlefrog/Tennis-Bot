@@ -317,7 +317,15 @@ public class Drivetrain extends MecanumDrive {
     public void simpleRotate(double angle) {
     }
 
-    public void simpleStraight(double distance) {
+    public void simpleStraight(double distance, double lastAmountSlow) {
 
+    }
+
+    public boolean isSimpleStraightMinusEnd() {
+        return false;
+    }
+
+    public boolean isSimpleStraightJustEnd() {
+        return false;
     }
 }

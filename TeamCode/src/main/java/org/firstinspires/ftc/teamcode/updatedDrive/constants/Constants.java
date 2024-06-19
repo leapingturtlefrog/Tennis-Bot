@@ -92,6 +92,9 @@ public class Constants {
 
     public static double INTAKE_START_POWER = 0.0;
 
+    public static double RESTING_INTAKE_POWER = 0.5; //the power for when the robot
+    //is not collecting a target
+
 
     /** Tfod Image detection */
 
