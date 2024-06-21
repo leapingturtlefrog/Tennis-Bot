@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.updatedDrive2.objects;
 
-import static org.firstinspires.ftc.teamcode.updatedDrive.constants.Constants.LOGO_FACING_DIR;
-import static org.firstinspires.ftc.teamcode.updatedDrive.constants.Constants.USB_FACING_DIR;
+import static org.firstinspires.ftc.teamcode.updatedDrive2.constants.Constants.LOGO_FACING_DIR;
+import static org.firstinspires.ftc.teamcode.updatedDrive2.constants.Constants.USB_FACING_DIR;
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.HardwareMap;

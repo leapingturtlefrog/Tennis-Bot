@@ -28,7 +28,7 @@ import org.firstinspires.ftc.teamcode.updatedDrive2.storage.Positions;
 
 
 /**
- * The main opmode for the robot
+ * Used to test functions. Auto control removed
  *
  *
  * //GAMEPAD CONTROLS
@@ -50,9 +50,9 @@ import org.firstinspires.ftc.teamcode.updatedDrive2.storage.Positions;
 //TODO: Add distance sensor to prevent driving into solid objects and add virtual map for path planning
 
 
-@TeleOp(name="updatedDrive2Main", group = "APushBot")
+@TeleOp(name="testingSandbox", group = "APushBot")
 //@Disabled
-public class Main extends LinearOpMode {
+public class TestingSandbox extends LinearOpMode {
     private int locateRotations = 0;
     private int collectRotations = 0;
     private int collectStraights = 0;
@@ -96,111 +96,46 @@ public class Main extends LinearOpMode {
             switch (currentMode) {
                 case AUTO_CONTROL:
 
-                    if (currentState != State.IDLE && currentState != State.DROPPING_OFF && ballsCollected > 1) {
-                        //if the robot has collected enough targets, head home if not idle or dropping off
-                        currentState = State.HEADING_HOME;
-
-                    } else {
-                        switch (currentState) {
-                            case IDLE:
-                                //stop movement and intake
-                                robot.drivetrain.setMotorPowers(0.0, 0.0, 0.0, 0.0);
-                                robot.intake.turnIntakeOff();
-
-                                currentMovement = Movement.IDLE;
-
-                                break;
-
-                            case LOCATING:
-                                //locates tennis balls
-                                robot.intake.intakeVariablePower(RESTING_INTAKE_POWER);
-
-                                //if there is a detection
-                                if (robot.tfodControls.currentRecognitions.size() > 0) {
-                                    //save the recognition data for the highest confidence recognition
-                                    saveRecognitionData();
-
-                                    currentState = State.COLLECTING;
-
-                                } else if (!robot.drivetrain.isSimpleRotating()) {
-                                    //if there is no detection
-                                    if (locateRotations < 36) {
-                                        //rotate to find target
-                                        robot.drivetrain.simpleRotate(10.0); //rotate 10 degrees counterclockwise
-                                        locateRotations++;
-
-                                        currentMovement = Movement.LOCATING_BY_ROTATING;
-
-                                    } else if (!robot.drivetrain.isSimpleStraight()){
-                                        //drive to a new location asynchronously
-                                        findNewLocation();
-                                        driveToNewLocation();
-
-                                        //once done: locateRotations = 0;
-
-                                        currentMovement = Movement.LOCATING_BY_DRIVING;
-
-                                    }
-
-                                }
-
-                                break;
-
-                            case COLLECTING:
-                                //collects the detected tennis ball
-                                if (!robot.drivetrain.isSimpleRotating() && collectRotations == 0) {
-                                    //needs to rotate to target
-                                    robot.drivetrain.simpleRotate(savedHeadingError);
-                                    collectRotations++;
-
-                                    currentMovement = Movement.ROTATING_TO_TARGET;
-
-                                } else if (!robot.drivetrain.isSimpleStraightMinusEnd() && collectStraights == 0) {
-                                    //needs to collect target
-                                    robot.intake.turnIntakeOn();
-
-                                    robot.drivetrain.simpleStraight(savedDistance, 12);
-                                    collectStraights++;
-
-                                    currentMovement = Movement.DRIVING_STRAIGHT_TO_TARGET;
-
-                                } else if (robot.drivetrain.isSimpleStraightJustEnd()) {
-                                    currentMovement = Movement.COLLECTING_TARGET;
-
-                                } else {
-                                    //collected target
-                                    ballsCollected++;
-
-                                    currentState = State.LOCATING;
-
-                                }
-
-
-                                break;
-
-                            case HEADING_HOME:
-                                //finds apriltag and then when found go to it
-                                robot.intake.intakeVariablePower(RESTING_INTAKE_POWER);
-
-                                currentMovement = Movement.FINDING_HOME;
-
-                                break;
-
-                            case DROPPING_OFF:
-                                //dropping off the tennis balls when already at home
-                                robot.intake.turnIntakeOff();
-
-                                currentMovement = Movement.STATIONARY_FOR_DROPOFF;
-
-                        }
-
-                    }
-
                     break;
 
                 case DRIVER_CONTROL:
                     //gamepad controls that only occur if the mode is driver control
-                    robot.gamepadControls.driverControlControls();
+                    robot.drivetrain.setWeightedDrivePower(
+                            new Pose2d(
+                                    -gamepad1.left_stick_y,
+                                    -gamepad1.left_stick_x,
+                                    -gamepad1.right_stick_x
+                            )
+                    );
+
+                    //if triggers are 0 turn off intake if it is not continuous
+                    if (gamepad1.left_trigger < 0.1 && gamepad1.right_trigger < 0.1 && !robot.intake.isIntakeRunningContinuously()) {
+                        robot.intake.turnIntakeOff();
+                    }
+
+                    if (gamepad1.left_bumper) {
+                        robot.intake.turnIntakeOff();
+
+                    } else if (gamepad1.right_bumper) {
+                        robot.intake.turnIntakeOn();
+
+                    } else if (gamepad1.left_trigger > 0.1) {
+                        robot.intake.intakeVariablePower(-gamepad1.left_trigger);
+
+                    } else if (gamepad1.right_trigger > 0.1) {
+                        robot.intake.intakeVariablePower(gamepad1.right_trigger);
+
+                    }
+
+                    if (gamepad1.dpad_up) {
+                        robot.drivetrain.driveStraightFromZero(12);
+                    } else if (gamepad1.dpad_down) {
+                        robot.drivetrain.driveStraightFromZero(100);
+                    } else if (gamepad1.dpad_left) {
+                        robot.drivetrain.turn(90);
+                    } else if (gamepad1.dpad_right) {
+                        robot.drivetrain.turn(-180);
+                    }
 
                     currentMovement = Movement.DRIVER_IN_CONTROL;
 

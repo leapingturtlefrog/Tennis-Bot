@@ -85,7 +85,7 @@ public class TelemetryControls{
         telemetry.addData("# objects detected", robot.tfodControls.currentRecognitions.size());
 
         double highestConfidence = 0;
-        int index = -1;
+        int index = 0;
         robot.tfodControls.currentDetectionIndex = -1;
 
         //display info on each recognition

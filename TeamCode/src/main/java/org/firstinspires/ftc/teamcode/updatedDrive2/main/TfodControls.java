@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.updatedDrive2.main;
 
-import static org.firstinspires.ftc.teamcode.updatedDrive.constants.Constants.LABELS;
-import static org.firstinspires.ftc.teamcode.updatedDrive.constants.Constants.TFOD_MODEL_FILE;
+import static org.firstinspires.ftc.teamcode.updatedDrive2.constants.Constants.LABELS;
+import static org.firstinspires.ftc.teamcode.updatedDrive2.constants.Constants.TFOD_MODEL_FILE;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -133,7 +133,7 @@ public class TfodControls extends LinearOpMode {
         telemetry.addData("# objects detected", currentRecognitions.size());
 
         double highestConfidence = 0;
-        int index = -1;
+        int index = 0;
         currentDetectionIndex = -1;
 
         //display info on each recognition

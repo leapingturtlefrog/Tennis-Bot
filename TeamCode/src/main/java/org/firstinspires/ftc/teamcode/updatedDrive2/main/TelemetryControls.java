@@ -1,16 +1,16 @@
 package org.firstinspires.ftc.teamcode.updatedDrive2.main;
 
-import static org.firstinspires.ftc.teamcode.updatedDrive.constants.Constants.INTAKE_START_POWER;
-import static org.firstinspires.ftc.teamcode.updatedDrive.main.TfodControls.savedDetectionIndex;
-import static org.firstinspires.ftc.teamcode.updatedDrive.main.TfodControls.savedDistance;
-import static org.firstinspires.ftc.teamcode.updatedDrive.main.TfodControls.savedHeadingError;
-import static org.firstinspires.ftc.teamcode.updatedDrive.main.TfodControls.savedRecognitions;
-import static org.firstinspires.ftc.teamcode.updatedDrive.main.TfodControls.savedX;
-import static org.firstinspires.ftc.teamcode.updatedDrive.main.TfodControls.savedY;
-import static org.firstinspires.ftc.teamcode.updatedDrive.storage.PoseStorage.poseEstimate;
-import static org.firstinspires.ftc.teamcode.updatedDrive.storage.Positions.currentMode;
-import static org.firstinspires.ftc.teamcode.updatedDrive.storage.Positions.currentMovement;
-import static org.firstinspires.ftc.teamcode.updatedDrive.storage.Positions.currentState;
+import static org.firstinspires.ftc.teamcode.updatedDrive2.constants.Constants.INTAKE_START_POWER;
+import static org.firstinspires.ftc.teamcode.updatedDrive2.main.TfodControls.savedDetectionIndex;
+import static org.firstinspires.ftc.teamcode.updatedDrive2.main.TfodControls.savedDistance;
+import static org.firstinspires.ftc.teamcode.updatedDrive2.main.TfodControls.savedHeadingError;
+import static org.firstinspires.ftc.teamcode.updatedDrive2.main.TfodControls.savedRecognitions;
+import static org.firstinspires.ftc.teamcode.updatedDrive2.main.TfodControls.savedX;
+import static org.firstinspires.ftc.teamcode.updatedDrive2.main.TfodControls.savedY;
+import static org.firstinspires.ftc.teamcode.updatedDrive2.storage.PoseStorage.poseEstimate;
+import static org.firstinspires.ftc.teamcode.updatedDrive2.storage.Positions.currentMode;
+import static org.firstinspires.ftc.teamcode.updatedDrive2.storage.Positions.currentMovement;
+import static org.firstinspires.ftc.teamcode.updatedDrive2.storage.Positions.currentState;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -85,7 +85,7 @@ public class TelemetryControls{
         telemetry.addData("# objects detected", robot.tfodControls.currentRecognitions.size());
 
         double highestConfidence = 0;
-        int index = -1;
+        int index = 0;
         robot.tfodControls.currentDetectionIndex = -1;
 
         //display info on each recognition

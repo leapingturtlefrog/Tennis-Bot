@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.updatedDrive2.objects;
 
 
-import static org.firstinspires.ftc.teamcode.updatedDrive.constants.Constants.INTAKE_START_POWER;
+import static org.firstinspires.ftc.teamcode.updatedDrive2.constants.Constants.INTAKE_START_POWER;
 
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;

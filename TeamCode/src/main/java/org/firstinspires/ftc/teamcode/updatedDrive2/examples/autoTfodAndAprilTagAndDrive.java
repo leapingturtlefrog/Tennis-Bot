@@ -19,7 +19,7 @@ import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-@Autonomous(name = "TFODpropAprilTag (Blocks to Java)")
+@Autonomous(name = "Updated drive TFODpropAprilTag (Blocks to Java)")
 public class autoTfodAndAprilTagAndDrive extends LinearOpMode {
 
     private DcMotor left_driveAsDcMotor;

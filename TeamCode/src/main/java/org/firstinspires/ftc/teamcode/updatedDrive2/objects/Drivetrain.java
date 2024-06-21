@@ -1,21 +1,21 @@
 package org.firstinspires.ftc.teamcode.updatedDrive2.objects;
 
 import static org.firstinspires.ftc.teamcode.drive.OldDriveConstants.MOTOR_VELO_PID;
-import static org.firstinspires.ftc.teamcode.updatedDrive.constants.Constants.ACCEL_CONSTRAINT;
-import static org.firstinspires.ftc.teamcode.updatedDrive.constants.Constants.HEADING_PID;
-import static org.firstinspires.ftc.teamcode.updatedDrive.constants.Constants.LATERAL_MULTIPLIER;
-import static org.firstinspires.ftc.teamcode.updatedDrive.constants.Constants.MAX_ANG_ACCEL;
-import static org.firstinspires.ftc.teamcode.updatedDrive.constants.Constants.MAX_ANG_VEL;
-import static org.firstinspires.ftc.teamcode.updatedDrive.constants.Constants.OMEGA_WEIGHT;
-import static org.firstinspires.ftc.teamcode.updatedDrive.constants.Constants.TRACK_WIDTH;
-import static org.firstinspires.ftc.teamcode.updatedDrive.constants.Constants.TRANSLATIONAL_PID;
-import static org.firstinspires.ftc.teamcode.updatedDrive.constants.Constants.VEL_CONSTRAINT;
-import static org.firstinspires.ftc.teamcode.updatedDrive.constants.Constants.VX_WEIGHT;
-import static org.firstinspires.ftc.teamcode.updatedDrive.constants.Constants.VY_WEIGHT;
-import static org.firstinspires.ftc.teamcode.updatedDrive.constants.Constants.encoderTicksToInches;
-import static org.firstinspires.ftc.teamcode.updatedDrive.constants.Constants.kA;
-import static org.firstinspires.ftc.teamcode.updatedDrive.constants.Constants.kStatic;
-import static org.firstinspires.ftc.teamcode.updatedDrive.constants.Constants.kV;
+import static org.firstinspires.ftc.teamcode.updatedDrive2.constants.Constants.ACCEL_CONSTRAINT;
+import static org.firstinspires.ftc.teamcode.updatedDrive2.constants.Constants.HEADING_PID;
+import static org.firstinspires.ftc.teamcode.updatedDrive2.constants.Constants.LATERAL_MULTIPLIER;
+import static org.firstinspires.ftc.teamcode.updatedDrive2.constants.Constants.MAX_ANG_ACCEL;
+import static org.firstinspires.ftc.teamcode.updatedDrive2.constants.Constants.MAX_ANG_VEL;
+import static org.firstinspires.ftc.teamcode.updatedDrive2.constants.Constants.OMEGA_WEIGHT;
+import static org.firstinspires.ftc.teamcode.updatedDrive2.constants.Constants.TRACK_WIDTH;
+import static org.firstinspires.ftc.teamcode.updatedDrive2.constants.Constants.TRANSLATIONAL_PID;
+import static org.firstinspires.ftc.teamcode.updatedDrive2.constants.Constants.VEL_CONSTRAINT;
+import static org.firstinspires.ftc.teamcode.updatedDrive2.constants.Constants.VX_WEIGHT;
+import static org.firstinspires.ftc.teamcode.updatedDrive2.constants.Constants.VY_WEIGHT;
+import static org.firstinspires.ftc.teamcode.updatedDrive2.constants.Constants.encoderTicksToInches;
+import static org.firstinspires.ftc.teamcode.updatedDrive2.constants.Constants.kA;
+import static org.firstinspires.ftc.teamcode.updatedDrive2.constants.Constants.kStatic;
+import static org.firstinspires.ftc.teamcode.updatedDrive2.constants.Constants.kV;
 
 import androidx.annotation.NonNull;
 
@@ -314,10 +314,14 @@ public class Drivetrain extends MecanumDrive {
     }
 
     public void simpleRotate(double angle) {
-        double power;
+        turn(angle);
+
+        //double power;
     }
 
     public void simpleStraight(double distance, double lastAmountSlow) {
+        driveStraightFromZero(distance - lastAmountSlow);
+
 
     }
 
