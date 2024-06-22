@@ -52,6 +52,9 @@ public class Robot {
     }
 
     public void update() {
+        //update roadrunner
+        drivetrain.update();
+
         //update intake power if needed
         intake.updateIntake();
 

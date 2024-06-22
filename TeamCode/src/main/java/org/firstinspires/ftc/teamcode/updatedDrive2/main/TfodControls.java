@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.updatedDrive2.main;
 
 import static org.firstinspires.ftc.teamcode.updatedDrive2.constants.Constants.LABELS;
 import static org.firstinspires.ftc.teamcode.updatedDrive2.constants.Constants.TFOD_MODEL_FILE;
+import static org.firstinspires.ftc.teamcode.updatedDrive2.storage.Positions.currentMode;
+import static org.firstinspires.ftc.teamcode.updatedDrive2.storage.Positions.currentState;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -10,6 +12,7 @@ import org.firstinspires.ftc.robotcore.external.JavaUtil;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
+import org.firstinspires.ftc.teamcode.updatedDrive2.storage.Positions;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import org.firstinspires.ftc.vision.tfod.TfodProcessor;
@@ -61,7 +64,7 @@ public class TfodControls extends LinearOpMode {
         // Build the TensorFlow Object Detection processor and assign it to a variable.
         myTfodProcessor = myTfodProcessorBuilder.build();
         // Set the minimum confidence at which to keep recognitions.
-        myTfodProcessor.setMinResultConfidence((float) 0.55); //0.40 //.10
+        myTfodProcessor.setMinResultConfidence((float) 0.75); //0.40 //.10 //lower for when at court
 
         //aprilTag
         AprilTagProcessor.Builder myAprilTagProcessorBuilder;
@@ -160,5 +163,61 @@ public class TfodControls extends LinearOpMode {
         }
     }
 
+    //save the recognition data for the highest confidence recognition
+    public void saveRecognitionData() {
+        savedRecognitions = currentRecognitions;
+
+        savedDetectionIndex = currentDetectionIndex;
+        savedHeadingError = -savedRecognitions.get(savedDetectionIndex).estimateAngleToObject(AngleUnit.DEGREES);
+
+        savedX = (savedRecognitions.get(savedDetectionIndex).getLeft() + savedRecognitions.get(savedDetectionIndex).getRight()) / 2.0;
+        savedY = (savedRecognitions.get(savedDetectionIndex).getTop() + savedRecognitions.get(savedDetectionIndex).getBottom()) / 2.0;
+
+        /* WRONG, does y value based on distance
+        //approximates the distance based on the y value
+        //552 + -3.69x + 0.0245x^2 + -7.77E-05x^3 + 9.57E-08x^4
+        savedDistance = 552 - 3.69*savedY + 0.0245*savedY*savedY - 0.0000777*Math.pow(savedY, 3) + 0.0000000957*Math.pow(savedY, 4);*/
+
+        //Correct, produces distance based on y value //update: produces near-zero values
+        //1.31E+07 + -214233x + 1461x^2 + -5.31x^3 + 0.0109x^4 + -1.18E-05x^5 + 5.36E-09x^6
+        //savedDistance = 13100000 - 214233*savedY + 1461*savedY*savedY - 5.31*Math.pow(savedY, 3) + 0.0109*Math.pow(savedY, 4) - 0.000018*Math.pow(savedY, 5) + 0.00000000536*Math.pow(savedY, 6);
+
+        //212101 + -2265x + 9.08x^2 + -0.0162x^3 + 1.08E-05x^4
+        //savedDistance = 212101 - 2265*savedY + 9.08*savedY*savedY - 0.0162*Math.pow(savedY, 3) + 0.0000108*Math.pow(savedY, 4);
+
+        /*
+        BigDecimal y = new BigDecimal(savedY);
+
+        BigDecimal a1 = new BigDecimal(212101);
+
+        BigDecimal a2a = new BigDecimal(-2265);
+        BigDecimal a2 = a2a.multiply(y);
+
+        BigDecimal a3a = new BigDecimal(9.08);
+        BigDecimal a3b = y.pow(2);
+        BigDecimal a3 = a3a.multiply(a3b);
+
+        BigDecimal a4a = new BigDecimal(-0.0162);
+        BigDecimal a4b = y.pow(3);
+        BigDecimal a4 = a4a.multiply(a4b);
+
+        BigDecimal a5a = new BigDecimal(0.0000108);
+        BigDecimal a5b = y.pow(4);
+        BigDecimal a5 = a5a.multiply(a5b);
+
+        BigDecimal ans = a1.add(a2.add(a3.add(a4.add(a5))));
+
+        savedDistance = ans.doubleValue();*/
+
+        //ab^y + c WRONG
+        //a=239.735, b=0.983259, c=315.151
+        //savedDistance = 239.735*Math.pow(0.983259, savedY) + 315.151;
+
+
+        //ab^y + c
+        //a=7.5252e7, b=0.960118, c=60.4614
+        savedDistance = (7.5252E7) * (Math.pow(0.960118, savedY)) + 60.4614;
+
+    }
 
 }

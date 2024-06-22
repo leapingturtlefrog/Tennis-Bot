@@ -35,6 +35,9 @@ public class TelemetryControls{
     }
 
     public void update() {
+        //distance sensor
+        telemetry.addData("sensorDistance", robot.distanceSensor.getDistance());
+
         //modes, states, and movement
         telemetry.addData("mode", currentMode);
         telemetry.addData("state", currentState);

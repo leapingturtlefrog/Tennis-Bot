@@ -60,8 +60,8 @@ public class Constants {
     //values used to constrain the robot's movement
     public static double MAX_VEL = 35;
     public static double MAX_ACCEL = 35;
-    public static double MAX_ANG_VEL = 2.11;
-    public static double MAX_ANG_ACCEL = 1.5;
+    public static double MAX_ANG_VEL = 1.5; //2.11;
+    public static double MAX_ANG_ACCEL = 1.0; //1.5;
 
     public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(0, 0, 0); //0,0,0 //may need to be 0,0,0 if path is wonky
     public static PIDCoefficients HEADING_PID = new PIDCoefficients(6, 0, 0); //0,0,0

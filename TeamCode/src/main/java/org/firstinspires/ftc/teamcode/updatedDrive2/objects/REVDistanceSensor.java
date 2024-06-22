@@ -14,7 +14,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 public class REVDistanceSensor {
     public DistanceSensor distanceSensor;
 
-    public double distance;
+    public static double distance;
+    public static double savedDistance;
 
     public REVDistanceSensor(HardwareMap hardwareMap) {
         distanceSensor = hardwareMap.get(DistanceSensor.class, "distanceSensor");
@@ -24,6 +25,12 @@ public class REVDistanceSensor {
     //updates the distance variable
     public void updateDistance() {
         distance = distanceSensor.getDistance(DistanceUnit.INCH);
+
+    }
+
+    public double getDistance() {
+        updateDistance();
+        return distance;
 
     }
 

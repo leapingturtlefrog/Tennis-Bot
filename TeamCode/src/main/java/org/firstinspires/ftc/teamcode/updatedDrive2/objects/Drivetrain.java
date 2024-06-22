@@ -71,8 +71,11 @@ public class Drivetrain extends MecanumDrive {
     private List<Integer> lastEncPositions = new ArrayList<>();
     private List<Integer> lastEncVels = new ArrayList<>();
 
-    private boolean graduallyChangePower = false;
-    private double startPower, targetMaxPower;
+    private boolean isSimpleRotating = false, isSimpleStraight = false;
+
+    public Trajectory previousTrajectory;
+
+    public static double angleSinceLastRotation = 0;
 
     private Robot robot;
 
@@ -121,15 +124,6 @@ public class Drivetrain extends MecanumDrive {
                 follower, HEADING_PID, batteryVoltageSensor,
                 lastEncPositions, lastEncVels, lastTrackingEncPositions, lastTrackingEncVels
         );
-
-    }
-
-    /*** Custom functions */
-
-    //drives while gradually changing power a certain distance
-    //from a starting velocity of zero
-    public void driveStraightFromZero(double distance) {
-
 
     }
 
@@ -305,35 +299,72 @@ public class Drivetrain extends MecanumDrive {
         return new ProfileAccelerationConstraint(maxAccel);
     }
 
+    /*** Added functions */
+
     public boolean isSimpleRotating() {
+        if (isSimpleRotating && isBusy() && !Thread.currentThread().isInterrupted()) {
+            return true; //if currently busy and is supposed to be rotating
+
+        } else if (!isBusy() && isSimpleRotating) {
+            isSimpleRotating = false; //if it is not busy but says it is rotating
+            return false;
+
+        }
+
         return false;
+
     }
 
     public boolean isSimpleStraight() {
+        if (isSimpleStraight && isBusy() && !Thread.currentThread().isInterrupted()) {
+            return true; //if currently busy and is supposed to be going straight
+
+        } else if (!isBusy() && isSimpleStraight) {
+            isSimpleStraight = false; //if it is not busy but says it is going straight
+            return false;
+
+        }
+
         return false;
+
     }
 
     public void simpleRotate(double angle) {
-        turn(Math.toRadians(angle));
+        isSimpleRotating = true;
+        angleSinceLastRotation += angle;
+        turnAsync(Math.toRadians(angle));
 
-        //double power;
     }
 
-    public void simpleStraight(double distance, double lastAmountSlow) {
-        Trajectory forwardLastBit = robot.drivetrain.trajectoryBuilder(new Pose2d())
+    public void simpleStraight(double distance) {
+        isSimpleStraight = true;
+
+        correctAngleSinceLastRotation();
+
+        Trajectory goForward = robot.drivetrain.trajectoryBuilder(
+                previousTrajectory.end().plus(new Pose2d(0, 0, Math.toRadians(angleSinceLastRotation))))
                 .forward(distance)
                 .build();
 
+        robot.drivetrain.followTrajectoryAsync(goForward);
 
-        robot.drivetrain.followTrajectory(forwardLastBit);
+        previousTrajectory = goForward;
+        angleSinceLastRotation = 0;
 
     }
 
-    public boolean isSimpleStraightMinusEnd() {
+    public void correctAngleSinceLastRotation() {
+        while (angleSinceLastRotation >= 360) angleSinceLastRotation -= 360;
+
+        while (angleSinceLastRotation <= -360) angleSinceLastRotation += 360;
+
+    }
+
+    /*public boolean isSimpleStraightMinusEnd() {
         return false;
     }
 
     public boolean isSimpleStraightJustEnd() {
         return false;
-    }
+    }*/
 }
