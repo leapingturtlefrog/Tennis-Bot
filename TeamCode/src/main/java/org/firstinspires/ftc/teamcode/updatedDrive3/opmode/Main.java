@@ -25,16 +25,16 @@ import org.firstinspires.ftc.teamcode.updatedDrive3.storage.Positions;
 
 /**
  * The main opmode for the robot
- *
+ * <p>
  *
  * //GAMEPAD CONTROLS
- *
+ * <p>
  * Universal
  * x    switch mode to driver control, intake off, cancel following
  * y    switch mode to auto control, intake off
  * a    switch state to locate
  * b    switch state to idle
- *
+ * <p>
  * Driver control
  * left bumper      intake off
  * right bumper     intake on
@@ -54,7 +54,9 @@ public class Main extends LinearOpMode {
     private int collectStraights = 0;
 
     private boolean firstAuto = true; //have we been in auto yet or have we just picked up a ball?
+    private boolean firstDetection = true; //is this the first time detecting objects?
     ElapsedTime timer = new ElapsedTime();
+    ElapsedTime timer1 = new ElapsedTime();
 
     private int ballsCollected = 0;
 
@@ -120,23 +122,37 @@ public class Main extends LinearOpMode {
 
                                 //if there is a detection
                                 if (robot.tfodControls.currentRecognitions.size() > 0) {
-                                    //save the recognition data for the highest confidence recognition
-                                    robot.tfodControls.saveRecognitionData();
+                                    if (firstDetection) {
+                                        firstDetection = false;
 
-                                    currentState = State.COLLECTING;
+                                        //stop the robot
+                                        robot.drivetrain.breakFollowingImmediately();
 
-                                    //if the distance seems off
-                                    if (savedDistance < 0 || savedDistance > 300) {
-                                        robot.drivetrain.simpleRotate(90);
-                                        currentMode = Mode.FIRST_AUTO_CONTROL;
-                                        currentState = State.LOCATING;
+                                        timer1.reset();
+
+                                    } else if (timer1.seconds() > 0.5){
+                                        firstDetection = true;
+
+                                        //save the recognition data for the highest confidence recognition
+                                        robot.tfodControls.saveRecognitionData();
+
+                                        currentState = State.COLLECTING;
+
+                                        //if the distance seems off
+                                        if (savedDistance < 0 || savedDistance > 300) {
+                                            robot.drivetrain.simpleRotate(90);
+                                            firstAuto = true;
+                                            currentMode = Mode.FIRST_AUTO_CONTROL;
+                                            currentState = State.LOCATING;
+                                        }
+
                                     }
 
                                 } else if (!robot.drivetrain.isSimpleRotating()) {
                                     //if there is no detection
-                                    if (locateRotations < 272 /*72*/) {
+                                    if (locateRotations < 6 /*72*/) {
                                         //rotate to find target
-                                        robot.drivetrain.simpleRotate(10.0); //rotate 10 degrees counterclockwise
+                                        robot.drivetrain.simpleRotate(180, 0.3); //rotate 45 degrees counterclockwise
                                         locateRotations++;
 
                                         currentMovement = Movement.LOCATING_BY_ROTATING;
@@ -241,15 +257,12 @@ public class Main extends LinearOpMode {
             //updates only the telemetry
             robot.telemetryControls.update();
 
-
         }
 
     }
 
 
     /** FUNCTIONS ***/
-
-
 
 
     //TODO: finish these functions

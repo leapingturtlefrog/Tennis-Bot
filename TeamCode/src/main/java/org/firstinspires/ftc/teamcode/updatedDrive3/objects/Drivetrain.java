@@ -4,6 +4,7 @@ import static org.firstinspires.ftc.teamcode.drive.OldDriveConstants.MOTOR_VELO_
 import static org.firstinspires.ftc.teamcode.updatedDrive3.constants.Constants.ACCEL_CONSTRAINT;
 import static org.firstinspires.ftc.teamcode.updatedDrive3.constants.Constants.HEADING_PID;
 import static org.firstinspires.ftc.teamcode.updatedDrive3.constants.Constants.LATERAL_MULTIPLIER;
+import static org.firstinspires.ftc.teamcode.updatedDrive3.constants.Constants.MAX_ACCEL;
 import static org.firstinspires.ftc.teamcode.updatedDrive3.constants.Constants.MAX_ANG_ACCEL;
 import static org.firstinspires.ftc.teamcode.updatedDrive3.constants.Constants.MAX_ANG_VEL;
 import static org.firstinspires.ftc.teamcode.updatedDrive3.constants.Constants.OMEGA_WEIGHT;
@@ -38,12 +39,13 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceBuilder;
-import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceRunner;
 import org.firstinspires.ftc.teamcode.updatedDrive3.constants.Constants;
 import org.firstinspires.ftc.teamcode.updatedDrive3.main.Robot;
+import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceRunnerUpdated;
 import org.firstinspires.ftc.teamcode.util.LynxModuleUtil;
 
 import java.util.ArrayList;
@@ -63,7 +65,7 @@ public class Drivetrain extends MecanumDrive {
 
     private List<DcMotorEx> motors;
 
-    private TrajectorySequenceRunner trajectorySequenceRunner;
+    private TrajectorySequenceRunnerUpdated trajectorySequenceRunner;
     private TrajectoryFollower follower;
 
     private VoltageSensor batteryVoltageSensor;
@@ -71,11 +73,11 @@ public class Drivetrain extends MecanumDrive {
     private List<Integer> lastEncPositions = new ArrayList<>();
     private List<Integer> lastEncVels = new ArrayList<>();
 
-    private boolean isSimpleRotating = false, isSimpleStraight = false;
+    private boolean isSimpleRotating = false, isSimpleStraight = false, isSmoothBraking = false;
+
+    ElapsedTime timer = new ElapsedTime();
 
     public Trajectory previousTrajectory;
-
-    public static double angleSinceLastRotation = 0;
 
     private Robot robot;
 
@@ -97,7 +99,6 @@ public class Drivetrain extends MecanumDrive {
 
             motor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
 
-            //TODO: should this not be zero for a more smooth and accurate robot?
             motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         }
 
@@ -120,7 +121,7 @@ public class Drivetrain extends MecanumDrive {
         List<Integer> lastTrackingEncPositions = new ArrayList<>();
         List<Integer> lastTrackingEncVels = new ArrayList<>();
 
-        trajectorySequenceRunner = new TrajectorySequenceRunner(
+        trajectorySequenceRunner = new TrajectorySequenceRunnerUpdated(
                 follower, HEADING_PID, batteryVoltageSensor,
                 lastEncPositions, lastEncVels, lastTrackingEncPositions, lastTrackingEncVels
         );
@@ -184,11 +185,28 @@ public class Drivetrain extends MecanumDrive {
         waitForIdle();
     }
 
+    public void breakFollowingSmooth() {
+        setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        isSmoothBraking = true;
+        timer.reset();
+
+        trajectorySequenceRunner.breakFollowing();
+    }
+
+    public void breakFollowingImmediately() {
+        trajectorySequenceRunner.breakFollowing();
+    }
+
     public Pose2d getLastError() {
         return trajectorySequenceRunner.getLastPoseError();
     }
 
     public void update() {
+        if (isSmoothBraking && timer.seconds() > 0.5) {
+            isSmoothBraking = false;
+            setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        }
+
         updatePoseEstimate();
         DriveSignal signal = trajectorySequenceRunner.update(getPoseEstimate(), getPoseVelocity());
         if (signal != null) setDriveSignal(signal);
@@ -331,15 +349,22 @@ public class Drivetrain extends MecanumDrive {
 
     public void simpleRotate(double angle) {
         isSimpleRotating = true;
-        angleSinceLastRotation += angle;
-        turnAsync(Math.toRadians(angle));
+        turnAsync(angle);
+
+    }
+
+    public void simpleRotate(double angle, double maxVel) {
+        isSimpleRotating = true;
+        trajectorySequenceRunner.followTrajectorySequenceAsync(
+                trajectorySequenceBuilder(getPoseEstimate())
+                        .turn(Math.toRadians(angle), maxVel, 1.0)
+                        .build()
+        );
 
     }
 
     public void simpleStraight(double distance) {
         isSimpleStraight = true;
-
-        correctAngleSinceLastRotation();
 
         Trajectory goForward = robot.drivetrain.trajectoryBuilder(
                 getPoseEstimate())
@@ -347,16 +372,6 @@ public class Drivetrain extends MecanumDrive {
                 .build();
 
         robot.drivetrain.followTrajectoryAsync(goForward);
-
-        previousTrajectory = goForward;
-        angleSinceLastRotation = 0;
-
-    }
-
-    public void correctAngleSinceLastRotation() {
-        while (angleSinceLastRotation >= 360) angleSinceLastRotation -= 360;
-
-        while (angleSinceLastRotation <= -360) angleSinceLastRotation += 360;
 
     }
 

@@ -47,6 +47,7 @@ public class GamepadControls {
         if (gamepad1.x) {
             //robot.intake.turnIntakeOff();
             //robot.drivetrain.setMotorPowers(0, 0, 0, 0);
+            robot.drivetrain.breakFollowingSmooth();
             currentMode = Mode.DRIVER_CONTROL;
             currentMovement = Movement.DRIVER_IN_CONTROL;
 
@@ -59,6 +60,7 @@ public class GamepadControls {
             currentState = State.LOCATING;
 
         } else if (gamepad1.b) {
+            robot.drivetrain.breakFollowingSmooth();
             robot.intake.turnIntakeOff();
             currentState = State.IDLE;
 
