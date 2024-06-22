@@ -64,7 +64,7 @@ public class TfodControls extends LinearOpMode {
         // Build the TensorFlow Object Detection processor and assign it to a variable.
         myTfodProcessor = myTfodProcessorBuilder.build();
         // Set the minimum confidence at which to keep recognitions.
-        myTfodProcessor.setMinResultConfidence((float) 0.75); //0.40 //.10 //lower for when at court
+        myTfodProcessor.setMinResultConfidence((float) 0.70); //0.40 //.10 //lower for when at court
 
         //aprilTag
         AprilTagProcessor.Builder myAprilTagProcessorBuilder;

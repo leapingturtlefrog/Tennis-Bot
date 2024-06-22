@@ -342,7 +342,7 @@ public class Drivetrain extends MecanumDrive {
         correctAngleSinceLastRotation();
 
         Trajectory goForward = robot.drivetrain.trajectoryBuilder(
-                previousTrajectory.end().plus(new Pose2d(0, 0, Math.toRadians(angleSinceLastRotation))))
+                getPoseEstimate())
                 .forward(distance)
                 .build();
 

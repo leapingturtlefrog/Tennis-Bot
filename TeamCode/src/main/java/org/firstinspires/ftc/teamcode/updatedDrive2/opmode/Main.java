@@ -87,7 +87,7 @@ public class Main extends LinearOpMode {
         PoseStorage.currentPose = robot.drivetrain.getPoseEstimate();
 
         //set previous trajectory as the starting point
-        robot.drivetrain.previousTrajectory = robot.drivetrain.trajectoryBuilder(startPose).forward(0.1).build();
+        robot.drivetrain.previousTrajectory = robot.drivetrain.trajectoryBuilder(startPose).forward(0.000001).build();
 
 
         waitForStart();
@@ -137,7 +137,7 @@ public class Main extends LinearOpMode {
 
                                     //if the distance seems off
                                     if (savedDistance < 0 || savedDistance > 300) {
-                                        robot.drivetrain.simpleRotate(360);
+                                        robot.drivetrain.simpleRotate(90);
                                         currentMode = Mode.FIRST_AUTO_CONTROL;
                                         currentState = Positions.State.LOCATING;
                                     }
@@ -146,7 +146,7 @@ public class Main extends LinearOpMode {
                                     //if there is no detection
                                     if (locateRotations < 272 /*72*/) {
                                         //rotate to find target
-                                        robot.drivetrain.simpleRotate(5.0); //rotate 10 degrees counterclockwise
+                                        robot.drivetrain.simpleRotate(10.0); //rotate 10 degrees counterclockwise
                                         locateRotations++;
 
                                         currentMovement = Movement.LOCATING_BY_ROTATING;
