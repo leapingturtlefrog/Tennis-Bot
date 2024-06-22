@@ -14,6 +14,7 @@ import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public class TfodControls extends LinearOpMode {
@@ -60,7 +61,7 @@ public class TfodControls extends LinearOpMode {
         // Build the TensorFlow Object Detection processor and assign it to a variable.
         myTfodProcessor = myTfodProcessorBuilder.build();
         // Set the minimum confidence at which to keep recognitions.
-        myTfodProcessor.setMinResultConfidence((float) 0.10);
+        myTfodProcessor.setMinResultConfidence((float) 0.55); //0.40 //.10
 
         //aprilTag
         AprilTagProcessor.Builder myAprilTagProcessorBuilder;

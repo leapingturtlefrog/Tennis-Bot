@@ -14,6 +14,7 @@ public class Positions {
     //or auto is
     public static enum Mode {
         DRIVER_CONTROL,
+        FIRST_AUTO_CONTROL, //right after collecting a ball or first starting auto
         AUTO_CONTROL
 
     }

@@ -52,7 +52,7 @@ public class GamepadControls {
 
         } else if (gamepad1.y) {
             //robot.intake.turnIntakeOff();
-            currentMode = Mode.AUTO_CONTROL;
+            currentMode = Mode.FIRST_AUTO_CONTROL;
             currentMovement = Movement.IDLE;
 
         } else if (gamepad1.a) {

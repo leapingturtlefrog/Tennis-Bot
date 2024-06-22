@@ -61,7 +61,7 @@ public class Intake {
     //turn the intake to a variable power that is between -1 and 1
     public void intakeVariablePower(double power) {
         intakeRunningContinuously = false;
-        graduallyChangePower(power);
+        intake.setPower(power);
 
     }
 

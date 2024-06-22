@@ -20,11 +20,15 @@ import static org.firstinspires.ftc.teamcode.updatedDrive2.storage.Positions.sta
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.util.ElapsedTime;
+import java.math.BigDecimal;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.updatedDrive2.main.Robot;
 import org.firstinspires.ftc.teamcode.updatedDrive2.storage.PoseStorage;
 import org.firstinspires.ftc.teamcode.updatedDrive2.storage.Positions;
+
+import java.util.Timer;
 
 
 /**
@@ -56,6 +60,9 @@ public class Main extends LinearOpMode {
     private int locateRotations = 0;
     private int collectRotations = 0;
     private int collectStraights = 0;
+
+    private boolean firstAuto = true; //have we been in auto yet or have we just picked up a ball?
+    ElapsedTime timer = new ElapsedTime();
 
     private int ballsCollected = 0;
 
@@ -96,11 +103,12 @@ public class Main extends LinearOpMode {
             switch (currentMode) {
                 case AUTO_CONTROL:
 
-                    if (currentState != State.IDLE && currentState != State.DROPPING_OFF && ballsCollected > 1) {
+                    /*
+                    if (currentState != State.IDLE && currentState != State.DROPPING_OFF && ballsCollected > 9) {
                         //if the robot has collected enough targets, head home if not idle or dropping off
                         currentState = State.HEADING_HOME;
 
-                    } else {
+                    } else {*/
                         switch (currentState) {
                             case IDLE:
                                 //stop movement and intake
@@ -150,28 +158,33 @@ public class Main extends LinearOpMode {
                                 //collects the detected tennis ball
                                 if (!robot.drivetrain.isSimpleRotating() && collectRotations == 0) {
                                     //needs to rotate to target
-                                    robot.drivetrain.simpleRotate(savedHeadingError);
+                                    robot.drivetrain.simpleRotate(-savedHeadingError);
                                     collectRotations++;
 
                                     currentMovement = Movement.ROTATING_TO_TARGET;
 
                                 } else if (!robot.drivetrain.isSimpleStraightMinusEnd() && collectStraights == 0) {
                                     //needs to collect target
-                                    robot.intake.turnIntakeOn();
+                                    robot.intake.intakeVariablePower(1.0);
 
-                                    robot.drivetrain.simpleStraight(savedDistance, 12);
+                                    robot.drivetrain.simpleStraight(savedDistance + 3, 0);
                                     collectStraights++;
 
                                     currentMovement = Movement.DRIVING_STRAIGHT_TO_TARGET;
 
-                                } else if (robot.drivetrain.isSimpleStraightJustEnd()) {
+                                } /*else if (robot.drivetrain.isSimpleStraightJustEnd()) {
                                     currentMovement = Movement.COLLECTING_TARGET;
 
-                                } else {
+                                } */else {
                                     //collected target
                                     ballsCollected++;
 
+                                    collectRotations = 0;
+                                    collectStraights = 0;
+
                                     currentState = State.LOCATING;
+                                    firstAuto = true;
+                                    currentMode = Mode.FIRST_AUTO_CONTROL;
 
                                 }
 
@@ -194,7 +207,7 @@ public class Main extends LinearOpMode {
 
                         }
 
-                    }
+                    //}
 
                     break;
 
@@ -203,6 +216,20 @@ public class Main extends LinearOpMode {
                     robot.gamepadControls.driverControlControls();
 
                     currentMovement = Movement.DRIVER_IN_CONTROL;
+
+                    break;
+
+                case FIRST_AUTO_CONTROL:
+
+                    if (firstAuto) {
+                        timer.reset();
+                        firstAuto = false;
+
+                    } else if (timer.seconds() > 2.0) {
+                        currentMode = Mode.AUTO_CONTROL;
+                        currentState = State.LOCATING;
+
+                    }
 
             }
 
@@ -228,9 +255,56 @@ public class Main extends LinearOpMode {
         savedX = (savedRecognitions.get(savedDetectionIndex).getLeft() + savedRecognitions.get(savedDetectionIndex).getRight()) / 2.0;
         savedY = (savedRecognitions.get(savedDetectionIndex).getTop() + savedRecognitions.get(savedDetectionIndex).getBottom()) / 2.0;
 
+        /* WRONG, does y value based on distance
         //approximates the distance based on the y value
         //552 + -3.69x + 0.0245x^2 + -7.77E-05x^3 + 9.57E-08x^4
-        savedDistance = 552 - 3.69*savedY + 0.0245*savedY*savedY - 0.0000777*Math.pow(savedY, 3) + 0.0000000957*Math.pow(savedY, 4);
+        savedDistance = 552 - 3.69*savedY + 0.0245*savedY*savedY - 0.0000777*Math.pow(savedY, 3) + 0.0000000957*Math.pow(savedY, 4);*/
+
+        //Correct, produces distance based on y value //update: produces near-zero values
+        //1.31E+07 + -214233x + 1461x^2 + -5.31x^3 + 0.0109x^4 + -1.18E-05x^5 + 5.36E-09x^6
+        //savedDistance = 13100000 - 214233*savedY + 1461*savedY*savedY - 5.31*Math.pow(savedY, 3) + 0.0109*Math.pow(savedY, 4) - 0.000018*Math.pow(savedY, 5) + 0.00000000536*Math.pow(savedY, 6);
+
+        //212101 + -2265x + 9.08x^2 + -0.0162x^3 + 1.08E-05x^4
+        //savedDistance = 212101 - 2265*savedY + 9.08*savedY*savedY - 0.0162*Math.pow(savedY, 3) + 0.0000108*Math.pow(savedY, 4);
+
+        /*
+        BigDecimal y = new BigDecimal(savedY);
+
+        BigDecimal a1 = new BigDecimal(212101);
+
+        BigDecimal a2a = new BigDecimal(-2265);
+        BigDecimal a2 = a2a.multiply(y);
+
+        BigDecimal a3a = new BigDecimal(9.08);
+        BigDecimal a3b = y.pow(2);
+        BigDecimal a3 = a3a.multiply(a3b);
+
+        BigDecimal a4a = new BigDecimal(-0.0162);
+        BigDecimal a4b = y.pow(3);
+        BigDecimal a4 = a4a.multiply(a4b);
+
+        BigDecimal a5a = new BigDecimal(0.0000108);
+        BigDecimal a5b = y.pow(4);
+        BigDecimal a5 = a5a.multiply(a5b);
+
+        BigDecimal ans = a1.add(a2.add(a3.add(a4.add(a5))));
+
+        savedDistance = ans.doubleValue();*/
+
+        //ab^y + c WRONG
+        //a=239.735, b=0.983259, c=315.151
+        //savedDistance = 239.735*Math.pow(0.983259, savedY) + 315.151;
+
+
+        //ab^y + c
+        //a=7.5252e7, b=0.960118, c=60.4614
+        savedDistance = (7.5252E7) * (Math.pow(0.960118, savedY)) + 60.4614;
+
+        if (savedDistance < 30 || savedDistance > 300) {
+            robot.drivetrain.simpleRotate(360);
+            currentMode = Mode.FIRST_AUTO_CONTROL;
+            currentState = State.LOCATING;
+        }
 
     }
 

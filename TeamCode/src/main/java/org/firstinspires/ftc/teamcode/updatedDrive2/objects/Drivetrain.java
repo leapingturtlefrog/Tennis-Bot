@@ -314,14 +314,18 @@ public class Drivetrain extends MecanumDrive {
     }
 
     public void simpleRotate(double angle) {
-        turn(angle);
+        turn(Math.toRadians(angle));
 
         //double power;
     }
 
     public void simpleStraight(double distance, double lastAmountSlow) {
-        driveStraightFromZero(distance - lastAmountSlow);
+        Trajectory forwardLastBit = robot.drivetrain.trajectoryBuilder(new Pose2d())
+                .forward(distance)
+                .build();
 
+
+        robot.drivetrain.followTrajectory(forwardLastBit);
 
     }
 

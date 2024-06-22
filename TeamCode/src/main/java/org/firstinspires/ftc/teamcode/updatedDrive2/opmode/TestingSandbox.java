@@ -18,6 +18,7 @@ import static org.firstinspires.ftc.teamcode.updatedDrive2.storage.Positions.cur
 import static org.firstinspires.ftc.teamcode.updatedDrive2.storage.Positions.startPoseEnumerated;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -128,13 +129,25 @@ public class TestingSandbox extends LinearOpMode {
                     }
 
                     if (gamepad1.dpad_up) {
-                        robot.drivetrain.driveStraightFromZero(12);
+                        Trajectory forwardLastBit = robot.drivetrain.trajectoryBuilder(new Pose2d())
+                                .forward(12)
+                                .build();
+
+                        robot.drivetrain.followTrajectory(forwardLastBit);
+
                     } else if (gamepad1.dpad_down) {
-                        robot.drivetrain.driveStraightFromZero(100);
+                        Trajectory forwardLastBit = robot.drivetrain.trajectoryBuilder(new Pose2d())
+                                .forward(100)
+                                .build();
+
+                        robot.drivetrain.followTrajectory(forwardLastBit);
+
                     } else if (gamepad1.dpad_left) {
-                        robot.drivetrain.turn(90);
+                        robot.drivetrain.turn(Math.toRadians(90));
+
                     } else if (gamepad1.dpad_right) {
-                        robot.drivetrain.turn(-180);
+                        robot.drivetrain.turn(Math.toRadians(-180));
+
                     }
 
                     currentMovement = Movement.DRIVER_IN_CONTROL;
