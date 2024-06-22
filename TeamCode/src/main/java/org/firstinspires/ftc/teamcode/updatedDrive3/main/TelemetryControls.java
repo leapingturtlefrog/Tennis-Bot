@@ -1,6 +1,14 @@
 package org.firstinspires.ftc.teamcode.updatedDrive3.main;
 
 import static org.firstinspires.ftc.teamcode.updatedDrive3.constants.Constants.INTAKE_START_POWER;
+import static org.firstinspires.ftc.teamcode.updatedDrive3.constants.Constants.exposure;
+import static org.firstinspires.ftc.teamcode.updatedDrive3.constants.Constants.gain;
+import static org.firstinspires.ftc.teamcode.updatedDrive3.main.TfodControls.maxExposure;
+import static org.firstinspires.ftc.teamcode.updatedDrive3.main.TfodControls.maxGain;
+import static org.firstinspires.ftc.teamcode.updatedDrive3.main.TfodControls.minExposure;
+import static org.firstinspires.ftc.teamcode.updatedDrive3.main.TfodControls.minGain;
+import static org.firstinspires.ftc.teamcode.updatedDrive3.main.TfodControls.myExposure;
+import static org.firstinspires.ftc.teamcode.updatedDrive3.main.TfodControls.myGain;
 import static org.firstinspires.ftc.teamcode.updatedDrive3.main.TfodControls.savedDetectionIndex;
 import static org.firstinspires.ftc.teamcode.updatedDrive3.main.TfodControls.savedDistance;
 import static org.firstinspires.ftc.teamcode.updatedDrive3.main.TfodControls.savedHeadingError;
@@ -71,11 +79,14 @@ public class TelemetryControls{
         }
 
         //the rest of the objects detected
-        telemetry.addData("", " ");
         telemetry.addData("", "---------------"); //15 dashes
-        telemetry.addData("", " ");
 
         updateTfodTelemAndDetectionIndex();
+
+        //additional info
+        telemetry.addData("", "---------------"); //15 dashes
+        telemetry.addData("Exposure","%d  (%d - %d)", myExposure, minExposure, maxExposure);
+        telemetry.addData("Gain","%d  (%d - %d)", myGain, minGain, maxGain);
 
         telemetry.update();
 

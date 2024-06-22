@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode.updatedDrive3.main;
 
+import static org.firstinspires.ftc.teamcode.updatedDrive3.constants.Constants.exposure;
+import static org.firstinspires.ftc.teamcode.updatedDrive3.constants.Constants.gain;
+
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -47,6 +50,7 @@ public class Robot {
         telemetryControls = new TelemetryControls(this, telemetry);
 
         tfodControls = new TfodControls(hardwareMap);
+
         //aprilTag = new AprilTag(hardwareMap);
 
     }

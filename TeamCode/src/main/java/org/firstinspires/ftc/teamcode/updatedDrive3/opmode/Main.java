@@ -1,6 +1,14 @@
 package org.firstinspires.ftc.teamcode.updatedDrive3.opmode;
 
 import static org.firstinspires.ftc.teamcode.updatedDrive3.constants.Constants.RESTING_INTAKE_POWER;
+import static org.firstinspires.ftc.teamcode.updatedDrive3.constants.Constants.exposure;
+import static org.firstinspires.ftc.teamcode.updatedDrive3.constants.Constants.gain;
+import static org.firstinspires.ftc.teamcode.updatedDrive3.main.TfodControls.myExposure;
+import static org.firstinspires.ftc.teamcode.updatedDrive3.main.TfodControls.myGain;
+import static org.firstinspires.ftc.teamcode.updatedDrive3.main.TfodControls.minExposure;
+import static org.firstinspires.ftc.teamcode.updatedDrive3.main.TfodControls.minGain;
+import static org.firstinspires.ftc.teamcode.updatedDrive3.main.TfodControls.maxExposure;
+import static org.firstinspires.ftc.teamcode.updatedDrive3.main.TfodControls.maxGain;
 import static org.firstinspires.ftc.teamcode.updatedDrive3.main.TfodControls.savedDistance;
 import static org.firstinspires.ftc.teamcode.updatedDrive3.main.TfodControls.savedHeadingError;
 import static org.firstinspires.ftc.teamcode.updatedDrive3.storage.PoseStorage.poseEstimate;
@@ -18,9 +26,14 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl;
 import org.firstinspires.ftc.teamcode.updatedDrive3.main.Robot;
 import org.firstinspires.ftc.teamcode.updatedDrive3.storage.PoseStorage;
 import org.firstinspires.ftc.teamcode.updatedDrive3.storage.Positions;
+import org.firstinspires.ftc.vision.VisionPortal;
+
+import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -66,6 +79,9 @@ public class Main extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
+        telemetry.addLine("Wait...............");
+        telemetry.update();
+
         robot = new Robot(hardwareMap, telemetry, gamepad1);
 
         currentMode = Mode.DRIVER_CONTROL;
@@ -81,12 +97,15 @@ public class Main extends LinearOpMode {
         //set previous trajectory as the starting point
         robot.drivetrain.previousTrajectory = robot.drivetrain.trajectoryBuilder(startPose).forward(0.000001).build();
 
+        telemetry.addLine("Ready");
+        telemetry.update();
 
         waitForStart();
 
         if (isStopRequested()) return;
 
         while (opModeIsActive() && !isStopRequested()) {
+            robot.telemetryControls.add("Exposure changed", robot.tfodControls.setManualExposure(myExposure, myGain) ? "true" : "false", time);
             poseEstimate = robot.drivetrain.getPoseEstimate();
 
             //checks and does actions based on the universal gamepad controls

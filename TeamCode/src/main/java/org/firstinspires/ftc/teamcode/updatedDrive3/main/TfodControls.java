@@ -2,12 +2,16 @@ package org.firstinspires.ftc.teamcode.updatedDrive3.main;
 
 import static org.firstinspires.ftc.teamcode.updatedDrive3.constants.Constants.LABELS;
 import static org.firstinspires.ftc.teamcode.updatedDrive3.constants.Constants.TFOD_MODEL_FILE;
+import static org.firstinspires.ftc.teamcode.updatedDrive3.constants.Constants.exposure;
+import static org.firstinspires.ftc.teamcode.updatedDrive3.constants.Constants.gain;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.JavaUtil;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.vision.VisionPortal;
@@ -15,10 +19,9 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class TfodControls extends LinearOpMode {
-    public VisionPortal visionPortal;
-
     public List<Recognition> currentRecognitions;
     public int currentDetectionIndex = -1;
     //for the recognitions we are heading to
@@ -34,6 +37,13 @@ public class TfodControls extends LinearOpMode {
     public TfodProcessor myTfodProcessor;
     public VisionPortal myVisionPortal;
 
+    public static int     myExposure  ;
+    public static int     minExposure ;
+    public static int     maxExposure ;
+    public static int     myGain      ;
+    public static int     minGain ;
+    public static int     maxGain ;
+
 
     public void runOpMode() throws InterruptedException {}
 
@@ -41,6 +51,13 @@ public class TfodControls extends LinearOpMode {
         hardwareMap = hwMap;
 
         initTfod();
+
+        //sets the camera exposure (0-1000) and gain (0-255) (for this webcam, for others use OptimizeExposure
+        //opmode in the external samples to find the values
+        getCameraSetting();
+        myExposure = Math.max(exposure, minExposure);
+        myGain = Math.min(gain, maxGain);
+        setManualExposure(myExposure, myGain);
 
     }
 
@@ -91,6 +108,8 @@ public class TfodControls extends LinearOpMode {
         myVisionPortalBuilder.addProcessor(myTfodProcessor);
         // Build the VisionPortal object and assign it to a variable.
         myVisionPortal = myVisionPortalBuilder.build();
+
+        sleep(20);
 
     }
 
@@ -169,51 +188,74 @@ public class TfodControls extends LinearOpMode {
         savedX = (savedRecognitions.get(savedDetectionIndex).getLeft() + savedRecognitions.get(savedDetectionIndex).getRight()) / 2.0;
         savedY = (savedRecognitions.get(savedDetectionIndex).getTop() + savedRecognitions.get(savedDetectionIndex).getBottom()) / 2.0;
 
-        /* WRONG, does y value based on distance
-        //approximates the distance based on the y value
-        //552 + -3.69x + 0.0245x^2 + -7.77E-05x^3 + 9.57E-08x^4
-        savedDistance = 552 - 3.69*savedY + 0.0245*savedY*savedY - 0.0000777*Math.pow(savedY, 3) + 0.0000000957*Math.pow(savedY, 4);*/
-
-        //Correct, produces distance based on y value //update: produces near-zero values
-        //1.31E+07 + -214233x + 1461x^2 + -5.31x^3 + 0.0109x^4 + -1.18E-05x^5 + 5.36E-09x^6
-        //savedDistance = 13100000 - 214233*savedY + 1461*savedY*savedY - 5.31*Math.pow(savedY, 3) + 0.0109*Math.pow(savedY, 4) - 0.000018*Math.pow(savedY, 5) + 0.00000000536*Math.pow(savedY, 6);
-
-        //212101 + -2265x + 9.08x^2 + -0.0162x^3 + 1.08E-05x^4
-        //savedDistance = 212101 - 2265*savedY + 9.08*savedY*savedY - 0.0162*Math.pow(savedY, 3) + 0.0000108*Math.pow(savedY, 4);
-
-        /*
-        BigDecimal y = new BigDecimal(savedY);
-
-        BigDecimal a1 = new BigDecimal(212101);
-
-        BigDecimal a2a = new BigDecimal(-2265);
-        BigDecimal a2 = a2a.multiply(y);
-
-        BigDecimal a3a = new BigDecimal(9.08);
-        BigDecimal a3b = y.pow(2);
-        BigDecimal a3 = a3a.multiply(a3b);
-
-        BigDecimal a4a = new BigDecimal(-0.0162);
-        BigDecimal a4b = y.pow(3);
-        BigDecimal a4 = a4a.multiply(a4b);
-
-        BigDecimal a5a = new BigDecimal(0.0000108);
-        BigDecimal a5b = y.pow(4);
-        BigDecimal a5 = a5a.multiply(a5b);
-
-        BigDecimal ans = a1.add(a2.add(a3.add(a4.add(a5))));
-
-        savedDistance = ans.doubleValue();*/
-
-        //ab^y + c WRONG
-        //a=239.735, b=0.983259, c=315.151
-        //savedDistance = 239.735*Math.pow(0.983259, savedY) + 315.151;
-
-
         //ab^y + c
         //a=7.5252e7, b=0.960118, c=60.4614
         savedDistance = (7.5252E7) * (Math.pow(0.960118, savedY)) + 60.4614;
 
+    }
+
+    public boolean    setManualExposure(int exposureMS, int gain) {
+        // Ensure Vision Portal has been setup.
+        if (myVisionPortal == null) {
+            return false;
+        }
+
+        // Wait for the camera to be open
+        if (myVisionPortal.getCameraState() != VisionPortal.CameraState.STREAMING) {
+            while (!isStopRequested() && (myVisionPortal.getCameraState() != VisionPortal.CameraState.STREAMING)) {
+                sleep(20);
+            }
+        }
+
+        // Set camera controls unless we are stopping.
+        if (!isStopRequested())
+        {
+            // Set exposure.  Make sure we are in Manual Mode for these values to take effect.
+            ExposureControl exposureControl = myVisionPortal.getCameraControl(ExposureControl.class);
+            if (exposureControl.getMode() != ExposureControl.Mode.Manual) {
+                exposureControl.setMode(ExposureControl.Mode.Manual);
+                sleep(50);
+            }
+            exposureControl.setExposure((long)exposureMS, TimeUnit.MILLISECONDS);
+            sleep(20);
+
+            // Set Gain.
+            GainControl gainControl = myVisionPortal.getCameraControl(GainControl.class);
+            gainControl.setGain(gain);
+            sleep(20);
+            return (true);
+        } else {
+            return (false);
+        }
+    }
+
+    /*
+        Read this camera's minimum and maximum Exposure and Gain settings.
+        Can only be called AFTER calling initAprilTag();
+     */
+    private void getCameraSetting() {
+        // Ensure Vision Portal has been setup.
+        if (myVisionPortal == null) {
+            return;
+        }
+
+        // Wait for the camera to be open
+        if (myVisionPortal.getCameraState() != VisionPortal.CameraState.STREAMING) {
+            while (!isStopRequested() && (myVisionPortal.getCameraState() != VisionPortal.CameraState.STREAMING)) {
+                sleep(20);
+            }
+        }
+
+        // Get camera control values unless we are stopping.
+        if (!isStopRequested()) {
+            ExposureControl exposureControl = myVisionPortal.getCameraControl(ExposureControl.class);
+            minExposure = (int)exposureControl.getMinExposure(TimeUnit.MILLISECONDS) + 1;
+            maxExposure = (int)exposureControl.getMaxExposure(TimeUnit.MILLISECONDS);
+
+            GainControl gainControl = myVisionPortal.getCameraControl(GainControl.class);
+            minGain = gainControl.getMinGain();
+            maxGain = gainControl.getMaxGain();
+        }
     }
 
 }

@@ -32,7 +32,6 @@ package org.firstinspires.ftc.teamcode.updatedDrive3.examples;
 import static org.firstinspires.ftc.teamcode.updatedDrive3.constants.Constants.LABELS;
 import static org.firstinspires.ftc.teamcode.updatedDrive3.constants.Constants.TFOD_MODEL_FILE;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.Range;
@@ -41,8 +40,8 @@ import org.firstinspires.ftc.robotcore.external.JavaUtil;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl;
+import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.vision.VisionPortal;
-import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 
@@ -69,8 +68,8 @@ import java.util.concurrent.TimeUnit;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list.
  */
 
-@TeleOp(name="Optimize AprilTag Exposure", group = "Concept")
-@Disabled
+@TeleOp(name="Optimize AprilTag/Tfod Exposure", group = "Concept")
+//@Disabled
 public class AprilTagOrTfdodOptimizeExposure extends LinearOpMode
 {
     public AprilTagProcessor myAprilTagProcessor;
@@ -118,7 +117,8 @@ public class AprilTagOrTfdodOptimizeExposure extends LinearOpMode
             telemetry.addLine("Use Right bump/trig to adjust Gain.\n");
 
             // Display how many Tags Detected
-            List<AprilTagDetection> currentDetections = aprilTag.getDetections();
+            List<Recognition> currentDetections = myTfodProcessor.getRecognitions();
+            //List<AprilTagDetection> currentDetections = aprilTag.getDetections();
             int numTags = currentDetections.size();
             if (numTags > 0 )
                 telemetry.addData("Tag", "####### %d Detected  ######", currentDetections.size());
