@@ -20,13 +20,13 @@ public class Multi2 extends LinearOpMode
         TfodProcessor.Builder myTfodProcessorBuilder = new TfodProcessor.Builder();
 
         myTfodProcessor = myTfodProcessorBuilder.setModelFileName(TFOD_MODEL_FILE)
-                    .setModelLabels(new String[]{"a"})
+                    .setModelLabels(new String[]{""})
                     .build();
 
         myTfodProcessor.setMinResultConfidence((float) 0.70);
 
         myTfodProcessor2 = myTfodProcessorBuilder.setModelFileName(TFOD_MODEL_FILE)
-                .setModelLabels(new String[]{"a"})
+                .setModelLabels(new String[]{""})
                 .build();
 
         myTfodProcessor2.setMinResultConfidence((float) 0.70);

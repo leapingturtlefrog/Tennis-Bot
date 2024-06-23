@@ -19,14 +19,19 @@ public class Multi3 extends LinearOpMode
 
         TfodProcessor.Builder myTfodProcessorBuilder = new TfodProcessor.Builder();
 
+        myTfodProcessorBuilder.setUseObjectTracker(false);
+        myTfodProcessorBuilder.setMaxNumRecognitions(1);
+        myTfodProcessorBuilder.setNumDetectorThreads(1);
+        myTfodProcessorBuilder.setNumExecutorThreads(1);
+
         myTfodProcessor = myTfodProcessorBuilder.setModelFileName(TFOD_MODEL_FILE)
-                    .setModelLabels(new String[]{"a"})
+                    .setModelLabels(new String[]{""})
                     .build();
 
         myTfodProcessor.setMinResultConfidence((float) 0.70);
 
         myTfodProcessor2 = myTfodProcessorBuilder.setModelFileName(TFOD_MODEL_FILE)
-                .setModelLabels(new String[]{"a"})
+                .setModelLabels(new String[]{""})
                 .build();
 
         myTfodProcessor2.setMinResultConfidence((float) 0.70);
@@ -49,6 +54,12 @@ public class Multi3 extends LinearOpMode
             telemetry.update();
         }
 
+
+        //portal1.stopStreaming();
+        //portal1.stopLiveView();
+
+        //sleep(500);
+
         if (isStopRequested())
         {
             return;
@@ -65,6 +76,12 @@ public class Multi3 extends LinearOpMode
             telemetry.addLine("Waiting for portal 2 to come online");
             telemetry.update();
         }
+
+
+        //portal1.stopStreaming();
+        //portal1.stopLiveView();
+
+        //sleep(500);
 
         if (isStopRequested())
         {

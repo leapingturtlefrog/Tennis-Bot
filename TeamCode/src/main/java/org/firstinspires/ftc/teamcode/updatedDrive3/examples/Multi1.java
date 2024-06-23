@@ -20,7 +20,7 @@ public class Multi1 extends LinearOpMode
         TfodProcessor.Builder myTfodProcessorBuilder = new TfodProcessor.Builder();
 
         myTfodProcessor = myTfodProcessorBuilder.setModelFileName(TFOD_MODEL_FILE)
-                    .setModelLabels(new String[]{"a"})
+                    .setModelLabels(new String[]{""})
                     .build();
 
         myTfodProcessor.setMinResultConfidence((float) 0.70);
