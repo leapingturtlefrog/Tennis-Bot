@@ -58,8 +58,8 @@ public class Constants {
     public static double KP_HEADING_PID = 6;
 
     //values used to constrain the robot's movement
-    public static double MAX_VEL = 35;
-    public static double MAX_ACCEL = 35;
+    public static double MAX_VEL = 40;
+    public static double MAX_ACCEL = 40;
     public static double MAX_ANG_VEL = 1.5; //2.11;
     public static double MAX_ANG_ACCEL = 1.0; //1.5;
 
@@ -92,7 +92,7 @@ public class Constants {
 
     public static double INTAKE_START_POWER = 0.0;
 
-    public static double RESTING_INTAKE_POWER = 0.5; //the power for when the robot
+    public static double RESTING_INTAKE_POWER = 1.0; //the power for when the robot
     //is not collecting a target
 
 

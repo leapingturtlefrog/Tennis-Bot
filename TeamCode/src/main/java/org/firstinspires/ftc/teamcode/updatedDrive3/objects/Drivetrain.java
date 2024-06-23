@@ -77,7 +77,7 @@ public class Drivetrain extends MecanumDrive {
 
     ElapsedTime timer = new ElapsedTime();
 
-    public Trajectory previousTrajectory;
+    public Trajectory currentTrajectory;
 
     private Robot robot;
 
@@ -349,7 +349,7 @@ public class Drivetrain extends MecanumDrive {
 
     public void simpleRotate(double angle) {
         isSimpleRotating = true;
-        turnAsync(angle);
+        turnAsync(Math.toRadians(angle));
 
     }
 
@@ -366,12 +366,12 @@ public class Drivetrain extends MecanumDrive {
     public void simpleStraight(double distance) {
         isSimpleStraight = true;
 
-        Trajectory goForward = robot.drivetrain.trajectoryBuilder(
+        Trajectory goForward = trajectoryBuilder(
                 getPoseEstimate())
                 .forward(distance)
                 .build();
 
-        robot.drivetrain.followTrajectoryAsync(goForward);
+        followTrajectoryAsync(goForward);
 
     }
 

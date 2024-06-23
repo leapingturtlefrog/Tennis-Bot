@@ -15,7 +15,6 @@ public class REVDistanceSensor {
     public DistanceSensor distanceSensor;
 
     public static double distance;
-    public static double savedDistance;
 
     public REVDistanceSensor(HardwareMap hardwareMap) {
         distanceSensor = hardwareMap.get(DistanceSensor.class, "distanceSensor");

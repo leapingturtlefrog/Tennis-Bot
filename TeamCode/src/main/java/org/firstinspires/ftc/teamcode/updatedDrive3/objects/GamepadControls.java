@@ -7,6 +7,10 @@ import static org.firstinspires.ftc.teamcode.updatedDrive3.storage.Positions.Sta
 import static org.firstinspires.ftc.teamcode.updatedDrive3.storage.Positions.currentMode;
 import static org.firstinspires.ftc.teamcode.updatedDrive3.storage.Positions.currentMovement;
 import static org.firstinspires.ftc.teamcode.updatedDrive3.storage.Positions.currentState;
+import static org.firstinspires.ftc.teamcode.updatedDrive3.opmode.Main.collectRotations;
+import static org.firstinspires.ftc.teamcode.updatedDrive3.opmode.Main.collectStraights;
+import static org.firstinspires.ftc.teamcode.updatedDrive3.opmode.Main.locateRotations;
+
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.hardware.Gamepad;
@@ -50,6 +54,9 @@ public class GamepadControls {
             robot.drivetrain.breakFollowingSmooth();
             currentMode = Mode.DRIVER_CONTROL;
             currentMovement = Movement.DRIVER_IN_CONTROL;
+            collectRotations = 0;
+            collectStraights = 0;
+            locateRotations = 0;
 
         } else if (gamepad1.y) {
             //robot.intake.turnIntakeOff();
