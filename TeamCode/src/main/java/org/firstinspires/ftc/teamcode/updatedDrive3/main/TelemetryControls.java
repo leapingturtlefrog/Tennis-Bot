@@ -1,20 +1,18 @@
 package org.firstinspires.ftc.teamcode.updatedDrive3.main;
 
 import static org.firstinspires.ftc.teamcode.updatedDrive3.constants.Constants.INTAKE_START_POWER;
-import static org.firstinspires.ftc.teamcode.updatedDrive3.constants.Constants.exposure;
-import static org.firstinspires.ftc.teamcode.updatedDrive3.constants.Constants.gain;
-import static org.firstinspires.ftc.teamcode.updatedDrive3.main.TfodControls.maxExposure;
-import static org.firstinspires.ftc.teamcode.updatedDrive3.main.TfodControls.maxGain;
-import static org.firstinspires.ftc.teamcode.updatedDrive3.main.TfodControls.minExposure;
-import static org.firstinspires.ftc.teamcode.updatedDrive3.main.TfodControls.minGain;
-import static org.firstinspires.ftc.teamcode.updatedDrive3.main.TfodControls.myExposure;
-import static org.firstinspires.ftc.teamcode.updatedDrive3.main.TfodControls.myGain;
-import static org.firstinspires.ftc.teamcode.updatedDrive3.main.TfodControls.savedDetectionIndex;
-import static org.firstinspires.ftc.teamcode.updatedDrive3.main.TfodControls.savedDistance;
-import static org.firstinspires.ftc.teamcode.updatedDrive3.main.TfodControls.savedHeadingError;
-import static org.firstinspires.ftc.teamcode.updatedDrive3.main.TfodControls.savedRecognitions;
-import static org.firstinspires.ftc.teamcode.updatedDrive3.main.TfodControls.savedX;
-import static org.firstinspires.ftc.teamcode.updatedDrive3.main.TfodControls.savedY;
+import static org.firstinspires.ftc.teamcode.updatedDrive3.main.CameraControls.maxExposure;
+import static org.firstinspires.ftc.teamcode.updatedDrive3.main.CameraControls.maxGain;
+import static org.firstinspires.ftc.teamcode.updatedDrive3.main.CameraControls.minExposure;
+import static org.firstinspires.ftc.teamcode.updatedDrive3.main.CameraControls.minGain;
+import static org.firstinspires.ftc.teamcode.updatedDrive3.main.CameraControls.myExposure;
+import static org.firstinspires.ftc.teamcode.updatedDrive3.main.CameraControls.myGain;
+import static org.firstinspires.ftc.teamcode.updatedDrive3.main.CameraControls.savedDetectionIndex;
+import static org.firstinspires.ftc.teamcode.updatedDrive3.main.CameraControls.savedDistance;
+import static org.firstinspires.ftc.teamcode.updatedDrive3.main.CameraControls.savedHeadingError;
+import static org.firstinspires.ftc.teamcode.updatedDrive3.main.CameraControls.savedRecognitions;
+import static org.firstinspires.ftc.teamcode.updatedDrive3.main.CameraControls.savedX;
+import static org.firstinspires.ftc.teamcode.updatedDrive3.main.CameraControls.savedY;
 import static org.firstinspires.ftc.teamcode.updatedDrive3.storage.PoseStorage.poseEstimate;
 import static org.firstinspires.ftc.teamcode.updatedDrive3.storage.Positions.currentMode;
 import static org.firstinspires.ftc.teamcode.updatedDrive3.storage.Positions.currentMovement;
@@ -94,19 +92,19 @@ public class TelemetryControls{
 
     //updates the telemetry for the tfod and the
     public void updateTfodTelemAndDetectionIndex() {
-        robot.tfodControls.currentRecognitions = robot.tfodControls.myTfodProcessor.getRecognitions();
+        robot.cameraControls.currentRecognitions = robot.cameraControls.myTfodProcessor.getRecognitions();
 
-        telemetry.addData("# objects detected", robot.tfodControls.currentRecognitions.size());
+        telemetry.addData("# objects detected", robot.cameraControls.currentRecognitions.size());
 
         double highestConfidence = 0;
         int index = 0;
-        robot.tfodControls.currentDetectionIndex = -1;
+        robot.cameraControls.currentDetectionIndex = -1;
 
         //display info on each recognition
-        for (Recognition recognition : robot.tfodControls.currentRecognitions) {
+        for (Recognition recognition : robot.cameraControls.currentRecognitions) {
             if (recognition.getConfidence() > highestConfidence) {
                 highestConfidence = recognition.getConfidence();
-                robot.tfodControls.currentDetectionIndex = index;
+                robot.cameraControls.currentDetectionIndex = index;
 
             }
 

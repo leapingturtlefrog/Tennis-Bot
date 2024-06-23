@@ -1,8 +1,7 @@
-package org.firstinspires.ftc.teamcode.updatedDrive3.examples;
+package org.firstinspires.ftc.teamcode.updatedDrive4.examples;
 
-import static org.firstinspires.ftc.teamcode.updatedDrive3.constants.Constants.TFOD_MODEL_FILE;
+import static org.firstinspires.ftc.teamcode.updatedDrive4.constants.Constants.TFOD_MODEL_FILE;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -14,9 +13,8 @@ import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 
 import java.util.concurrent.TimeUnit;
 
-@TeleOp(name="updatedDriveMulti5")
-@Disabled
-public class Multi5 extends LinearOpMode
+@TeleOp
+public class Multi4 extends LinearOpMode
 {
     @Override
     public void runOpMode() throws InterruptedException
@@ -26,8 +24,9 @@ public class Multi5 extends LinearOpMode
         TfodProcessor.Builder myTfodProcessorBuilder = new TfodProcessor.Builder();
 
         myTfodProcessor = myTfodProcessorBuilder.setUseObjectTracker(false)
+                .setMaxNumRecognitions(1)
                 .setNumDetectorThreads(1)
-                .setNumExecutorThreads(2)
+                .setNumExecutorThreads(1)
                 .setModelFileName(TFOD_MODEL_FILE)
                 .setModelLabels(new String[]{""})
                 .build();
@@ -35,14 +34,14 @@ public class Multi5 extends LinearOpMode
         myTfodProcessor.setMinResultConfidence((float) 0.10);
 
         myTfodProcessor2 = myTfodProcessorBuilder.setUseObjectTracker(false)
+                .setMaxNumRecognitions(1)
                 .setNumDetectorThreads(1)
-                .setNumExecutorThreads(2)
+                .setNumExecutorThreads(1)
                 .setModelFileName(TFOD_MODEL_FILE)
                 .setModelLabels(new String[]{""})
                 .build();
 
         myTfodProcessor2.setMinResultConfidence((float) 0.10);
-        myTfodProcessor2.setClippingMargins(0, 0, 0, 60);
 
         //
 
@@ -83,7 +82,7 @@ public class Multi5 extends LinearOpMode
             telemetry.update();
         }
 
-        setManualExposure(19, 255, portal2);
+        setManualExposure(60, 255, portal2);
 
         if (isStopRequested())
         {
@@ -101,11 +100,12 @@ public class Multi5 extends LinearOpMode
         {
             int exp = (int) Math.abs((gamepad1.left_stick_y + gamepad1.left_trigger) * 100);
             //19
-            setManualExposure(19, 255, portal2);
+            setManualExposure(exp, 255, portal2);
 
             telemetry.addLine("All cameras online");
             telemetry.addData("exp", exp);
             telemetry.update();
+            sleep(500);
         }
     }
 

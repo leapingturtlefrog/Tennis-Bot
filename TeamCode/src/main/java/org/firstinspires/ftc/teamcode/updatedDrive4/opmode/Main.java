@@ -1,19 +1,19 @@
-package org.firstinspires.ftc.teamcode.updatedDrive3.opmode;
+package org.firstinspires.ftc.teamcode.updatedDrive4.opmode;
 
-import static org.firstinspires.ftc.teamcode.updatedDrive3.constants.Constants.RESTING_INTAKE_POWER;
-import static org.firstinspires.ftc.teamcode.updatedDrive3.constants.Constants.TRACK_WIDTH;
-import static org.firstinspires.ftc.teamcode.updatedDrive3.main.CameraControls.savedDistance;
-import static org.firstinspires.ftc.teamcode.updatedDrive3.main.CameraControls.savedHeadingError;
-import static org.firstinspires.ftc.teamcode.updatedDrive3.objects.REVDistanceSensor.distance;
-import static org.firstinspires.ftc.teamcode.updatedDrive3.storage.PoseStorage.poseEstimate;
-import static org.firstinspires.ftc.teamcode.updatedDrive3.storage.Positions.Mode;
-import static org.firstinspires.ftc.teamcode.updatedDrive3.storage.Positions.Movement;
-import static org.firstinspires.ftc.teamcode.updatedDrive3.storage.Positions.StartPoseEnumerated;
-import static org.firstinspires.ftc.teamcode.updatedDrive3.storage.Positions.State;
-import static org.firstinspires.ftc.teamcode.updatedDrive3.storage.Positions.currentMode;
-import static org.firstinspires.ftc.teamcode.updatedDrive3.storage.Positions.currentMovement;
-import static org.firstinspires.ftc.teamcode.updatedDrive3.storage.Positions.currentState;
-import static org.firstinspires.ftc.teamcode.updatedDrive3.storage.Positions.startPoseEnumerated;
+import static org.firstinspires.ftc.teamcode.updatedDrive4.constants.Constants.RESTING_INTAKE_POWER;
+import static org.firstinspires.ftc.teamcode.updatedDrive4.constants.Constants.TRACK_WIDTH;
+import static org.firstinspires.ftc.teamcode.updatedDrive4.main.CameraControls.savedDistance;
+import static org.firstinspires.ftc.teamcode.updatedDrive4.main.CameraControls.savedHeadingError;
+import static org.firstinspires.ftc.teamcode.updatedDrive4.objects.REVDistanceSensor.distance;
+import static org.firstinspires.ftc.teamcode.updatedDrive4.storage.PoseStorage.poseEstimate;
+import static org.firstinspires.ftc.teamcode.updatedDrive4.storage.Positions.Mode;
+import static org.firstinspires.ftc.teamcode.updatedDrive4.storage.Positions.Movement;
+import static org.firstinspires.ftc.teamcode.updatedDrive4.storage.Positions.StartPoseEnumerated;
+import static org.firstinspires.ftc.teamcode.updatedDrive4.storage.Positions.State;
+import static org.firstinspires.ftc.teamcode.updatedDrive4.storage.Positions.currentMode;
+import static org.firstinspires.ftc.teamcode.updatedDrive4.storage.Positions.currentMovement;
+import static org.firstinspires.ftc.teamcode.updatedDrive4.storage.Positions.currentState;
+import static org.firstinspires.ftc.teamcode.updatedDrive4.storage.Positions.startPoseEnumerated;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
@@ -21,10 +21,11 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.updatedDrive3.main.Robot;
-import org.firstinspires.ftc.teamcode.updatedDrive3.objects.Drivetrain;
-import org.firstinspires.ftc.teamcode.updatedDrive3.storage.PoseStorage;
-import org.firstinspires.ftc.teamcode.updatedDrive3.storage.Positions;
+import org.firstinspires.ftc.teamcode.updatedDrive4.main.Robot;
+import org.firstinspires.ftc.teamcode.updatedDrive4.main.TelemetryControls;
+import org.firstinspires.ftc.teamcode.updatedDrive4.objects.Drivetrain;
+import org.firstinspires.ftc.teamcode.updatedDrive4.storage.PoseStorage;
+import org.firstinspires.ftc.teamcode.updatedDrive4.storage.Positions;
 
 
 /**
@@ -50,7 +51,7 @@ import org.firstinspires.ftc.teamcode.updatedDrive3.storage.Positions;
 //TODO: Add distance sensor to prevent driving into solid objects and add virtual map for path planning
 
 
-@TeleOp(name="updatedDrive3Main", group = "APushBot")
+@TeleOp(name="updatedDrive4Main", group = "APushBot")
 //@Disabled
 public class Main extends LinearOpMode {
     public static int locateRotations = 0;
@@ -129,50 +130,61 @@ public class Main extends LinearOpMode {
                                     //locates tennis balls
                                     robot.intake.intakeVariablePower(RESTING_INTAKE_POWER);
 
-                                    //if there is a detection
-                                    if (robot.cameraControls.currentRecognitions.size() > 0) {
-                                        //stop the robot
-                                        robot.drivetrain.breakFollowingImmediately();
+                                    //if we are not stopping rotation
+                                    if (timer1.seconds() > 2.0) {
+                                        //if there is a detection
+                                        if (robot.cameraControls.currentRecognitions1.size() > 0 || robot.cameraControls.currentRecognitions2.size() > 0) {
+                                            //stop the robot
+                                            robot.drivetrain.breakFollowingImmediately();
 
-                                        if (locateRotations > 0) {
-                                            //correct the angle because the robot over-rotates after cancelling following
-                                            //if the robot was previously just rotating to find a target
-                                            robot.drivetrain.simpleRotate(-4.0);
+                                            if (firstDetection) {
+                                                firstDetection = false;
+                                                timer1.reset();
+
+                                            } else {
+                                                firstDetection = true;
+                                                //save the recognition data for the highest confidence recognition
+                                                robot.cameraControls.saveRecognitionData();
+
+                                                currentState = State.COLLECTING;
+
+                                                //if the distance seems off
+                                                if (savedDistance < 0 || savedDistance > 400) {
+                                                    telemetry.addData("Recognition distance too far", time);
+                                                    robot.drivetrain.simpleRotate(20);
+                                                    firstAuto = true;
+                                                    currentMode = Mode.FIRST_AUTO_CONTROL;
+                                                    currentState = State.LOCATING;
+                                                }
+
+                                            }
+
+                                            break;
+
+                                        } else if (!robot.drivetrain.isSimpleRotating()) {
+                                            firstDetection = true;
+                                            //if there is no detection
+                                            if (locateRotations < 30) {
+                                                //rotate to find target
+                                                robot.drivetrain.simpleRotate(50); //rotate 50 degrees counterclockwise
+                                                locateRotations++;
+
+                                                currentMovement = Movement.LOCATING_BY_ROTATING;
+
+                                            } else if (!robot.drivetrain.isSimpleStraight()){
+                                                //drive to a new location asynchronously
+                                                findNewLocation();
+                                                driveToNewLocation();
+
+                                                //once done: locateRotations = 0;
+
+                                                currentMovement = Movement.LOCATING_BY_DRIVING;
+
+                                            }
+
                                         }
 
-                                        //save the recognition data for the highest confidence recognition
-                                        robot.cameraControls.saveRecognitionData();
-
-                                        currentState = State.COLLECTING;
-
-                                        //if the distance seems off
-                                        if (savedDistance < 0 || savedDistance > 400) {
-                                            telemetry.addData("Recognition distance too far", time);
-                                            robot.drivetrain.simpleRotate(20);
-                                            firstAuto = true;
-                                            currentMode = Mode.FIRST_AUTO_CONTROL;
-                                            currentState = State.LOCATING;
-                                        }
-
-                                    } else if (!robot.drivetrain.isSimpleRotating()) {
-                                        //if there is no detection
-                                        if (locateRotations < 30) {
-                                            //rotate to find target
-                                            robot.drivetrain.simpleRotate(50, 0.2); //rotate 50 degrees counterclockwise
-                                            locateRotations++;
-
-                                            currentMovement = Movement.LOCATING_BY_ROTATING;
-
-                                        } else if (!robot.drivetrain.isSimpleStraight()){
-                                            //drive to a new location asynchronously
-                                            findNewLocation();
-                                            driveToNewLocation();
-
-                                            //once done: locateRotations = 0;
-
-                                            currentMovement = Movement.LOCATING_BY_DRIVING;
-
-                                        }
+                                        firstDetection = true;
 
                                     }
 
@@ -305,7 +317,7 @@ public class Main extends LinearOpMode {
             }
 
             //updates only the telemetry
-            robot.telemetryControls.update();
+            TelemetryControls.update();
 
         }
 

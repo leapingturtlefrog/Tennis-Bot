@@ -1,8 +1,7 @@
-package org.firstinspires.ftc.teamcode.updatedDrive3.examples;
+package org.firstinspires.ftc.teamcode.updatedDrive4.examples;
 
-import static org.firstinspires.ftc.teamcode.updatedDrive3.constants.Constants.TFOD_MODEL_FILE;
+import static org.firstinspires.ftc.teamcode.updatedDrive4.constants.Constants.TFOD_MODEL_FILE;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -14,8 +13,7 @@ import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 
 import java.util.concurrent.TimeUnit;
 
-@TeleOp(name="updatedDriveMulti5")
-@Disabled
+@TeleOp
 public class Multi5 extends LinearOpMode
 {
     @Override

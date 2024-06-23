@@ -21,7 +21,7 @@ import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-public class TfodControls extends LinearOpMode {
+public class CameraControls extends LinearOpMode {
     public List<Recognition> currentRecognitions;
     public int currentDetectionIndex = -1;
     //for the recognitions we are heading to
@@ -47,7 +47,7 @@ public class TfodControls extends LinearOpMode {
 
     public void runOpMode() throws InterruptedException {}
 
-    public TfodControls(HardwareMap hwMap) {
+    public CameraControls(HardwareMap hwMap) {
         hardwareMap = hwMap;
 
         initTfod();

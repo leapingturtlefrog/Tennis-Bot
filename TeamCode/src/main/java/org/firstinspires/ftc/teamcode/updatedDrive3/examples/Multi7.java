@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.updatedDrive3.examples;
 
 import static org.firstinspires.ftc.teamcode.updatedDrive3.constants.Constants.TFOD_MODEL_FILE;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -14,7 +15,8 @@ import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 
 import java.util.concurrent.TimeUnit;
 
-@TeleOp
+@TeleOp(name="updatedDriveMulti7")
+@Disabled
 public class Multi7 extends LinearOpMode
 {
     @Override
@@ -38,7 +40,7 @@ public class Multi7 extends LinearOpMode
         myTfodProcessor2 = myTfodProcessorBuilder.setUseObjectTracker(false)
                 .setMaxNumRecognitions(5)
                 .setNumDetectorThreads(1)
-                .setNumExecutorThreads(2)
+                .setNumExecutorThreads(1)
                 .setModelFileName(TFOD_MODEL_FILE)
                 .setModelLabels(new String[]{""})
                 .build();

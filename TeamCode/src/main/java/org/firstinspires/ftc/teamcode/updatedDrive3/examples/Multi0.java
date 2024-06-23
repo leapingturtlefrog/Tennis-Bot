@@ -1,12 +1,14 @@
 package org.firstinspires.ftc.teamcode.updatedDrive3.examples;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.vision.VisionPortal;
 
-@TeleOp
+@TeleOp(name="updatedDriveMulti0")
+@Disabled
 public class Multi0 extends LinearOpMode
 {
     @Override

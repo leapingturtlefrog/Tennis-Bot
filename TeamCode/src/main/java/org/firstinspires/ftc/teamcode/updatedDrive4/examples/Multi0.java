@@ -1,41 +1,23 @@
-package org.firstinspires.ftc.teamcode.updatedDrive3.examples;
+package org.firstinspires.ftc.teamcode.updatedDrive4.examples;
 
-import static org.firstinspires.ftc.teamcode.updatedDrive3.constants.Constants.TFOD_MODEL_FILE;
-
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.vision.VisionPortal;
-import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 
-@TeleOp(name="updatedDriveMulti1")
-@Disabled
-public class Multi1 extends LinearOpMode
+@TeleOp
+public class Multi0 extends LinearOpMode
 {
     @Override
     public void runOpMode() throws InterruptedException
     {
-        TfodProcessor myTfodProcessor;
-
-        TfodProcessor.Builder myTfodProcessorBuilder = new TfodProcessor.Builder();
-
-        myTfodProcessor = myTfodProcessorBuilder.setModelFileName(TFOD_MODEL_FILE)
-                    .setModelLabels(new String[]{""})
-                    .build();
-
-        myTfodProcessor.setMinResultConfidence((float) 0.70);
-
-        //
-
         telemetry.setMsTransmissionInterval(50);
 
         int[] viewIDs = VisionPortal.makeMultiPortalView(2, VisionPortal.MultiPortalLayout.HORIZONTAL);
 
         VisionPortal portal1 = new VisionPortal.Builder()
                 .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
-                .addProcessor(myTfodProcessor)
                 .setLiveViewContainerId(viewIDs[0])
                 .build();
 

@@ -1,20 +1,20 @@
-package org.firstinspires.ftc.teamcode.updatedDrive3.opmode;
+package org.firstinspires.ftc.teamcode.updatedDrive4.opmode;
 
-import static org.firstinspires.ftc.teamcode.updatedDrive3.main.CameraControls.savedDetectionIndex;
-import static org.firstinspires.ftc.teamcode.updatedDrive3.main.CameraControls.savedDistance;
-import static org.firstinspires.ftc.teamcode.updatedDrive3.main.CameraControls.savedHeadingError;
-import static org.firstinspires.ftc.teamcode.updatedDrive3.main.CameraControls.savedRecognitions;
-import static org.firstinspires.ftc.teamcode.updatedDrive3.main.CameraControls.savedX;
-import static org.firstinspires.ftc.teamcode.updatedDrive3.main.CameraControls.savedY;
-import static org.firstinspires.ftc.teamcode.updatedDrive3.storage.PoseStorage.poseEstimate;
-import static org.firstinspires.ftc.teamcode.updatedDrive3.storage.Positions.Mode;
-import static org.firstinspires.ftc.teamcode.updatedDrive3.storage.Positions.Movement;
-import static org.firstinspires.ftc.teamcode.updatedDrive3.storage.Positions.StartPoseEnumerated;
-import static org.firstinspires.ftc.teamcode.updatedDrive3.storage.Positions.State;
-import static org.firstinspires.ftc.teamcode.updatedDrive3.storage.Positions.currentMode;
-import static org.firstinspires.ftc.teamcode.updatedDrive3.storage.Positions.currentMovement;
-import static org.firstinspires.ftc.teamcode.updatedDrive3.storage.Positions.currentState;
-import static org.firstinspires.ftc.teamcode.updatedDrive3.storage.Positions.startPoseEnumerated;
+import static org.firstinspires.ftc.teamcode.updatedDrive4.main.CameraControls.savedDetectionIndex;
+import static org.firstinspires.ftc.teamcode.updatedDrive4.main.CameraControls.savedDistance;
+import static org.firstinspires.ftc.teamcode.updatedDrive4.main.CameraControls.savedHeadingError;
+import static org.firstinspires.ftc.teamcode.updatedDrive4.main.CameraControls.savedRecognitions;
+import static org.firstinspires.ftc.teamcode.updatedDrive4.main.CameraControls.savedX;
+import static org.firstinspires.ftc.teamcode.updatedDrive4.main.CameraControls.savedY;
+import static org.firstinspires.ftc.teamcode.updatedDrive4.storage.PoseStorage.poseEstimate;
+import static org.firstinspires.ftc.teamcode.updatedDrive4.storage.Positions.Mode;
+import static org.firstinspires.ftc.teamcode.updatedDrive4.storage.Positions.Movement;
+import static org.firstinspires.ftc.teamcode.updatedDrive4.storage.Positions.StartPoseEnumerated;
+import static org.firstinspires.ftc.teamcode.updatedDrive4.storage.Positions.State;
+import static org.firstinspires.ftc.teamcode.updatedDrive4.storage.Positions.currentMode;
+import static org.firstinspires.ftc.teamcode.updatedDrive4.storage.Positions.currentMovement;
+import static org.firstinspires.ftc.teamcode.updatedDrive4.storage.Positions.currentState;
+import static org.firstinspires.ftc.teamcode.updatedDrive4.storage.Positions.startPoseEnumerated;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
@@ -22,9 +22,9 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.teamcode.updatedDrive3.main.Robot;
-import org.firstinspires.ftc.teamcode.updatedDrive3.storage.PoseStorage;
-import org.firstinspires.ftc.teamcode.updatedDrive3.storage.Positions;
+import org.firstinspires.ftc.teamcode.updatedDrive4.main.Robot;
+import org.firstinspires.ftc.teamcode.updatedDrive4.storage.PoseStorage;
+import org.firstinspires.ftc.teamcode.updatedDrive4.storage.Positions;
 
 
 /**
@@ -50,7 +50,7 @@ import org.firstinspires.ftc.teamcode.updatedDrive3.storage.Positions;
 //TODO: Add distance sensor to prevent driving into solid objects and add virtual map for path planning
 
 
-@TeleOp(name="updatedDrive3testingSandbox", group = "APushBot")
+@TeleOp(name="updatedDrive4testingSandbox", group = "APushBot")
 //@Disabled
 public class TestingSandbox extends LinearOpMode {
     private int locateRotations = 0;
@@ -164,6 +164,7 @@ public class TestingSandbox extends LinearOpMode {
 
     /** FUNCTIONS ***/
 
+    /*
 
     //save the recognition data for the highest confidence recognition
     private void saveRecognitionData() {
@@ -179,7 +180,7 @@ public class TestingSandbox extends LinearOpMode {
         //552 + -3.69x + 0.0245x^2 + -7.77E-05x^3 + 9.57E-08x^4
         savedDistance = 552 - 3.69*savedY + 0.0245*savedY*savedY - 0.0000777*Math.pow(savedY, 3) + 0.0000000957*Math.pow(savedY, 4);
 
-    }
+    }*/
 
     //TODO: finish these functions
     //find new location using virtual map

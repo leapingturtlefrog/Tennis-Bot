@@ -1,8 +1,7 @@
-package org.firstinspires.ftc.teamcode.updatedDrive3.examples;
+package org.firstinspires.ftc.teamcode.updatedDrive4.examples;
 
-import static org.firstinspires.ftc.teamcode.updatedDrive3.constants.Constants.TFOD_MODEL_FILE;
+import static org.firstinspires.ftc.teamcode.updatedDrive4.constants.Constants.TFOD_MODEL_FILE;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -10,8 +9,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 
-@TeleOp(name="updatedDriveMulti1")
-@Disabled
+@TeleOp
 public class Multi1 extends LinearOpMode
 {
     @Override

@@ -1,8 +1,7 @@
-package org.firstinspires.ftc.teamcode.updatedDrive3.examples;
+package org.firstinspires.ftc.teamcode.updatedDrive4.examples;
 
-import static org.firstinspires.ftc.teamcode.updatedDrive3.constants.Constants.TFOD_MODEL_FILE;
+import static org.firstinspires.ftc.teamcode.updatedDrive4.constants.Constants.TFOD_MODEL_FILE;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -10,13 +9,13 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl;
 import org.firstinspires.ftc.vision.VisionPortal;
+import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 
 import java.util.concurrent.TimeUnit;
 
-@TeleOp(name="updatedDriveMulti5")
-@Disabled
-public class Multi5 extends LinearOpMode
+@TeleOp
+public class Multi7 extends LinearOpMode
 {
     @Override
     public void runOpMode() throws InterruptedException
@@ -26,23 +25,38 @@ public class Multi5 extends LinearOpMode
         TfodProcessor.Builder myTfodProcessorBuilder = new TfodProcessor.Builder();
 
         myTfodProcessor = myTfodProcessorBuilder.setUseObjectTracker(false)
+                .setMaxNumRecognitions(5)
                 .setNumDetectorThreads(1)
-                .setNumExecutorThreads(2)
+                .setNumExecutorThreads(1)
                 .setModelFileName(TFOD_MODEL_FILE)
                 .setModelLabels(new String[]{""})
                 .build();
 
         myTfodProcessor.setMinResultConfidence((float) 0.10);
 
+        //MUST HAVE USE OBJECT TRACKER FALSE for two cameras
         myTfodProcessor2 = myTfodProcessorBuilder.setUseObjectTracker(false)
+                .setMaxNumRecognitions(5)
                 .setNumDetectorThreads(1)
-                .setNumExecutorThreads(2)
+                .setNumExecutorThreads(1)
                 .setModelFileName(TFOD_MODEL_FILE)
                 .setModelLabels(new String[]{""})
                 .build();
 
         myTfodProcessor2.setMinResultConfidence((float) 0.10);
-        myTfodProcessor2.setClippingMargins(0, 0, 0, 60);
+        //myTfodProcessor2.setClippingMargins(0, 0, 0, 90);
+
+        //
+
+        AprilTagProcessor myAprilTagProcessor, myAprilTagProcessor2;
+
+        AprilTagProcessor.Builder myAprilTagProcessorBuilder = new AprilTagProcessor.Builder();
+
+        myAprilTagProcessor = myAprilTagProcessorBuilder.build();
+        myAprilTagProcessor.setDecimation(1);
+
+        myAprilTagProcessor2 = myAprilTagProcessorBuilder.build();
+        myAprilTagProcessor2.setDecimation(1);
 
         //
 
@@ -53,6 +67,7 @@ public class Multi5 extends LinearOpMode
         VisionPortal portal1 = new VisionPortal.Builder()
                 .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
                 .addProcessor(myTfodProcessor)
+                .addProcessor(myAprilTagProcessor)
                 .setStreamFormat(VisionPortal.StreamFormat.YUY2)
                 .setLiveViewContainerId(viewIDs[0])
                 .build();
@@ -73,6 +88,7 @@ public class Multi5 extends LinearOpMode
         VisionPortal portal2 = new VisionPortal.Builder()
                 .setCamera(hardwareMap.get(WebcamName.class, "Webcam 2"))
                 .addProcessor(myTfodProcessor2)
+                .addProcessor(myAprilTagProcessor2)
                 .setStreamFormat(VisionPortal.StreamFormat.YUY2)
                 .setLiveViewContainerId(viewIDs[1])
                 .build();
@@ -82,6 +98,8 @@ public class Multi5 extends LinearOpMode
             telemetry.addLine("Waiting for portal 2 to come online");
             telemetry.update();
         }
+
+        sleep(500);
 
         setManualExposure(19, 255, portal2);
 

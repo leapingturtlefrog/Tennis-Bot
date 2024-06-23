@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.updatedDrive3.examples;
 
 import android.util.Size;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -17,7 +18,8 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-@TeleOp(name = "W_MultiPortal 2")
+@TeleOp(name = "u3W_MultiPortal 2")
+@Disabled
 public class MultiCamera2 extends LinearOpMode {
 
     VisionPortal.Builder myVisionPortalBuilder;
