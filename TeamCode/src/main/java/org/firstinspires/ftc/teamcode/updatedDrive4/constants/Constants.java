@@ -105,6 +105,8 @@ public class Constants {
             "a"
     };
 
+    //
+
     public static int exposure1 = 7, exposure2 = 19; //says 1-1000, but after 40 it is basically all white
     public static int gain1 = 255, gain2 = 255; //0-255 for this webcam
     public static int minExposure1, minExposure2, maxExposure1, maxExposure2;
