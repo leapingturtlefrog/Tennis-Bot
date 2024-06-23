@@ -80,6 +80,7 @@ public class AprilTagOrTfdodOptimizeExposure extends LinearOpMode
     private int     minExposure ;
     private int     maxExposure ;
     private int     myGain      ;
+    private double myGainAsDouble = 255;
     private int     minGain ;
     private int     maxGain ;
 
@@ -144,6 +145,15 @@ public class AprilTagOrTfdodOptimizeExposure extends LinearOpMode
                 setManualExposure(myExposure, myGain);
             }
 
+            if (thisGainDn) {
+                myGainAsDouble = Range.clip(myGainAsDouble - 0.6, minGain, maxGain);
+                setManualExposure(myExposure, (int) Math.round(myGainAsDouble));
+            } else if (thisGainUp) {
+                myGainAsDouble = Range.clip(myGainAsDouble + 0.6, minGain, maxGain);
+                setManualExposure(myExposure, (int) Math.round(myGainAsDouble));
+            }
+            telemetry.addData("GainAsDouble", myGainAsDouble);
+/*
             // look for clicks to change the gain
             if (thisGainUp && !lastGainUp) {
                 myGain = Range.clip(myGain + 1, minGain, maxGain );
@@ -151,7 +161,7 @@ public class AprilTagOrTfdodOptimizeExposure extends LinearOpMode
             } else if (thisGainDn && !lastGainDn) {
                 myGain = Range.clip(myGain - 1, minGain, maxGain );
                 setManualExposure(myExposure, myGain);
-            }
+            }*/
 
             lastExpUp = thisExpUp;
             lastExpDn = thisExpDn;
@@ -216,7 +226,7 @@ public class AprilTagOrTfdodOptimizeExposure extends LinearOpMode
 
         myVisionPortalBuilder = new VisionPortal.Builder();
 
-        myVisionPortalBuilder.setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"));
+        myVisionPortalBuilder.setCamera(hardwareMap.get(WebcamName.class, "Webcam 2"));
 
         // Add the AprilTag processor.
         myVisionPortalBuilder.addProcessor(myAprilTagProcessor);

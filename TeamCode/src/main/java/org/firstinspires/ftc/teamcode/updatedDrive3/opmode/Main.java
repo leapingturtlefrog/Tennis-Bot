@@ -199,13 +199,13 @@ public class Main extends LinearOpMode {
                                     if (!robot.drivetrain.isSimpleRotating()) {
                                         if (distance < 14 && !robot.drivetrain.isSimpleRotating() & collectRotations != 0) {
                                             telemetry.addData("Distance within 14in", time);
-                                            robot.drivetrain.breakFollowingSmooth();
+                                            robot.drivetrain.breakFollowingImmediately();
                                             //robot.drivetrain.update();
 
                                             //move backwards and turn
                                             Trajectory trajectory = robot.drivetrain.trajectoryBuilder(
                                                             robot.drivetrain.getPoseEstimate().plus(new Pose2d(0, 0, Math.toRadians(45))))
-                                                    .back(36, Drivetrain.getVelocityConstraint(6.0, 0.3, TRACK_WIDTH),
+                                                    .back(36, Drivetrain.getVelocityConstraint(6.0, 0.1, TRACK_WIDTH),
                                                             Drivetrain.getAccelerationConstraint(3.0))
                                                     .build();
 
