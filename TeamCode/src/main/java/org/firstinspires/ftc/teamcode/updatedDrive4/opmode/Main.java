@@ -94,6 +94,8 @@ public class Main extends LinearOpMode {
         telemetry.addLine("Ready");
         telemetry.update();
 
+        robot.cameraControls.visionPortal2.stopLiveView();
+
         waitForStart();
 
         if (isStopRequested()) return;
@@ -131,7 +133,7 @@ public class Main extends LinearOpMode {
                                     robot.intake.intakeVariablePower(RESTING_INTAKE_POWER);
 
                                     //if we are not stopping rotation
-                                    if (timer1.seconds() > 2.0) {
+                                    if (timer1.seconds() > 5.0) {
                                         //if there is a detection
                                         if (robot.cameraControls.currentRecognitions1.size() > 0 || robot.cameraControls.currentRecognitions2.size() > 0) {
                                             //stop the robot
@@ -166,8 +168,10 @@ public class Main extends LinearOpMode {
                                             //if there is no detection
                                             if (locateRotations < 30) {
                                                 //rotate to find target
-                                                robot.drivetrain.simpleRotate(50); //rotate 50 degrees counterclockwise
+                                                robot.drivetrain.simpleRotate(30); //rotate 50 degrees counterclockwise
                                                 locateRotations++;
+
+                                                timer1.reset();
 
                                                 currentMovement = Movement.LOCATING_BY_ROTATING;
 
@@ -193,7 +197,7 @@ public class Main extends LinearOpMode {
                                 case COLLECTING:
                                     //~4 is the end of the collector
                                     if (!robot.drivetrain.isSimpleRotating()) {
-                                        if (distance < 14 && !robot.drivetrain.isSimpleRotating() & collectRotations != 0) {
+                                        if (distance < 18 && !robot.drivetrain.isSimpleRotating() & collectRotations != 0) {
                                             telemetry.addData("Distance within 14in", time);
                                             robot.drivetrain.breakFollowingImmediately();
                                             //robot.drivetrain.update();
@@ -201,7 +205,7 @@ public class Main extends LinearOpMode {
                                             //move backwards and turn
                                             Trajectory trajectory = robot.drivetrain.trajectoryBuilder(
                                                             robot.drivetrain.getPoseEstimate().plus(new Pose2d(0, 0, Math.toRadians(45))))
-                                                    .back(36, Drivetrain.getVelocityConstraint(6.0, 0.1, TRACK_WIDTH),
+                                                    .back(36, Drivetrain.getVelocityConstraint(9.0, 0.2, TRACK_WIDTH),
                                                             Drivetrain.getAccelerationConstraint(3.0))
                                                     .build();
 
@@ -217,7 +221,7 @@ public class Main extends LinearOpMode {
                                             break;
 
                                         } else if (!robot.drivetrain.isBusy()) {
-                                            if (distance < 16 && !robot.drivetrain.isSimpleRotating() && collectRotations != 0) {
+                                            if (distance < 18 && !robot.drivetrain.isSimpleRotating() && collectRotations != 0) {
                                                 telemetry.addData("Distance within 16in", time);
                                                 robot.drivetrain.breakFollowingImmediately();
 
@@ -272,6 +276,9 @@ public class Main extends LinearOpMode {
                                     break;
 
                                 case HEADING_HOME:
+                                    robot.cameraControls.visionPortal1.setProcessorEnabled(robot.cameraControls.aprilTagProcessor1, true);
+                                    robot.cameraControls.visionPortal2.setProcessorEnabled(robot.cameraControls.aprilTagProcessor2, true);
+
                                     //finds apriltag and then when found go to it
                                     robot.intake.intakeVariablePower(RESTING_INTAKE_POWER);
 

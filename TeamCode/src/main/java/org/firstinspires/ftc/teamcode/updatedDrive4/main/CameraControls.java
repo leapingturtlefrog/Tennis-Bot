@@ -2,6 +2,12 @@ package org.firstinspires.ftc.teamcode.updatedDrive4.main;
 
 import static org.firstinspires.ftc.teamcode.updatedDrive4.constants.Constants.LABELS;
 import static org.firstinspires.ftc.teamcode.updatedDrive4.constants.Constants.TFOD_MODEL_FILE;
+import static org.firstinspires.ftc.teamcode.updatedDrive4.constants.Constants.confidenceLevel1;
+import static org.firstinspires.ftc.teamcode.updatedDrive4.constants.Constants.confidenceLevel2;
+import static org.firstinspires.ftc.teamcode.updatedDrive4.constants.Constants.exposure1;
+import static org.firstinspires.ftc.teamcode.updatedDrive4.constants.Constants.exposure2;
+import static org.firstinspires.ftc.teamcode.updatedDrive4.constants.Constants.gain1;
+import static org.firstinspires.ftc.teamcode.updatedDrive4.constants.Constants.gain2;
 
 import static java.lang.Thread.sleep;
 
@@ -54,23 +60,23 @@ public class CameraControls {
         tfodProcessor1 = myTfodProcessorBuilder.setUseObjectTracker(false)
                 .setMaxNumRecognitions(5)
                 .setNumDetectorThreads(1)
-                .setNumExecutorThreads(1)
+                .setNumExecutorThreads(2)
                 .setModelFileName(TFOD_MODEL_FILE)
-                .setModelLabels(new String[]{""})
+                .setModelLabels(LABELS)
                 .build();
 
-        tfodProcessor1.setMinResultConfidence((float) 0.10);
+        tfodProcessor1.setMinResultConfidence(confidenceLevel1);
 
         //MUST HAVE USE OBJECT TRACKER FALSE for two cameras
         tfodProcessor2 = myTfodProcessorBuilder.setUseObjectTracker(false)
                 .setMaxNumRecognitions(5)
                 .setNumDetectorThreads(1)
-                .setNumExecutorThreads(1)
+                .setNumExecutorThreads(2)
                 .setModelFileName(TFOD_MODEL_FILE)
-                .setModelLabels(new String[]{""})
+                .setModelLabels(LABELS)
                 .build();
 
-        tfodProcessor2.setMinResultConfidence((float) 0.10);
+        tfodProcessor2.setMinResultConfidence(confidenceLevel2);
         //myTfodProcessor2.setClippingMargins(0, 0, 0, 90);
 
         //
@@ -95,13 +101,15 @@ public class CameraControls {
                 .setLiveViewContainerId(viewIDs[0])
                 .build();
 
+        visionPortal1.setProcessorEnabled(aprilTagProcessor1, false);
+
         while (visionPortal1.getCameraState() != VisionPortal.CameraState.STREAMING)
         {
             TelemetryControls.add("Waiting for portal 1 to come online");
 
         }
 
-        setManualExposure(7, 255, visionPortal1);
+        setManualExposure(exposure1, gain1, visionPortal1);
 
         visionPortal2 = new VisionPortal.Builder()
                 .setCamera(hardwareMap.get(WebcamName.class, "Webcam 2"))
@@ -111,6 +119,8 @@ public class CameraControls {
                 .setLiveViewContainerId(viewIDs[1])
                 .build();
 
+        visionPortal2.setProcessorEnabled(aprilTagProcessor2, false);
+
         while (visionPortal2.getCameraState() != VisionPortal.CameraState.STREAMING)
         {
             TelemetryControls.add("Waiting for portal 2 to come online");
@@ -119,7 +129,8 @@ public class CameraControls {
 
         sleep(500);
 
-        setManualExposure(19, 255, visionPortal2);
+        setManualExposure(exposure2, gain2, visionPortal2);
+
     }
 
     private void setManualExposure(int exposureMS, int gain, VisionPortal visionPortal) throws InterruptedException {
