@@ -74,11 +74,11 @@ public class Main extends LinearOpMode {
         telemetry.addLine("Wait...............");
         telemetry.update();
 
-        robot = new Robot(hardwareMap, telemetry, gamepad1);
+        robot = new Robot(hardwareMap, telemetry, gamepad1, gamepad2);
 
-        currentMode = Mode.DRIVER_CONTROL;
-        currentState = State.IDLE;
-        currentMovement = Movement.DRIVER_IN_CONTROL;
+        currentMode = Mode.FIRST_AUTO_CONTROL; // Mode.DRIVER_CONTROL;
+        currentState = State.LOCATING; //State.IDLE;
+        currentMovement = Movement.IDLE; //Movement.DRIVER_IN_CONTROL;
 
         startPoseEnumerated = StartPoseEnumerated.COURT_FOUR;
         startPose = Positions.getStartPose();
@@ -94,7 +94,9 @@ public class Main extends LinearOpMode {
         telemetry.addLine("Ready");
         telemetry.update();
 
+        //robot.cameraControls.visionPortal1.stopLiveView();
         robot.cameraControls.visionPortal2.stopLiveView();
+        robot.cameraControls.visionPortal2.stopStreaming();
 
         waitForStart();
 
@@ -133,7 +135,7 @@ public class Main extends LinearOpMode {
                                     robot.intake.intakeVariablePower(RESTING_INTAKE_POWER);
 
                                     //if we are not stopping rotation
-                                    if (timer1.seconds() > 5.0) {
+                                    if (timer1.seconds() > 1.5) {
                                         //if there is a detection
                                         if (robot.cameraControls.currentRecognitions1.size() > 0 || robot.cameraControls.currentRecognitions2.size() > 0) {
                                             //stop the robot
@@ -142,6 +144,7 @@ public class Main extends LinearOpMode {
                                             if (firstDetection) {
                                                 firstDetection = false;
                                                 timer1.reset();
+                                                sleep(50);
 
                                             } else {
                                                 firstDetection = true;
@@ -151,7 +154,7 @@ public class Main extends LinearOpMode {
                                                 currentState = State.COLLECTING;
 
                                                 //if the distance seems off
-                                                if (savedDistance < 0 || savedDistance > 400) {
+                                                if (savedDistance < 0 || savedDistance > 800) {
                                                     telemetry.addData("Recognition distance too far", time);
                                                     robot.drivetrain.simpleRotate(20);
                                                     firstAuto = true;
@@ -166,12 +169,13 @@ public class Main extends LinearOpMode {
                                         } else if (!robot.drivetrain.isSimpleRotating()) {
                                             firstDetection = true;
                                             //if there is no detection
-                                            if (locateRotations < 30) {
+                                            if (locateRotations < 300) {
                                                 //rotate to find target
                                                 robot.drivetrain.simpleRotate(30); //rotate 50 degrees counterclockwise
                                                 locateRotations++;
 
                                                 timer1.reset();
+                                                sleep(50);
 
                                                 currentMovement = Movement.LOCATING_BY_ROTATING;
 
@@ -204,9 +208,9 @@ public class Main extends LinearOpMode {
 
                                             //move backwards and turn
                                             Trajectory trajectory = robot.drivetrain.trajectoryBuilder(
-                                                            robot.drivetrain.getPoseEstimate().plus(new Pose2d(0, 0, Math.toRadians(45))))
-                                                    .back(36, Drivetrain.getVelocityConstraint(9.0, 0.2, TRACK_WIDTH),
-                                                            Drivetrain.getAccelerationConstraint(3.0))
+                                                            robot.drivetrain.getPoseEstimate().plus(new Pose2d(0, 0, Math.toRadians(70))))
+                                                    .back(36, Drivetrain.getVelocityConstraint(12.0, 0.2, TRACK_WIDTH),
+                                                            Drivetrain.getAccelerationConstraint(6.0))
                                                     .build();
 
                                             robot.drivetrain.followTrajectory(trajectory);
@@ -323,8 +327,12 @@ public class Main extends LinearOpMode {
 
             }
 
+            //sleep(300);
+
             //updates only the telemetry
             TelemetryControls.update();
+
+            sleep(50);
 
         }
 

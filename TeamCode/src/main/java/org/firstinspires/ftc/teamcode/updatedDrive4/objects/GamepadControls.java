@@ -21,7 +21,7 @@ import org.firstinspires.ftc.teamcode.updatedDrive4.main.Robot;
  * The gamepad
  *
  *
- * //GAMEPAD CONTROLS
+ * //GAMEPAD1 CONTROLS
  *
  * Universal
  * x    switch mode to driver control, intake off, stop robot
@@ -34,6 +34,9 @@ import org.firstinspires.ftc.teamcode.updatedDrive4.main.Robot;
  * right bumper     intake on
  * left trigger     intake reverse with variable speed
  * right trigger    intake collect with variable speed
+ *
+ * GAMEPAD2 CONTROLS
+ *
  */
 
 
@@ -41,9 +44,13 @@ public class GamepadControls {
 
     private Robot robot;
 
-    private Gamepad gamepad1;
+    private Gamepad gamepad1, gamepad2;
 
-    public GamepadControls(Robot rob, Gamepad gamepadUno) { robot = rob; gamepad1 = gamepadUno; }
+    public GamepadControls(Robot rob, Gamepad gamepadUno, Gamepad gamepadDos) {
+        robot = rob;
+        gamepad1 = gamepadUno;
+        gamepad2 = gamepadDos;
+    }
 
     //allows the gamepad to change mode and state
     public void universalControls() {
@@ -69,6 +76,35 @@ public class GamepadControls {
             robot.drivetrain.breakFollowingSmooth();
             robot.intake.turnIntakeOff();
             currentState = State.IDLE;
+
+        }
+
+
+        if (gamepad2.dpad_right) {
+            robot.cameraControls.visionPortal1.resumeLiveView();
+
+        } else if (gamepad2.dpad_left) {
+            robot.cameraControls.visionPortal1.stopLiveView();
+
+        } else if (gamepad2.dpad_up) {
+            robot.cameraControls.visionPortal2.resumeLiveView();
+
+        } else if (gamepad2.dpad_down) {
+            robot.cameraControls.visionPortal2.stopLiveView();
+
+        }
+
+        if (gamepad2.b) {
+            robot.cameraControls.visionPortal1.resumeStreaming();
+
+        } else if (gamepad2.x) {
+            robot.cameraControls.visionPortal1.stopStreaming();
+
+        } else if (gamepad2.y) {
+            robot.cameraControls.visionPortal2.resumeStreaming();
+
+        } else if (gamepad2.a) {
+            robot.cameraControls.visionPortal2.stopStreaming();
 
         }
 

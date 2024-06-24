@@ -105,11 +105,11 @@ public class Constants {
             "a"
     };
 
-    public static float confidenceLevel1 = 0.70f, confidenceLevel2 = 1.0f;
+    public static float confidenceLevel1 = 0.40f, confidenceLevel2 = 1.0f;
 
     //
 
-    public static int exposure1 = 5, exposure2 = 19; //says 1-1000, but after 40 it is basically all white
+    public static int exposure1 = 7, exposure2 = 19; //says 1-1000, but after 40 it is basically all white
     public static int gain1 = 255, gain2 = 255; //0-255 for this webcam
     public static int minExposure1, minExposure2, maxExposure1, maxExposure2;
     public static int minGain1, minGain2, maxGain1, maxGain2;

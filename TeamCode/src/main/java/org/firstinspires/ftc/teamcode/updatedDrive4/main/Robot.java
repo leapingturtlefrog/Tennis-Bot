@@ -37,12 +37,12 @@ public class Robot {
 
     //public AprilTag aprilTag;
 
-    public Robot(HardwareMap hardwareMap, Telemetry telemetry, Gamepad gamepadUno) throws InterruptedException {
+    public Robot(HardwareMap hardwareMap, Telemetry telemetry, Gamepad gamepadUno, Gamepad gamepadDos) throws InterruptedException {
         drivetrain = new Drivetrain(hardwareMap, this);
         intake = new Intake(hardwareMap);
         imu = new Imu(hardwareMap);
         distanceSensor = new REVDistanceSensor(hardwareMap);
-        gamepadControls = new GamepadControls(this, gamepadUno);
+        gamepadControls = new GamepadControls(this, gamepadUno, gamepadDos);
 
         telemetryControls = new TelemetryControls(this, telemetry);
 

@@ -78,6 +78,10 @@ public class TelemetryControls{
         //additional info
         telemetry.addData("", "---------------"); //15 dashes
 
+        telemetry.addData("vision1 fps", robot.cameraControls.visionPortal1.getFps());
+
+        telemetry.addData("vision2 fps", robot.cameraControls.visionPortal2.getFps());
+
         telemetry.update();
 
     }
@@ -85,7 +89,7 @@ public class TelemetryControls{
     //updates the telemetry for the tfod
     public static void updateTfodTelemAndDetectionIndex() {
         robot.cameraControls.currentRecognitions1 = robot.cameraControls.tfodProcessor1.getRecognitions();
-        robot.cameraControls.currentRecognitions2 = robot.cameraControls.tfodProcessor1.getRecognitions();
+        robot.cameraControls.currentRecognitions2 = robot.cameraControls.tfodProcessor2.getRecognitions();
 
         telemetry.addData("# objects detected1", robot.cameraControls.currentRecognitions1.size());
         telemetry.addData("# objects detected2", robot.cameraControls.currentRecognitions2.size());

@@ -65,7 +65,7 @@ public class TestingSandbox extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        robot = new Robot(hardwareMap, telemetry, gamepad1);
+        robot = new Robot(hardwareMap, telemetry, gamepad1, gamepad2);
 
         currentMode = Mode.DRIVER_CONTROL;
         currentState = State.IDLE;
