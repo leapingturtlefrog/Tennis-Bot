@@ -52,9 +52,6 @@ public class CameraControls {
     public AprilTagProcessor aprilTagProcessor1, aprilTagProcessor2;
     public VisionPortal visionPortal1, visionPortal2;
 
-    public static int currentExposure1, currentExposure2;
-    public static int currentGain1, currentGain2;
-
     public CameraControls(HardwareMap hardwareMap) throws InterruptedException {
         //initialize the tfod and apriltag for both vision portals
         initCameras(hardwareMap);
