@@ -12,6 +12,7 @@ import org.firstinspires.ftc.robotcore.external.JavaUtil;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
+import org.firstinspires.ftc.robotcore.internal.camera.calibration.CameraCalibration;
 import org.firstinspires.ftc.teamcode.updatedDrive2.storage.Positions;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
@@ -64,7 +65,7 @@ public class TfodControls extends LinearOpMode {
         // Build the TensorFlow Object Detection processor and assign it to a variable.
         myTfodProcessor = myTfodProcessorBuilder.build();
         // Set the minimum confidence at which to keep recognitions.
-        myTfodProcessor.setMinResultConfidence((float) 0.70); //0.40 //.10 //lower for when at court
+        myTfodProcessor.setMinResultConfidence((float) 0.01); //0.40 //.10 //lower for when at court
 
         //aprilTag
         AprilTagProcessor.Builder myAprilTagProcessorBuilder;

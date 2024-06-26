@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.updatedDrive4.main;
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
 import static org.firstinspires.ftc.teamcode.updatedDrive4.constants.Constants.LABELS;
 import static org.firstinspires.ftc.teamcode.updatedDrive4.constants.Constants.TFOD_MODEL_FILE;
 import static org.firstinspires.ftc.teamcode.updatedDrive4.constants.Constants.confidenceLevel1;
@@ -8,6 +9,14 @@ import static org.firstinspires.ftc.teamcode.updatedDrive4.constants.Constants.e
 import static org.firstinspires.ftc.teamcode.updatedDrive4.constants.Constants.exposure2;
 import static org.firstinspires.ftc.teamcode.updatedDrive4.constants.Constants.gain1;
 import static org.firstinspires.ftc.teamcode.updatedDrive4.constants.Constants.gain2;
+import static org.firstinspires.ftc.teamcode.updatedDrive4.constants.Constants.maxExposure1;
+import static org.firstinspires.ftc.teamcode.updatedDrive4.constants.Constants.maxExposure2;
+import static org.firstinspires.ftc.teamcode.updatedDrive4.constants.Constants.maxGain1;
+import static org.firstinspires.ftc.teamcode.updatedDrive4.constants.Constants.maxGain2;
+import static org.firstinspires.ftc.teamcode.updatedDrive4.constants.Constants.minExposure1;
+import static org.firstinspires.ftc.teamcode.updatedDrive4.constants.Constants.minExposure2;
+import static org.firstinspires.ftc.teamcode.updatedDrive4.constants.Constants.minGain1;
+import static org.firstinspires.ftc.teamcode.updatedDrive4.constants.Constants.minGain2;
 
 import static java.lang.Thread.sleep;
 
@@ -49,6 +58,8 @@ public class CameraControls {
     public CameraControls(HardwareMap hardwareMap) throws InterruptedException {
         //initialize the tfod and apriltag for both vision portals
         initCameras(hardwareMap);
+        //get the min and max gain and exposure for both cameras
+        getCameraSetting();
 
         TelemetryControls.add("All cameras online");
 
@@ -133,7 +144,7 @@ public class CameraControls {
 
     }
 
-    private void setManualExposure(int exposureMS, int gain, VisionPortal visionPortal) throws InterruptedException {
+    public void setManualExposure(int exposureMS, int gain, VisionPortal visionPortal) throws InterruptedException {
         // Ensure Vision Portal has been setup.
         if (visionPortal == null) {
             return;
@@ -202,6 +213,59 @@ public class CameraControls {
         //a=7.5252e7, b=0.960118, c=60.4614
         savedDistance = (7.5252E7) * (Math.pow(0.960118, savedY)) + 60.4614;
 
+    }
+
+    private void getCameraSetting() throws InterruptedException {
+        // Ensure Vision Portal has been setup.
+        if (visionPortal1 == null) {
+            return;
+        }
+
+        // Wait for the camera to be open
+        if (visionPortal1.getCameraState() != VisionPortal.CameraState.STREAMING) {
+            telemetry.addData("Camera1", "Waiting");
+            telemetry.update();
+            while (visionPortal1.getCameraState() != VisionPortal.CameraState.STREAMING) {
+                sleep(20);
+            }
+            telemetry.addData("Camera1", "Ready");
+            telemetry.update();
+        }
+
+        // Get camera control values unless we are stopping.
+        ExposureControl exposureControl = visionPortal1.getCameraControl(ExposureControl.class);
+        minExposure1 = (int)exposureControl.getMinExposure(TimeUnit.MILLISECONDS) + 1;
+        maxExposure1 = (int)exposureControl.getMaxExposure(TimeUnit.MILLISECONDS);
+
+        GainControl gainControl = visionPortal1.getCameraControl(GainControl.class);
+        minGain1 = gainControl.getMinGain();
+        maxGain1 = gainControl.getMaxGain();
+
+        //
+
+        if (visionPortal2 == null) {
+            return;
+        }
+
+        // Wait for the camera to be open
+        if (visionPortal2.getCameraState() != VisionPortal.CameraState.STREAMING) {
+            telemetry.addData("Camera2", "Waiting");
+            telemetry.update();
+            while (visionPortal2.getCameraState() != VisionPortal.CameraState.STREAMING) {
+                sleep(20);
+            }
+            telemetry.addData("Camera2", "Ready");
+            telemetry.update();
+        }
+
+        // Get camera control values unless we are stopping.
+        exposureControl = visionPortal2.getCameraControl(ExposureControl.class);
+        minExposure2 = (int)exposureControl.getMinExposure(TimeUnit.MILLISECONDS) + 1;
+        maxExposure2 = (int)exposureControl.getMaxExposure(TimeUnit.MILLISECONDS);
+
+        gainControl = visionPortal1.getCameraControl(GainControl.class);
+        minGain2 = gainControl.getMinGain();
+        maxGain2 = gainControl.getMaxGain();
     }
 
 }

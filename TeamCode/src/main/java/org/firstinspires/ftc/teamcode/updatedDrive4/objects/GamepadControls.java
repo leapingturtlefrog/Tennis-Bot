@@ -1,6 +1,18 @@
 package org.firstinspires.ftc.teamcode.updatedDrive4.objects;
 
 import static org.firstinspires.ftc.teamcode.updatedDrive4.constants.Constants.INTAKE_START_POWER;
+import static org.firstinspires.ftc.teamcode.updatedDrive4.constants.Constants.exposure1;
+import static org.firstinspires.ftc.teamcode.updatedDrive4.constants.Constants.exposure2;
+import static org.firstinspires.ftc.teamcode.updatedDrive4.constants.Constants.gain1;
+import static org.firstinspires.ftc.teamcode.updatedDrive4.constants.Constants.gain2;
+import static org.firstinspires.ftc.teamcode.updatedDrive4.constants.Constants.maxExposure1;
+import static org.firstinspires.ftc.teamcode.updatedDrive4.constants.Constants.maxExposure2;
+import static org.firstinspires.ftc.teamcode.updatedDrive4.constants.Constants.maxGain1;
+import static org.firstinspires.ftc.teamcode.updatedDrive4.constants.Constants.maxGain2;
+import static org.firstinspires.ftc.teamcode.updatedDrive4.constants.Constants.minExposure1;
+import static org.firstinspires.ftc.teamcode.updatedDrive4.constants.Constants.minExposure2;
+import static org.firstinspires.ftc.teamcode.updatedDrive4.constants.Constants.minGain1;
+import static org.firstinspires.ftc.teamcode.updatedDrive4.constants.Constants.minGain2;
 import static org.firstinspires.ftc.teamcode.updatedDrive4.opmode.Main.collectRotations;
 import static org.firstinspires.ftc.teamcode.updatedDrive4.opmode.Main.collectStraights;
 import static org.firstinspires.ftc.teamcode.updatedDrive4.opmode.Main.locateRotations;
@@ -13,6 +25,7 @@ import static org.firstinspires.ftc.teamcode.updatedDrive4.storage.Positions.cur
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.hardware.Gamepad;
+import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.updatedDrive4.main.Robot;
 
@@ -37,6 +50,9 @@ import org.firstinspires.ftc.teamcode.updatedDrive4.main.Robot;
  *
  * GAMEPAD2 CONTROLS
  *
+ * Universal
+ *
+ *
  */
 
 
@@ -46,6 +62,8 @@ public class GamepadControls {
 
     private Gamepad gamepad1, gamepad2;
 
+    private boolean lastLeftTrigger2 = false, lastRightTrigger2 = false, lastLeftBumper2 = false, lastRightBumper2 = false;
+
     public GamepadControls(Robot rob, Gamepad gamepadUno, Gamepad gamepadDos) {
         robot = rob;
         gamepad1 = gamepadUno;
@@ -53,7 +71,7 @@ public class GamepadControls {
     }
 
     //allows the gamepad to change mode and state
-    public void universalControls() {
+    public void universalControls() throws InterruptedException {
         if (gamepad1.x) {
             //robot.intake.turnIntakeOff();
             //robot.drivetrain.setMotorPowers(0, 0, 0, 0);
@@ -82,12 +100,16 @@ public class GamepadControls {
 
         if (gamepad2.dpad_right) {
             robot.cameraControls.visionPortal1.resumeLiveView();
+            gain1 = Range.clip(gain1-10, minGain1, maxGain1);
+            robot.cameraControls.setManualExposure(exposure1, gain1, robot.cameraControls.visionPortal1);
 
         } else if (gamepad2.dpad_left) {
             robot.cameraControls.visionPortal1.stopLiveView();
 
         } else if (gamepad2.dpad_up) {
             robot.cameraControls.visionPortal2.resumeLiveView();
+            gain2 = Range.clip(gain2-10, minGain2, maxGain2);
+            robot.cameraControls.setManualExposure(exposure2, gain2, robot.cameraControls.visionPortal2);
 
         } else if (gamepad2.dpad_down) {
             robot.cameraControls.visionPortal2.stopLiveView();
@@ -108,6 +130,32 @@ public class GamepadControls {
 
         }
 
+        boolean leftTrigger2 = gamepad2.left_trigger > 0.25, rightTrigger2 = gamepad2.right_trigger > 0.25, leftBumper2 = gamepad2.left_bumper, rightBumper2 = gamepad2.right_bumper;
+
+
+        if (leftTrigger2 && !lastLeftTrigger2) {
+            exposure1 = Range.clip(exposure1-1, minExposure1, maxExposure1);
+            robot.cameraControls.setManualExposure(exposure1, gain1, robot.cameraControls.visionPortal1);
+
+        } else if (leftBumper2 && !lastLeftBumper2) {
+            exposure1 = Range.clip(exposure1+1, minExposure1, maxExposure1);
+            robot.cameraControls.setManualExposure(exposure1, gain1, robot.cameraControls.visionPortal1);
+
+        } else if (rightTrigger2 && !lastRightTrigger2) {
+            exposure2 = Range.clip(exposure2-1, minExposure2, maxExposure2);
+            robot.cameraControls.setManualExposure(exposure2, gain2, robot.cameraControls.visionPortal2);
+
+        } else if (rightBumper2 && !lastRightBumper2) {
+            exposure2 = Range.clip(exposure2+1, minExposure2, maxExposure2);
+            robot.cameraControls.setManualExposure(exposure2, gain2, robot.cameraControls.visionPortal2);
+
+        }
+
+        lastLeftTrigger2 = leftTrigger2;
+        lastRightTrigger2 = rightTrigger2;
+        lastLeftBumper2 = leftBumper2;
+        lastRightBumper2 = rightBumper2;
+
     }
 
     //allows the gamepad to do certain controls during the driver period
@@ -124,6 +172,7 @@ public class GamepadControls {
         //if triggers are 0 turn off intake if it is not continuous
         if (gamepad1.left_trigger < 0.1 && gamepad1.right_trigger < 0.1 && !robot.intake.isIntakeRunningContinuously()) {
             robot.intake.turnIntakeOff();
+
         }
 
         if (gamepad1.left_bumper) {
@@ -139,14 +188,6 @@ public class GamepadControls {
             robot.intake.intakeVariablePower(gamepad1.right_trigger);
 
         }
-
-
-        if (gamepad1.dpad_up) {
-            INTAKE_START_POWER += 0.001;
-        } else if (gamepad1.dpad_down) {
-            INTAKE_START_POWER -= 0.001;
-        }
-
 
     }
 }

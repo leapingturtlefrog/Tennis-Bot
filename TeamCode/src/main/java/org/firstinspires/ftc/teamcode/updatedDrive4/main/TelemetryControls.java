@@ -1,6 +1,24 @@
 package org.firstinspires.ftc.teamcode.updatedDrive4.main;
 
+import static org.firstinspires.ftc.teamcode.updatedDrive3.main.CameraControls.maxExposure;
+import static org.firstinspires.ftc.teamcode.updatedDrive3.main.CameraControls.maxGain;
+import static org.firstinspires.ftc.teamcode.updatedDrive3.main.CameraControls.minExposure;
+import static org.firstinspires.ftc.teamcode.updatedDrive3.main.CameraControls.minGain;
+import static org.firstinspires.ftc.teamcode.updatedDrive3.main.CameraControls.myExposure;
+import static org.firstinspires.ftc.teamcode.updatedDrive3.main.CameraControls.myGain;
 import static org.firstinspires.ftc.teamcode.updatedDrive4.constants.Constants.INTAKE_START_POWER;
+import static org.firstinspires.ftc.teamcode.updatedDrive4.constants.Constants.exposure1;
+import static org.firstinspires.ftc.teamcode.updatedDrive4.constants.Constants.exposure2;
+import static org.firstinspires.ftc.teamcode.updatedDrive4.constants.Constants.gain1;
+import static org.firstinspires.ftc.teamcode.updatedDrive4.constants.Constants.gain2;
+import static org.firstinspires.ftc.teamcode.updatedDrive4.constants.Constants.maxExposure1;
+import static org.firstinspires.ftc.teamcode.updatedDrive4.constants.Constants.maxExposure2;
+import static org.firstinspires.ftc.teamcode.updatedDrive4.constants.Constants.maxGain1;
+import static org.firstinspires.ftc.teamcode.updatedDrive4.constants.Constants.maxGain2;
+import static org.firstinspires.ftc.teamcode.updatedDrive4.constants.Constants.minExposure1;
+import static org.firstinspires.ftc.teamcode.updatedDrive4.constants.Constants.minExposure2;
+import static org.firstinspires.ftc.teamcode.updatedDrive4.constants.Constants.minGain1;
+import static org.firstinspires.ftc.teamcode.updatedDrive4.constants.Constants.minGain2;
 import static org.firstinspires.ftc.teamcode.updatedDrive4.main.CameraControls.savedDetectionIndex;
 import static org.firstinspires.ftc.teamcode.updatedDrive4.main.CameraControls.savedDistance;
 import static org.firstinspires.ftc.teamcode.updatedDrive4.main.CameraControls.savedHeadingError;
@@ -63,12 +81,20 @@ public class TelemetryControls{
         //current saved recognition and its data
         if (savedRecognitions != null && savedRecognitions.size() > 0) {
             telemetry.addData("Saved object", "");
-            telemetry.addData("- Detection index", savedDetectionIndex);
+            telemetry.addData("- Detection index", savedDetectionIndex[0] + ", " + savedDetectionIndex[1]);
             telemetry.addData("- Heading error", savedHeadingError);
             telemetry.addData("- x", savedX);
             telemetry.addData("- y", savedY);
             telemetry.addData("- Distance", savedDistance);
         }
+
+        telemetry.addData("vision1 fps", robot.cameraControls.visionPortal1.getFps());
+        telemetry.addData("vision2 fps", robot.cameraControls.visionPortal2.getFps());
+
+        telemetry.addData("Exposure1","%d  (%d - %d)", exposure1, minExposure1, maxExposure1);
+        telemetry.addData("Gain1","%d  (%d - %d)", gain1, minGain1, maxGain1);
+        telemetry.addData("Exposure2","%d  (%d - %d)", exposure2, minExposure2, maxExposure2);
+        telemetry.addData("Gain2","%d  (%d - %d)", gain2, minGain2, maxGain2);
 
         //the rest of the objects detected
         telemetry.addData("", "---------------"); //15 dashes
@@ -77,10 +103,6 @@ public class TelemetryControls{
 
         //additional info
         telemetry.addData("", "---------------"); //15 dashes
-
-        telemetry.addData("vision1 fps", robot.cameraControls.visionPortal1.getFps());
-
-        telemetry.addData("vision2 fps", robot.cameraControls.visionPortal2.getFps());
 
         telemetry.update();
 

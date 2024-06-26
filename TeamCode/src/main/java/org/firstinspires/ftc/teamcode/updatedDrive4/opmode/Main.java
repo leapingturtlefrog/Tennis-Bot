@@ -98,6 +98,12 @@ public class Main extends LinearOpMode {
         robot.cameraControls.visionPortal2.stopLiveView();
         robot.cameraControls.visionPortal2.stopStreaming();
 
+        while (!opModeIsActive() && !isStopRequested()) {
+            robot.gamepadControls.universalControls();
+
+
+        }
+
         waitForStart();
 
         if (isStopRequested()) return;
