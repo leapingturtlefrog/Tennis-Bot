@@ -19,12 +19,15 @@
  * SOFTWARE.
  */
 
-package org.firstinspires.ftc.teamcode.updatedDrive4.examples.EasyOpenCVExamples.src.main.java.org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.copyThatMayChange.opmode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.copyThatMayChange.examples.EasyOpenCVExamples.src.main.java.org.firstinspires.ftc.teamcode.InternalCamera1Example;
+import org.firstinspires.ftc.teamcode.copyThatMayChange.examples.EasyOpenCVExamples.src.main.java.org.firstinspires.ftc.teamcode.WebcamExample;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
@@ -44,8 +47,9 @@ import java.util.List;
  * callback to switch which stage of a pipeline is rendered to the viewport for debugging
  * purposes. We also show how to get data from the pipeline to your OpMode.
  */
-@TeleOp
-public class WEBCAMObjDetTest extends LinearOpMode
+@TeleOp(name="A.Webcam_Recognition_OpenCV", group="A")
+@Disabled
+public class Webcam_Recognition_OpenCV extends LinearOpMode
 {
     OpenCvCamera phoneCam;
     StageSwitchingPipeline stageSwitchingPipeline;

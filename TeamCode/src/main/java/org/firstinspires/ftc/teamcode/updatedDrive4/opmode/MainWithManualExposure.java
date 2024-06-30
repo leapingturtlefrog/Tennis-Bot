@@ -2,6 +2,10 @@ package org.firstinspires.ftc.teamcode.updatedDrive4.opmode;
 
 import static org.firstinspires.ftc.teamcode.updatedDrive4.constants.Constants.RESTING_INTAKE_POWER;
 import static org.firstinspires.ftc.teamcode.updatedDrive4.constants.Constants.TRACK_WIDTH;
+import static org.firstinspires.ftc.teamcode.updatedDrive4.constants.Constants.exposure1;
+import static org.firstinspires.ftc.teamcode.updatedDrive4.constants.Constants.exposure2;
+import static org.firstinspires.ftc.teamcode.updatedDrive4.constants.Constants.gain1;
+import static org.firstinspires.ftc.teamcode.updatedDrive4.constants.Constants.gain2;
 import static org.firstinspires.ftc.teamcode.updatedDrive4.main.CameraControls.savedDistance;
 import static org.firstinspires.ftc.teamcode.updatedDrive4.main.CameraControls.savedHeadingError;
 import static org.firstinspires.ftc.teamcode.updatedDrive4.objects.REVDistanceSensor.distance;
@@ -51,9 +55,9 @@ import org.firstinspires.ftc.teamcode.updatedDrive4.storage.Positions;
 //TODO: Add distance sensor to prevent driving into solid objects and add virtual map for path planning
 
 
-@TeleOp(name="updatedDrive4Main", group = "APushBot")
+@TeleOp(name="updatedDrive4Main_WithManualExposure", group = "APushBot")
 //@Disabled
-public class Main extends LinearOpMode {
+public class MainWithManualExposure extends LinearOpMode {
     public static int locateRotations = 0;
     public static int collectRotations = 0;
     public static int collectStraights = 0;
@@ -91,12 +95,19 @@ public class Main extends LinearOpMode {
         //set previous trajectory as the starting point
         robot.drivetrain.currentTrajectory = robot.drivetrain.trajectoryBuilder(startPose).forward(0.000001).build();
 
-        telemetry.addLine("Ready");
-        telemetry.update();
-
         //robot.cameraControls.visionPortal1.stopLiveView();
         //robot.cameraControls.visionPortal2.stopLiveView();
         //robot.cameraControls.visionPortal2.stopStreaming();
+
+        robot.cameraControls.setManualExposure(exposure1, gain1, robot.cameraControls.visionPortal1);
+
+        sleep(500);
+
+        robot.cameraControls.setManualExposure(exposure2, gain2, robot.cameraControls.visionPortal2);
+
+
+        telemetry.addLine("Ready");
+        telemetry.update();
 
         while (!opModeIsActive() && !isStopRequested()) {
             robot.gamepadControls.universalControls();

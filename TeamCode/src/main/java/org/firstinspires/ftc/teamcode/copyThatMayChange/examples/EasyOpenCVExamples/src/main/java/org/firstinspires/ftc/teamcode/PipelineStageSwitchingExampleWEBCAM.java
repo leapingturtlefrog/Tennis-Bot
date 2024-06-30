@@ -19,8 +19,9 @@
  * SOFTWARE.
  */
 
-package org.firstinspires.ftc.teamcode.updatedDrive4.examples.EasyOpenCVExamples.src.main.java.org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.copyThatMayChange.examples.EasyOpenCVExamples.src.main.java.org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -29,7 +30,6 @@ import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.Scalar;
-import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -44,52 +44,12 @@ import java.util.List;
  * callback to switch which stage of a pipeline is rendered to the viewport for debugging
  * purposes. We also show how to get data from the pipeline to your OpMode.
  */
-@TeleOp
-public class WEBCAMObjDetTest extends LinearOpMode
+@TeleOp(name="copyThatMayChangePipelineStageSwitchingExampleWEBCAM")
+@Disabled
+public class PipelineStageSwitchingExampleWEBCAM extends LinearOpMode
 {
     OpenCvCamera phoneCam;
     StageSwitchingPipeline stageSwitchingPipeline;
-
-    /*
-// remember: H ranges 0-180, S and V range 0-255
-            Scalar minValues = new Scalar(48, 64,
-                    50);
-            Scalar maxValues = new Scalar(127, 183,
-                    250);
-
-             */
-
-    /*
-    import numpy
-import cv2
-
-image = cv2.imread("bact.png")
-output = image.copy()
-
-gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-
-hist = cv2.equalizeHist(gray)
-
-blur = cv2.GaussianBlur(hist, (31,31), cv2.BORDER_DEFAULT)
-height, width = blur.shape[:2]
-
-minR = round(width/65)
-maxR = round(width/11)
-minDis = round(width/7)
-
-circles = cv2.HoughCircles(blur, cv2.HOUGH_GRADIENT, 1, minDis, param1=14, param2=25, minRadius=minR, maxRadius=maxR)
-
-if circles is not None:
-    circles = numpy.round(circles[0, :]).astype("int")
-    for (x, y, r) in circles:
-        cv2.circle(output, (x, y), r, (0, 255, 0), 2)
-        cv2.rectangle(output, (x - 5, y - 5), (x + 5, y + 5), (0, 128, 255), -1)
-cv2.imshow("result", numpy.hstack([image, output]))
-cv2.waitKey()
-     */
-    static int minH = 48, minS = 64, minV = 50, maxH = 127, maxS = 183, maxV = 250;
-
-    //31, 144, 134, 154, 255, 255
 
     @Override
     public void runOpMode()
@@ -127,34 +87,7 @@ cv2.waitKey()
 
         while (opModeIsActive())
         {
-            /*
-// remember: H ranges 0-180, S and V range 0-255
-            Scalar minValues = new Scalar(48, 64,
-                    50);
-            Scalar maxValues = new Scalar(127, 183,
-                    250);
-
-             */
-            if (gamepad1.left_stick_x > 0.1) {
-                maxH = Math.round(gamepad1.left_stick_x * 180);
-            } else if (gamepad1.left_stick_x < -0.1) {
-                minH = Math.round(-gamepad1.left_stick_x * 180);
-            }
-
-            if (gamepad1.right_stick_y > 0.1) {
-                maxV = Math.round(gamepad1.right_stick_y * 255);
-            } else if (gamepad1.right_stick_y < -0.1) {
-                minV = Math.round(-gamepad1.right_stick_y * 255);
-            }
-
-            if (gamepad1.right_trigger > 0.1) {
-                maxS = Math.round(gamepad1.right_trigger * 255);
-            } else if (gamepad1.left_trigger > 0.1) {
-                minS = Math.round(gamepad1.left_trigger * 255);
-            }
             telemetry.addData("Num contours found", stageSwitchingPipeline.getNumContoursFound());
-            telemetry.addData("HSV mins", "%d : %d : %d", minH, minS, minV);
-            telemetry.addData("HSV maxes", "%d : %d : %d", maxH, maxS, maxV);
             telemetry.update();
             sleep(100);
         }
@@ -168,13 +101,6 @@ cv2.waitKey()
      */
     static class StageSwitchingPipeline extends OpenCvPipeline
     {
-        Mat blurredImage = new Mat();
-        Mat hsvImage = new Mat();
-        Mat mask = new Mat();
-        Mat morphOutput = new Mat();
-
-        //
-
         Mat yCbCrChan2Mat = new Mat();
         Mat thresholdMat = new Mat();
         Mat contoursOnFrameMat = new Mat();
@@ -183,14 +109,13 @@ cv2.waitKey()
 
         enum Stage
         {
-            TEST,
             YCbCr_CHAN2,
             THRESHOLD,
             CONTOURS_OVERLAYED_ON_FRAME,
             RAW_IMAGE,
         }
 
-        private Stage stageToRenderToViewport = Stage.TEST;
+        private Stage stageToRenderToViewport = Stage.YCbCr_CHAN2;
         private Stage[] stages = Stage.values();
 
         @Override
@@ -216,58 +141,12 @@ cv2.waitKey()
         @Override
         public Mat processFrame(Mat input)
         {
-
-            // remove some noise
-            Imgproc.blur(input, blurredImage, new Size(7, 7));
-
-// convert the frame to HSV
-            Imgproc.cvtColor(blurredImage, hsvImage, Imgproc.COLOR_BGR2HSV);
-
-// get thresholding values from the UI
-// remember: H ranges 0-180, S and V range 0-255
-            Scalar minValues = new Scalar(minH, minS, minV);
-            Scalar maxValues = new Scalar(maxH, maxS, maxV);
-
-// threshold HSV image to select tennis balls
-            Core.inRange(hsvImage, minValues, maxValues, mask);
-
-            // morphological operators
-// dilate with large element, erode with small ones
-            Mat dilateElement = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(24, 24));
-            Mat erodeElement = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(12, 12));
-
-            Imgproc.erode(mask, morphOutput, erodeElement);
-            Imgproc.erode(mask, morphOutput, erodeElement);
-
-            Imgproc.dilate(mask, morphOutput, dilateElement);
-            Imgproc.dilate(mask, morphOutput, dilateElement);
-
-
-            // init
-            List<MatOfPoint> contours = new ArrayList<>();
-            Mat hierarchy = new Mat();
-
-// find contours
-            Imgproc.findContours(morphOutput, contours, hierarchy, Imgproc.RETR_CCOMP, Imgproc.CHAIN_APPROX_SIMPLE);
-            numContoursFound = contours.size();
-// if any contour exist...
-            if (hierarchy.size().height > 0 && hierarchy.size().width > 0)
-            {
-                // for each contour, display it in blue
-                for (int idx = 0; idx >= 0; idx = (int) hierarchy.get(0, idx)[0])
-                {
-                    Imgproc.drawContours(input, contours, idx, new Scalar(250, 0, 0));
-                }
-            }
-
-            input.copyTo(contoursOnFrameMat);
-
-            return contoursOnFrameMat;
-
-
-/*
             contoursList.clear();
 
+            /*
+             * This pipeline finds the contours of yellow blobs such as the Gold Mineral
+             * from the Rover Ruckus game.
+             */
             Imgproc.cvtColor(input, yCbCrChan2Mat, Imgproc.COLOR_RGB2YCrCb);
             Core.extractChannel(yCbCrChan2Mat, yCbCrChan2Mat, 2);
             Imgproc.threshold(yCbCrChan2Mat, thresholdMat, 102, 255, Imgproc.THRESH_BINARY_INV);
@@ -302,7 +181,7 @@ cv2.waitKey()
                 {
                     return input;
                 }
-            }*/
+            }
         }
 
         public int getNumContoursFound()

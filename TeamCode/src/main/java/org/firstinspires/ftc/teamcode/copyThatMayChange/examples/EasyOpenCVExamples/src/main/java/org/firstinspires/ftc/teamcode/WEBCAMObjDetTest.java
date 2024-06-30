@@ -19,8 +19,9 @@
  * SOFTWARE.
  */
 
-package org.firstinspires.ftc.teamcode.updatedDrive4.examples.EasyOpenCVExamples.src.main.java.org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.copyThatMayChange.examples.EasyOpenCVExamples.src.main.java.org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -44,7 +45,8 @@ import java.util.List;
  * callback to switch which stage of a pipeline is rendered to the viewport for debugging
  * purposes. We also show how to get data from the pipeline to your OpMode.
  */
-@TeleOp
+@TeleOp(name="copyThatMayChangeWEBCAMObjDetTest")
+@Disabled
 public class WEBCAMObjDetTest extends LinearOpMode
 {
     OpenCvCamera phoneCam;

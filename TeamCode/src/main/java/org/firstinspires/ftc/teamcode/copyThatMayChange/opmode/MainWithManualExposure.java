@@ -1,19 +1,23 @@
-package org.firstinspires.ftc.teamcode.updatedDrive4.opmode;
+package org.firstinspires.ftc.teamcode.copyThatMayChange.opmode;
 
-import static org.firstinspires.ftc.teamcode.updatedDrive4.constants.Constants.RESTING_INTAKE_POWER;
-import static org.firstinspires.ftc.teamcode.updatedDrive4.constants.Constants.TRACK_WIDTH;
-import static org.firstinspires.ftc.teamcode.updatedDrive4.main.CameraControls.savedDistance;
-import static org.firstinspires.ftc.teamcode.updatedDrive4.main.CameraControls.savedHeadingError;
-import static org.firstinspires.ftc.teamcode.updatedDrive4.objects.REVDistanceSensor.distance;
-import static org.firstinspires.ftc.teamcode.updatedDrive4.storage.PoseStorage.poseEstimate;
-import static org.firstinspires.ftc.teamcode.updatedDrive4.storage.Positions.Mode;
-import static org.firstinspires.ftc.teamcode.updatedDrive4.storage.Positions.Movement;
-import static org.firstinspires.ftc.teamcode.updatedDrive4.storage.Positions.StartPoseEnumerated;
-import static org.firstinspires.ftc.teamcode.updatedDrive4.storage.Positions.State;
-import static org.firstinspires.ftc.teamcode.updatedDrive4.storage.Positions.currentMode;
-import static org.firstinspires.ftc.teamcode.updatedDrive4.storage.Positions.currentMovement;
-import static org.firstinspires.ftc.teamcode.updatedDrive4.storage.Positions.currentState;
-import static org.firstinspires.ftc.teamcode.updatedDrive4.storage.Positions.startPoseEnumerated;
+import static org.firstinspires.ftc.teamcode.copyThatMayChange.constants.Constants.RESTING_INTAKE_POWER;
+import static org.firstinspires.ftc.teamcode.copyThatMayChange.constants.Constants.TRACK_WIDTH;
+import static org.firstinspires.ftc.teamcode.copyThatMayChange.constants.Constants.exposure1;
+import static org.firstinspires.ftc.teamcode.copyThatMayChange.constants.Constants.exposure2;
+import static org.firstinspires.ftc.teamcode.copyThatMayChange.constants.Constants.gain1;
+import static org.firstinspires.ftc.teamcode.copyThatMayChange.constants.Constants.gain2;
+import static org.firstinspires.ftc.teamcode.copyThatMayChange.main.CameraControls.savedDistance;
+import static org.firstinspires.ftc.teamcode.copyThatMayChange.main.CameraControls.savedHeadingError;
+import static org.firstinspires.ftc.teamcode.copyThatMayChange.objects.REVDistanceSensor.distance;
+import static org.firstinspires.ftc.teamcode.copyThatMayChange.storage.PoseStorage.poseEstimate;
+import static org.firstinspires.ftc.teamcode.copyThatMayChange.storage.Positions.Mode;
+import static org.firstinspires.ftc.teamcode.copyThatMayChange.storage.Positions.Movement;
+import static org.firstinspires.ftc.teamcode.copyThatMayChange.storage.Positions.StartPoseEnumerated;
+import static org.firstinspires.ftc.teamcode.copyThatMayChange.storage.Positions.State;
+import static org.firstinspires.ftc.teamcode.copyThatMayChange.storage.Positions.currentMode;
+import static org.firstinspires.ftc.teamcode.copyThatMayChange.storage.Positions.currentMovement;
+import static org.firstinspires.ftc.teamcode.copyThatMayChange.storage.Positions.currentState;
+import static org.firstinspires.ftc.teamcode.copyThatMayChange.storage.Positions.startPoseEnumerated;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
@@ -21,11 +25,11 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.updatedDrive4.main.Robot;
-import org.firstinspires.ftc.teamcode.updatedDrive4.main.TelemetryControls;
-import org.firstinspires.ftc.teamcode.updatedDrive4.objects.Drivetrain;
-import org.firstinspires.ftc.teamcode.updatedDrive4.storage.PoseStorage;
-import org.firstinspires.ftc.teamcode.updatedDrive4.storage.Positions;
+import org.firstinspires.ftc.teamcode.copyThatMayChange.main.Robot;
+import org.firstinspires.ftc.teamcode.copyThatMayChange.main.TelemetryControls;
+import org.firstinspires.ftc.teamcode.copyThatMayChange.objects.Drivetrain;
+import org.firstinspires.ftc.teamcode.copyThatMayChange.storage.PoseStorage;
+import org.firstinspires.ftc.teamcode.copyThatMayChange.storage.Positions;
 
 
 /**
@@ -51,9 +55,9 @@ import org.firstinspires.ftc.teamcode.updatedDrive4.storage.Positions;
 //TODO: Add distance sensor to prevent driving into solid objects and add virtual map for path planning
 
 
-@TeleOp(name="updatedDrive4Main", group = "APushBot")
+@TeleOp(name="A.Main_with_manual_exposure", group = "A")
 //@Disabled
-public class Main extends LinearOpMode {
+public class MainWithManualExposure extends LinearOpMode {
     public static int locateRotations = 0;
     public static int collectRotations = 0;
     public static int collectStraights = 0;
@@ -91,12 +95,19 @@ public class Main extends LinearOpMode {
         //set previous trajectory as the starting point
         robot.drivetrain.currentTrajectory = robot.drivetrain.trajectoryBuilder(startPose).forward(0.000001).build();
 
-        telemetry.addLine("Ready");
-        telemetry.update();
-
         //robot.cameraControls.visionPortal1.stopLiveView();
         //robot.cameraControls.visionPortal2.stopLiveView();
         //robot.cameraControls.visionPortal2.stopStreaming();
+
+        robot.cameraControls.setManualExposure(exposure1, gain1, robot.cameraControls.visionPortal1);
+
+        sleep(500);
+
+        robot.cameraControls.setManualExposure(exposure2, gain2, robot.cameraControls.visionPortal2);
+
+
+        telemetry.addLine("Ready");
+        telemetry.update();
 
         while (!opModeIsActive() && !isStopRequested()) {
             robot.gamepadControls.universalControls();

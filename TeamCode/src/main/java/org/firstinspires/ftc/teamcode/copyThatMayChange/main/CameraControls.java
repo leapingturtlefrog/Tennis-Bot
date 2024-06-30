@@ -1,29 +1,22 @@
-package org.firstinspires.ftc.teamcode.updatedDrive4.main;
+package org.firstinspires.ftc.teamcode.copyThatMayChange.main;
 
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
-import static org.firstinspires.ftc.teamcode.updatedDrive4.constants.Constants.LABELS;
-import static org.firstinspires.ftc.teamcode.updatedDrive4.constants.Constants.TFOD_MODEL_FILE;
-import static org.firstinspires.ftc.teamcode.updatedDrive4.constants.Constants.confidenceLevel1;
-import static org.firstinspires.ftc.teamcode.updatedDrive4.constants.Constants.confidenceLevel2;
-import static org.firstinspires.ftc.teamcode.updatedDrive4.constants.Constants.exposure1;
-import static org.firstinspires.ftc.teamcode.updatedDrive4.constants.Constants.exposure2;
-import static org.firstinspires.ftc.teamcode.updatedDrive4.constants.Constants.gain1;
-import static org.firstinspires.ftc.teamcode.updatedDrive4.constants.Constants.gain2;
-import static org.firstinspires.ftc.teamcode.updatedDrive4.constants.Constants.maxExposure1;
-import static org.firstinspires.ftc.teamcode.updatedDrive4.constants.Constants.maxExposure2;
-import static org.firstinspires.ftc.teamcode.updatedDrive4.constants.Constants.maxGain1;
-import static org.firstinspires.ftc.teamcode.updatedDrive4.constants.Constants.maxGain2;
-import static org.firstinspires.ftc.teamcode.updatedDrive4.constants.Constants.minExposure1;
-import static org.firstinspires.ftc.teamcode.updatedDrive4.constants.Constants.minExposure2;
-import static org.firstinspires.ftc.teamcode.updatedDrive4.constants.Constants.minGain1;
-import static org.firstinspires.ftc.teamcode.updatedDrive4.constants.Constants.minGain2;
-
+import static org.firstinspires.ftc.teamcode.copyThatMayChange.constants.Constants.LABELS;
+import static org.firstinspires.ftc.teamcode.copyThatMayChange.constants.Constants.TFOD_MODEL_FILE;
+import static org.firstinspires.ftc.teamcode.copyThatMayChange.constants.Constants.confidenceLevel1;
+import static org.firstinspires.ftc.teamcode.copyThatMayChange.constants.Constants.confidenceLevel2;
+import static org.firstinspires.ftc.teamcode.copyThatMayChange.constants.Constants.maxExposure1;
+import static org.firstinspires.ftc.teamcode.copyThatMayChange.constants.Constants.maxExposure2;
+import static org.firstinspires.ftc.teamcode.copyThatMayChange.constants.Constants.maxGain1;
+import static org.firstinspires.ftc.teamcode.copyThatMayChange.constants.Constants.maxGain2;
+import static org.firstinspires.ftc.teamcode.copyThatMayChange.constants.Constants.minExposure1;
+import static org.firstinspires.ftc.teamcode.copyThatMayChange.constants.Constants.minExposure2;
+import static org.firstinspires.ftc.teamcode.copyThatMayChange.constants.Constants.minGain1;
+import static org.firstinspires.ftc.teamcode.copyThatMayChange.constants.Constants.minGain2;
 import static java.lang.Thread.sleep;
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.robotcore.external.JavaUtil;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl;
