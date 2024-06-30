@@ -36,7 +36,7 @@ import org.openftc.easyopencv.OpenCvWebcam;
  * and then snapshot that value for later use when the START
  * command is issued. The pipeline is re-used from SkystoneDeterminationExample
  */
-@TeleOp(name="copyThatMayChange")
+@TeleOp(name="copyThatMayChangeAutonomousInitDetectionExample")
 @Disabled
 public class AutonomousInitDetectionExample extends LinearOpMode
 {

@@ -39,7 +39,7 @@ import org.openftc.easyopencv.OpenCvPipeline;
  * In this sample, we demonstrate how to use the advanced features provided
  * by the {@link OpenCvInternalCamera2} interface
  */
-@TeleOp(name="copyThatMayChange")
+@TeleOp(name="copyThatMayChangeInternalCamera2AdvancedFeaturesExample")
 @Disabled
 public class InternalCamera2AdvancedFeaturesExample extends LinearOpMode
 {

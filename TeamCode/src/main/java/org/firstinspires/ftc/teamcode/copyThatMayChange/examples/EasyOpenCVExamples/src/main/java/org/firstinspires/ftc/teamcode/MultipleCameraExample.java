@@ -41,7 +41,7 @@ import org.openftc.easyopencv.OpenCvPipeline;
  * method in order to concurrently display the preview of two cameras, using
  * OpenCV on both.
  */
-@TeleOp(name="copyThatMayChange")
+@TeleOp(name="copyThatMayChangeMultipleCameraExample")
 @Disabled
 public class MultipleCameraExample extends LinearOpMode
 {
