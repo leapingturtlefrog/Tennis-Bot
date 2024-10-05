@@ -1,6 +1,6 @@
 **Tennis Bot, an Autonomous Tennis Ball-Collecting Robot**
 
-Developed to the point of being able to collect 10 tennis balls indoors very slowly (~1/min) in a closed field.
+Developed to the point of being able to autonomously detect and collect 10 tennis balls indoors very slowly (~1/min) in a closed field.
 Also had full person-controlled driving and collection (but not the main point of the project).
 
 All the main code is in [TeamCode/src/main/java/org/firstinspires/ftc/teamcode/updatedDrive4](TeamCode/src/main/java/org/firstinspires/ftc/teamcode/updatedDrive4).
