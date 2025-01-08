@@ -1,1 +1,1 @@
-NOTE: Most of these are external examples and not examples to do with this robot.
+NOTE: Most of these are external examples and not examples of implementing this robot.
